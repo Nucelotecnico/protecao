@@ -1,0 +1,20 @@
+canvas {
+    background-color: rgb(255, 255, 255);
+    border: 5px solid black;
+    max-width: 794px;   /* Aproximação A4 largura */
+    max-height: 1123px; /* Aproximação A4 altura */
+}
+
+.graficoGD-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#graficoGD {
+    width: 794px;   /* Largura A4 */
+    height: 1123px; /* Altura A4 */
+}
+
+
+

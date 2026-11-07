@@ -1,0 +1,503 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #8fbc8f, #1c641c);
+    background-attachment: fixed;
+    text-align: center;
+}
+
+/* Oculta botões restritos por padrão */
+#botaoconfightml:not(.btn-permitido),
+#botaoajustesGDhtml:not(.btn-permitido),
+#botaotabelaGDhtml:not(.btn-permitido),
+#botaoestudosGDhtml:not(.btn-permitido),
+#botaoanalisehtml:not(.btn-permitido) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Força exibição dos botões permitidos */
+#botaoconfightml.btn-permitido,
+#botaodiagramahtml.btn-permitido,
+#botaoparametrohtml.btn-permitido,
+#botaotrafohtml.btn-permitido,
+#botaotptchtml.btn-permitido,
+#botaoajustehtml.btn-permitido,
+#botaotabelarelehtml.btn-permitido,
+#botaoestudoshtml.btn-permitido,
+#botaoajustesGDhtml.btn-permitido,
+#botaotabelaGDhtml.btn-permitido,
+#botaoestudosGDhtml.btn-permitido,
+#botaoanalisehtml.btn-permitido,
+#botaosairhtml.btn-permitido {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Força ocultação dos botões bloqueados */
+h1 button.btn-bloqueado {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+h1 {
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+}
+
+h1.loaded {
+    opacity: 1;
+}
+
+.tabelarele-layout {
+    padding-bottom: 16px;
+}
+
+.tabelarele-brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+}
+
+.tabelarele-brand-title {
+    font-family: 'Impact', 'Arial Black', cursive, sans-serif;
+    font-size: 2em;
+    letter-spacing: 2px;
+    color: rgb(2, 68, 2);
+}
+
+.tabelarele-brand-svg {
+    width: 4%;
+    height: 2em;
+    vertical-align: middle;
+}
+
+.tabelarele-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 1px;
+}
+
+.tabelarele-toolbar-label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #024402;
+    margin-right: 10px;
+}
+
+.tabelarele-toolbar-select {
+    padding: 6px 12px;
+    font-size: 0.96em;
+    border-radius: 6px;
+    border: 1px solid #024402;
+    background: #f6fff6;
+    color: #024402;
+    font-weight: bold;
+}
+
+table {
+    width: 98%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    background-color: white;
+    border: 2px solid black;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #454e45;
+    color: white;
+}
+
+
+.fase {
+    background-color: #FF0000;
+    color: white;
+}
+
+.neutro {
+    background-color: #00BFFF;
+    color: white;
+}
+
+
+
+
+
+table {
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 2px solid #000000;
+    /* ...outros estilos... */
+}
+
+
+.tabela table,
+.tabela th,
+.tabela td {
+    border: 2px solid #000 !important;
+    border-collapse: collapse !important;
+    box-sizing: border-box;
+    line-height: 1.35;
+}
+
+.tabela table {
+    border-spacing: 0 !important;
+    width: 100% !important;
+}
+
+/* Previne quebra de linhas e corte de texto no PDF e na impressão */
+.tabela tr,
+table tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    break-inside: avoid-page !important;
+}
+
+.tabela td,
+.tabela th,
+table td,
+table th {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    break-inside: avoid-page !important;
+}
+
+.tabela thead,
+table thead {
+    display: table-header-group !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+.diagramas_multifilares_container {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    break-inside: avoid-page !important;
+}
+
+button {
+    color: rgb(227, 224, 64);
+    font-size: 10px;
+    margin-bottom: 10px black;
+    margin: 20px black;
+    border: #34335c solid 2px;
+    background-color: rgb(2, 68, 2);
+    width: 100px;
+    height: 50px;
+    line-height: 1px;
+    border-radius: 10px;
+
+}
+
+button:hover {
+    background-color: #cf0808;
+}
+
+.tabela {
+    display: none;
+}
+
+.trel-table {
+    font-size: 0.95em;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.trel-table-collapse {
+    font-size: 0.95em;
+    max-width: 900px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.trel-table-compact {
+    font-size: 0.92em;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.trel-title-center {
+    text-align: center;
+    background-color: #454e45;
+    color: white;
+    font-weight: bold;
+}
+
+.trel-title-center-lg {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.trel-title-center-lg-compact {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.trel-section-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 8px;
+}
+
+.trel-center-middle {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.trel-middle-center {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.trel-bg-dark {
+    background: #454e45;
+}
+
+.trel-bg-dark-white {
+    background: #454e45;
+    color: white;
+}
+
+.trel-bg-dark-white-bold {
+    background: #454e45;
+    font-weight: bold;
+    color: white;
+}
+
+.trel-bg-dark-alt-white {
+    background-color: #454e45;
+    color: white;
+}
+
+.trel-status-header {
+    background-color: #454e45;
+    color: white;
+    text-align: center;
+}
+
+.trel-bg-gray {
+    background: #eee;
+}
+
+.trel-bg-gray-bold {
+    background: #454e45;
+    font-weight: bold;
+    color: white;
+
+}
+
+.trel-bg-gray-bold-middle-center {
+    background: #eee;
+    font-weight: bold;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.trel-row-gray-bold {
+    background: #e0e0e0;
+    font-weight: bold;
+}
+
+.trel-ul-compact {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.trel-preline {
+    white-space: pre-line;
+}
+
+.trel-w-6 {
+    width: 6%;
+}
+
+.trel-w-8 {
+    width: 8%;
+}
+
+.trel-w-10 {
+    width: 10%;
+}
+
+.trel-w-12 {
+    width: 12%;
+}
+
+.trel-w-14 {
+    width: 14%;
+}
+
+.trel-w-15 {
+    width: 15%;
+}
+
+.trel-w-16 {
+    width: 16%;
+}
+
+.trel-w-18 {
+    width: 18%;
+}
+
+.trel-w-20 {
+    width: 20%;
+}
+
+.trel-w-22 {
+    width: 22%;
+}
+
+.trel-w-24 {
+    width: 24%;
+}
+
+.trel-w-25 {
+    width: 25%;
+}
+
+.trel-w-28 {
+    width: 28%;
+}
+
+.trel-w-30 {
+    width: 30%;
+}
+
+.trel-w-32 {
+    width: 32%;
+}
+
+.trel-w-35 {
+    width: 35%;
+}
+
+.trel-w-38 {
+    width: 38%;
+}
+
+.trel-w-40 {
+    width: 40%;
+}
+
+/* --- Estilização dos Diagramas Multifilares --- */
+.diagramas_multifilares_container {
+    max-width: 800px;
+    margin: 25px auto;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.diagrama_titulo {
+    color: #024402;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    border-bottom: 2px solid #454e45;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.diagrama_wrapper {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.diagrama_img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.diagrama_img:hover {
+    transform: scale(1.02);
+}
+
+.diagrama_legenda {
+    font-size: 0.85em;
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
+
+/* Estilos específicos para impressão e geração de PDF */
+@media print {
+    body {
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    .tabelarele-toolbar,
+    .tabelarele-brand-header,
+    h1 {
+        display: none !important;
+    }
+
+    .tabela {
+        display: block !important;
+    }
+
+    table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    td,
+    th {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    thead {
+        display: table-header-group !important;
+    }
+
+    .diagramas_multifilares_container {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+        background-color: #fff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        break-inside: avoid-page !important;
+    }
+
+    .diagrama_titulo {
+        color: #000 !important;
+        border-bottom-color: #000 !important;
+    }
+}

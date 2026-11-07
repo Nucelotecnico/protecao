@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="animacao.css">
+    <link rel="stylesheet" href="botoes-header.css">
+    <link rel="stylesheet" href="config.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.js"></script>
+    <title>CONFIGURAÇÕES</title>
+    <script src="controle-acesso.js"></script>
+
+</head>
+
+<body>
+    <div class="config-brand-wrap">
+        <span class="config-brand-title">
+            COORDINATION WEB
+        </span>
+        <svg viewBox="0 0 350 350" class="config-brand-graphic">
+            <line x1="50" y1="350" x2="550" y2="350" class="eixo" />
+            <line x1="50" y1="50" x2="50" y2="350" class="eixo" />
+            <polyline class="curva-definida" fill="none" stroke="#00ff88" stroke-width="3" stroke-dasharray="1000"
+                stroke-dashoffset="1000" points="100,50,50, 50, 50,200, 200,200,200,350, 200,200" />
+        </svg>
+    </div>
+    <div id="botoesdoheader" class="config-header-wrap">
+    <h1>
+
+        <button id="botaoconfightml" class="dark-mode-toggle"
+            onclick="window.location.href='config.html';">CONFIGURAÇÕES</button>
+        <button id="botaodiagramahtml" class="dark-mode-toggle"
+            onclick="window.location.href='Diagramas.html';">DIAGRAMAS</button>
+        <button id="botaoparametrohtml" class="dark-mode-toggle"
+            onclick="window.location.href='Protecao_parametros.html';">PARÂMETROS</button>
+        <button id="botaotrafohtml" class="dark-mode-toggle"
+            onclick="window.location.href='transformadores.html';">TRAFOS</button>
+        <button id="botaotptchtml" class="dark-mode-toggle" onclick="window.location.href='TP-TC.html';">TP/TC</button>
+        <button id="botaoajustehtml" class="dark-mode-toggle"
+            onclick="window.location.href='protecaoajuste.html';">AJUSTES</button>
+        <button id="botaoajustesGDhtml" class="dark-mode-toggle"
+            onclick="window.location.href='ajustesGD.html';">AJUSTES GD</button>
+        <button id="botaotabelarelehtml" class="dark-mode-toggle"
+            onclick="window.location.href='tabelarele.html';">TABELA</button>
+        <button id="botaoestudoshtml" class="dark-mode-toggle"
+            onclick="window.location.href='estudos.html';">ESTUDOS</button>
+        <button id="botaotabelaGDhtml" class="dark-mode-toggle" onclick="window.location.href='tabelaGD.html';">TABELA
+            GD</button>
+        <button id="botaoestudosGDhtml" class="dark-mode-toggle"
+            onclick="window.location.href='estudosGD.html';">ESTUDOS GD</button>
+        <button id="botaoanalisehtml" class="dark-mode-toggle"
+            onclick="window.location.href='analise.html';">ANÁLISE</button>
+        <button id="botaosairhtml" class="dark-mode-toggle" onclick="window.location.href='index.html';">SAIR</button>
+
+    </h1>
+    </div>
+    <br>
+
+    <div id="labelDiagrama" class="config-page-label-wrap">
+        <label for="tipoDiagrama" class="config-page-label">
+            Gerenciamento de Usuários
+        </label>
+    </div>
+
+    <!-- Seção de Gerenciamento de Usuários -->
+    <div class="config-main-card">
+
+        <div id="statusMessage" class="status-message is-hidden"></div>
+
+        <!-- Formulário de Cadastro -->
+        <div class="config-section-card">
+            <h3 class="config-section-title">Cadastrar Novo Usuário</h3>
+            <form id="userForm" class="user-form-grid">
+                <div class="field-group">
+                    <label class="field-label">Email:</label>
+                    <input type="email" id="email" placeholder="email@exemplo.com" required
+                        class="input-control">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Senha:</label>
+                    <input type="password" id="senha" placeholder="Mínimo 6 caracteres" minlength="6" required
+                        class="input-control">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Categoria:</label>
+                    <select id="categoria" required class="input-control select-control">
+                        <option value="">Selecione</option>
+                        <option value="usuario">Usuário</option>
+                        <option value="tecnico">Técnico</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-action btn-action-primary btn-submit-user">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+
+        <!-- Teste de Login -->
+        <div class="config-section-card config-login-card">
+            <h3 class="config-section-title">Teste de Login</h3>
+            <form id="loginForm" class="login-form-row">
+                <div class="field-group field-grow">
+                    <label class="field-label">Email:</label>
+                    <input type="email" id="loginEmail" placeholder="email@exemplo.com" required 
+                           class="input-control input-control-lg">
+                </div>
+                <div class="field-group field-grow">
+                    <label class="field-label">Senha:</label>
+                    <input type="password" id="loginSenha" placeholder="Digite a senha" required
+                           class="input-control input-control-lg">
+                </div>
+                <button type="submit" class="btn-action btn-action-info btn-login-validate">
+                    Validar Login
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista de Usuários -->
+        <div>
+            <h3 class="config-section-title">Usuários Cadastrados</h3>
+            <div id="userCount" class="count-text"></div>
+            <div class="table-wrapper">
+                <table id="userTable" class="data-table">
+                    <thead>
+                        <tr class="table-head-primary">
+                            <th class="table-head-cell table-head-cell-left">
+                                Email</th>
+                            <th class="table-head-cell">Categoria</th>
+                            <th class="table-head-cell">Data de Criação</th>
+                            <th class="table-head-cell table-head-cell-center table-head-cell-right">
+                                Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão para mostrar/ocultar logs -->
+    <div class="logs-toggle-wrap">
+        <button id="toggleLogsBtn" class="btn-action btn-logs btn-logs-show">
+            📊 Exibir Logs de Acesso
+        </button>
+    </div>
+
+    <!-- Seção de Logs (inicialmente oculta) -->
+    <div id="logsSection" class="config-main-card logs-section is-hidden">
+        <h3 class="logs-section-title">
+            📋 Histórico de Acessos
+        </h3>
+        <div id="logCount" class="count-text"></div>
+        <div class="table-wrapper">
+            <table id="logTable" class="data-table">
+                <thead>
+                    <tr class="table-head-info">
+                        <th class="table-head-cell table-head-cell-left">
+                            Email</th>
+                        <th class="table-head-cell">Categoria</th>
+                        <th class="table-head-cell table-head-cell-right">
+                            Data e Hora do Acesso</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <br><br>
+
+    <script src="config.js"></script>
+
+</body>
+
+</html>
