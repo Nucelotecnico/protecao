@@ -1,0 +1,2137 @@
+// Debug: mostrar todos os itens do localStorage
+// console.log('Itens no localStorage:');
+// for (let i = 0; i < localStorage.length; i++) {
+//     var chave = localStorage.key(i);
+//     console.log(`${chave}:`, localStorage.getItem(chave));
+// }
+
+//INICIALIZAR DO CARREGAMENTO DA PAGINA 
+document.addEventListener('DOMContentLoaded', function () {
+
+    configurarEventosHeaderEImpressao();
+    configurarQuebrasDinamicasImpressao();
+
+    exibirCorrenteMinimaSeNecessario();
+
+    // Aguardar MathJax carregar com retry
+    function carregarFormulas() {
+        if (typeof MathJax !== 'undefined' && MathJax.startup && MathJax.typesetPromise) {
+            console.log('MathJax detectado, aguardando startup...');
+            MathJax.startup.promise.then(() => {
+                console.log('MathJax pronto! Aguardando inicialização completa...');
+                // Aguardar mais tempo para garantir que MathJax está totalmente inicializado
+                setTimeout(() => {
+                    console.log('Preenchendo fórmulas...');
+                    atualizarFormula();
+                    atualizarFormula2();
+                    // Forçar renderização após preencher
+                    setTimeout(() => {
+                        const formulas = document.querySelectorAll('.formula1, .formula2, .formula3, .formula4, .formula5, .formula6, .formula7');
+                        console.log(`Elementos encontrados: ${formulas.length}`);
+                        formulas.forEach((el, idx) => {
+                            console.log(`Formula ${idx + 1} innerHTML:`, el.innerHTML.substring(0, 50));
+                        });
+                        if (formulas.length > 0) {
+                            console.log('Chamando MathJax.typesetPromise...');
+                            MathJax.typesetPromise(Array.from(formulas))
+                                .then(() => {
+                                    console.log('✓ Renderização concluída');
+                                    formulas.forEach((el, idx) => {
+                                        console.log(`Formula ${idx + 1} após render:`, el.innerHTML.substring(0, 50));
+                                    });
+                                })
+                                .catch(err => console.error('Erro ao renderizar:', err));
+                        }
+                    }, 200);
+                }, 1000);
+            }).catch(err => console.error('Erro no startup:', err));
+        } else {
+            console.log('Aguardando MathJax...');
+            setTimeout(carregarFormulas, 300);
+        }
+    }
+    carregarFormulas();
+
+    // Controle de acesso movido para controle-acesso.js
+
+    // Carregar o script do gráfico
+    carregarScript('grafico5051consumo.js', function () {
+        setTimeout(() => {
+            verificarMathJax();
+        }, 1000);
+    });
+
+    // Carregar tabela de relés
+    setTimeout(() => {
+
+        adicionarEstilosTabelaParametrizacaoReles();
+        carregarTabelaReles();
+
+    }, 1500);
+
+
+    carregarVariaveisEstudo();
+    preencherFolhaSeloComDadosFormulario();
+    carregarTabelaMotoresEmEstudos();
+    preencherValoresDinamicosMotor();
+    renderizarParametrosConsideradosMotores();
+    renderizarCalculoDialMotores();
+
+    exibirCalculoMotoresSeTabelaPreenchida();
+    aplicarVisibilidadeSaturacaoTC();
+    renderizarSumarioEstudo();
+
+       //incluirimagensrele();
+    // Recarregar a página após salvar as opções
+    // location.reload();
+
+});
+
+function preencherFolhaSeloComDadosFormulario() {
+    const campoFolha = document.querySelector('#tabelaselo [data-selo-folha]');
+    if (campoFolha) {
+        campoFolha.value = '1/1';
+    }
+
+    const dadosFormulario = obterJSONStorageSeguro('formularioProjetoDados', {});
+    if (!dadosFormulario || typeof dadosFormulario !== 'object' || Array.isArray(dadosFormulario)) {
+        return;
+    }
+
+    document.querySelectorAll('[data-form-field]').forEach((campo) => {
+        const nomeCampo = campo.dataset.formField;
+        const valor = dadosFormulario[nomeCampo];
+        if (typeof valor === 'string') {
+            let valorExibido = valor;
+            if (nomeCampo === 'dataProjeto' && /^\d{4}-\d{2}-\d{2}$/.test(valor)) {
+                const [ano, mes, dia] = valor.split('-');
+                valorExibido = `${dia}/${mes}/${ano}`;
+            }
+
+            if (campo instanceof HTMLInputElement) {
+                campo.value = valorExibido;
+            } else {
+                campo.textContent = valorExibido;
+            }
+        }
+    });
+
+    const demandaContrato = localStorage.getItem('demandadecontrato');
+    const campoDemandaContrato = document.querySelector(
+        '#tabelaselo [data-local-storage-field="demandadecontrato"]'
+    );
+    if (campoDemandaContrato && demandaContrato !== null) {
+        campoDemandaContrato.value = `${demandaContrato} KW`;
+    }
+}
+
+function escaparHtml(texto) {
+    return String(texto || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+
+//exibir calculo motores se a tabela de motores estiver preenchida com Sim se não estiver preenchida , ou estiver com Não não exibe
+function exibirCalculoMotoresSeTabelaPreenchida() {
+    const tabelaMotoresPreenchida = localStorage.getItem("tabelaMotoresPreenchida");
+    const containerMotores = document.querySelector('.exibircalculomotores');
+    
+    if (containerMotores) {
+        if (tabelaMotoresPreenchida === "Sim") {
+            containerMotores.style.display = 'block';
+        } else {
+            containerMotores.style.display = 'none';
+        }
+    }
+}
+
+
+
+
+// função para preencher os valores dinâmicos do motor na seção de estudos, utilizando os dados do localStorage e do JSON do motor, e aplicando as fórmulas de cálculo conforme a lógica especificada
+function preencherValoresDinamicosMotor() {
+    // Obter dados do localStorage
+    const demandadecontrato = parseFloat(localStorage.getItem('demandadecontrato')) || 0;
+    const fatorPotenciaSelecionada = parseFloat(localStorage.getItem('fatorPotenciaSelecionada')) || 92;
+    const motorJSON = obterJSONStorageSeguro('motorJSON', {});
+    const maiorCorrenteOperante = parseFloat(localStorage.getItem('maiorCorrenteoperante')) || 0;
+    
+    // Calcular valores conforme a lógica especificada
+    const fatorPotenciaDecimal = fatorPotenciaSelecionada;
+    const demandaTotalKva = demandadecontrato / fatorPotenciaDecimal;
+    const potenciaMotorKva = parseFloat(motorJSON.potenciamotorkva) || 0;
+    const potenciaOperante = demandaTotalKva - potenciaMotorKva;
+    const correntePartidaMotor = parseFloat(motorJSON.correntepartida) || 0;
+    const correnteOperantePlanta = maiorCorrenteOperante - correntePartidaMotor;
+    const tempoPartidaMotor = parseFloat(motorJSON.tempopartida) || 0;
+    
+    // Preencher os spans no HTML
+    const elementos = {
+        'demanda-contratada-motor': demandadecontrato.toFixed(0),
+        'fator-potencia-motor': fatorPotenciaDecimal.toFixed(2),
+        'demanda-total-kva': demandaTotalKva.toFixed(2),
+        'potencia-motor-kva': potenciaMotorKva.toFixed(2),
+        'potencia-operante-motor': potenciaOperante.toFixed(2),
+        'corrente-partida-motor': correntePartidaMotor.toFixed(2),
+        'corrente-operante-planta': correnteOperantePlanta.toFixed(2),
+        'corrente-partida-total': maiorCorrenteOperante.toFixed(2),
+        'corrente-partida-total-frase': maiorCorrenteOperante.toFixed(2),
+        'tempo-partida-motor': tempoPartidaMotor.toFixed(0)
+    };
+    
+    // Atualizar cada elemento
+    for (const [id, valor] of Object.entries(elementos)) {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            elemento.textContent = valor;
+        }
+    }
+}
+
+//-----Fim do preenchimento dos valores dinâmicos do motor na seção de estudos------------------
+
+function renderizarParametrosConsideradosMotores() {
+    const container = document.getElementById('parametros-considerados-motor');
+    if (!container) {
+        return;
+    }
+
+    const correntePartidaTotal = parseFloat(localStorage.getItem('maiorCorrenteoperante')) || 0;
+    const correntePartidaReferencia = parseFloat(localStorage.getItem('Ipdeconsumo')) || 0;
+    const curvaFaseSelecionada = localStorage.getItem('curvafaseSelecionada') || '-';
+    const motorJSON = obterJSONStorageSeguro('motorJSON', {});
+    const tempoPartida = parseFloat(motorJSON.tempopartida) || 0.1;
+
+    const dadosCurva = JSON.parse(localStorage.getItem('dadoscurvausariofase')) || {};
+    const beta = Number(dadosCurva.beta);
+    const alfa = Number(dadosCurva.alfa);
+    const k = Number(dadosCurva.k);
+
+    const fatorM = correntePartidaReferencia > 0 ? (correntePartidaTotal / correntePartidaReferencia) : 0;
+
+    container.innerHTML = `
+        <h3>Parâmetros Considerados</h3>
+        <p>Para o cálculo do dial de fase considerando os motores, serão considerados os seguintes parâmetros:</p>
+        <table class="estudos-border-collapse">
+            <tr>
+                <td class="estudos-pad-2-8">Tipo de curva:</td>
+                <td class="estudos-pad-2-8">${escaparHtml(curvaFaseSelecionada)}</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Fator alfa (a):</td>
+                <td class="estudos-pad-2-8">${isFinite(alfa) ? alfa.toFixed(2) : '-'}</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Fator beta (b):</td>
+                <td class="estudos-pad-2-8">${isFinite(beta) ? beta.toFixed(2) : '-'}</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Tempo de partida do motor (t):</td>
+                <td class="estudos-pad-2-8">${tempoPartida.toFixed(0)} s</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Corrente de partida total (Ip):</td>
+                <td class="estudos-pad-2-8">${correntePartidaTotal.toFixed(2)} A</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Corrente de partida 1 (Ip):</td>
+                <td class="estudos-pad-2-8">${correntePartidaReferencia.toFixed(2)} A</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Fator M (Ip/Ip1):</td>
+                <td class="estudos-pad-2-8">${fatorM.toFixed(2)}</td>
+            </tr>
+            <tr>
+                <td class="estudos-pad-2-8">Constante k:</td>
+                <td class="estudos-pad-2-8">${isFinite(k) ? k.toFixed(2) : '-'}</td>
+            </tr>
+        </table>
+    `;
+}
+
+function renderizarCalculoDialMotores() {
+    const container = document.getElementById('calculo-dial-motores');
+    if (!container) {
+        return;
+    }
+
+    const correntePartidaTotal = parseFloat(localStorage.getItem('maiorCorrenteoperante')) || 0;
+    const correntePartidaReferencia = parseFloat(localStorage.getItem('Ipdeconsumo')) || 0;
+    const motorJSON = obterJSONStorageSeguro('motorJSON', {});
+    const tempoPartida = parseFloat(motorJSON.tempopartida) || 0.1;
+
+    const dadosCurva = JSON.parse(localStorage.getItem('dadoscurvausariofase')) || {};
+    const beta = Number(dadosCurva.beta);
+    const alfa = Number(dadosCurva.alfa);
+    const k = Number(dadosCurva.k);
+
+    if (!isFinite(correntePartidaTotal) || correntePartidaTotal <= 0 || !isFinite(correntePartidaReferencia) || correntePartidaReferencia <= 0 || !isFinite(beta) || beta === 0 || !isFinite(alfa) || !isFinite(k)) {
+        container.innerHTML = '<p>Dados insuficientes para calcular o dial de fase dos motores.</p>';
+        return;
+    }
+
+    const m = correntePartidaTotal / correntePartidaReferencia;
+    const mElevado = Math.pow(m, alfa);
+    const numerador = mElevado - k;
+    const divisao = numerador / beta;
+    const dial = divisao * tempoPartida;
+
+    const latex1 = `DT = \\left( \\frac{\\left( \\frac{I_{inst}}{I_n} \\right)^{\\alpha}- k}{\\beta}  \\right) \\times t`;
+    const latex2 = `DT = \\left( \\frac{\\left( \\frac{${correntePartidaTotal.toFixed(3)}}{${correntePartidaReferencia.toFixed(3)}} \\right)^{${alfa.toFixed(3)}}- ${k.toFixed(3)}}{${beta.toFixed(3)}}  \\right) \\times ${tempoPartida.toFixed(3)}`;
+    const latex3 = `DT = \\left( \\frac{\\left( ${m.toFixed(3)} \\right)^{${alfa.toFixed(3)}}- ${k.toFixed(3)}}{${beta.toFixed(3)}}  \\right) \\times ${tempoPartida.toFixed(3)}`;
+    const latex4 = `DT = \\left( \\frac{${mElevado.toFixed(3)} - ${k.toFixed(3)}}{${beta.toFixed(3)}}  \\right) \\times ${tempoPartida.toFixed(3)}`;
+    const latex5 = `DT = \\left( \\frac{${numerador.toFixed(3)}}{${beta.toFixed(3)}} \\right) \\times ${tempoPartida.toFixed(3)}`;
+    const latex6 = `DT = \\left( ${divisao.toFixed(3)} \\right) \\times ${tempoPartida.toFixed(3)}`;
+    const latex7 = `DT = ${dial.toFixed(3)}`;
+
+    container.innerHTML = `
+        <p class="formula1 estudos-fs-12">\\(${latex1}\\)</p>
+        <p class="formula2 estudos-fs-12">\\(${latex2}\\)</p>
+        <p class="formula3 estudos-fs-12">\\(${latex3}\\)</p>
+        <p class="formula4 estudos-fs-12">\\(${latex4}\\)</p>
+        <p class="formula5 estudos-fs-12">\\(${latex5}\\)</p>
+        <p class="formula6 estudos-fs-11">\\(${latex6}\\)</p>
+        <p class="formula7 estudos-fs-11">${latex7}</p>
+        <p>Dial calculado: <span class="dial-fase-calculado-motores">${dial.toFixed(2)}</span></p>
+    `;
+
+    const dialFraseEl = document.getElementById('dial-calculado-frase-motores');
+    if (dialFraseEl) {
+        dialFraseEl.textContent = dial.toFixed(2);
+    }
+
+    const tempoFraseEl = document.getElementById('tempo-partida-frase-motores');
+    if (tempoFraseEl) {
+        tempoFraseEl.textContent = tempoPartida.toFixed(0);
+    }
+
+    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+        MathJax.typesetPromise(Array.from(container.querySelectorAll('.formula1, .formula2, .formula3, .formula4, .formula5, .formula6, .formula7')))
+            .catch(err => console.error('Erro ao renderizar fórmulas do dial de motores:', err));
+    }
+}
+
+function carregarTabelaMotoresEmEstudos() {
+    const container = document.getElementById('tabela-motores');
+    if (!container) {
+        return;
+    }
+
+    const blocoMotores = container.closest('.calculosfuncoes');
+    if (blocoMotores) {
+        blocoMotores.classList.add('estudos-motores-wide');
+    }
+
+    const motoresDetalhados = obterJSONStorageSeguro('tabelaMotoresJSON', []);
+    if (!Array.isArray(motoresDetalhados) || motoresDetalhados.length === 0) {
+        container.innerHTML = '<p>Nenhum motor informado.</p>';
+        return;
+    }
+
+    const linhas = motoresDetalhados.map((motor) => `
+        <tr>
+            <td>${escaparHtml(motor.motor)}</td>
+            <td>${escaparHtml(motor.cv)}</td>
+            <td>${escaparHtml(motor.potenciaKva)}</td>
+            <td>${escaparHtml(motor.potenciaKw)}</td>
+            <td>${escaparHtml(motor.correnteNominal)}</td>
+            <td>${escaparHtml(motor.ipIn)}</td>
+            <td>${escaparHtml(motor.correntePartida)}</td>
+            <td>${escaparHtml(motor.tempoPartida)}</td>
+            <td>${escaparHtml(motor.mecanismoPartida)}</td>
+            <td>${escaparHtml(motor.potenciaInstalacaoPartida)}</td>
+            <td>${escaparHtml(motor.correnteInstalacao)}</td>
+            <td>${escaparHtml(motor.correnteTotal)}</td>
+        </tr>
+    `).join('');
+
+    container.innerHTML = `
+        <div class="estudos-motores-table-wrap">
+            <table class="estudos-motores-table" border="1" cellpadding="6" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Motor</th>
+                        <th>CV</th>
+                        <th>Potência<br>(kVA)</th>
+                        <th>Potência<br>(kW)</th>
+                        <th>Corrente<br>nominal</th>
+                        <th>Ip/In</th>
+                        <th>Corrente de<br>partida</th>
+                        <th>Tempo de<br>partida</th>
+                        <th>Mecanismo<br>de partida</th>
+                        <th>Potência aparente<br>na partida (kVA)</th>
+                        <th>Corrente da<br>instalação</th>
+                        <th>Corrente<br>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${linhas}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function obterJSONStorageSeguro(chave, fallback = null) {
+    const valorBruto = localStorage.getItem(chave);
+    if (!valorBruto) {
+        return fallback;
+    }
+
+    try {
+        return JSON.parse(valorBruto);
+    } catch (erro) {
+        return fallback;
+    }
+}
+
+function configurarEventosHeaderEImpressao() {
+    const rotasHeader = {
+        botaoconfightml: 'config.html',
+        botaodiagramahtml: 'Diagramas.html',
+        botaoparametrohtml: 'Protecao_parametros.html',
+        botaotrafohtml: 'transformadores.html',
+        botaotptchtml: 'TP-TC.html',
+        botaoajustehtml: 'protecaoajuste.html',
+        botaotabelarelehtml: 'tabelarele.html',
+        botaoestudoshtml: 'estudos.html',
+        botaoajustesGDhtml: 'ajustesGD.html',
+        botaotabelaGDhtml: 'tabelaGD.html',
+        botaoestudosGDhtml: 'estudosGD.html',
+        botaoanalisehtml: 'analise.html',
+        botaosairhtml: 'index.html'
+    };
+
+    Object.entries(rotasHeader).forEach(([id, rota]) => {
+        const botao = document.getElementById(id);
+        if (!botao || botao.dataset.estudosBound === 'true') {
+            return;
+        }
+
+        botao.addEventListener('click', () => {
+            window.location.href = rota;
+        });
+        botao.dataset.estudosBound = 'true';
+    });
+
+    const botaoEstudos = document.getElementById('botaoestudoshtml');
+    if (botaoEstudos) {
+        botaoEstudos.classList.add('estudos-header-active');
+    }
+
+    const botaoImprimir = document.getElementById('estudos-print-btn');
+    if (botaoImprimir && botaoImprimir.dataset.estudosBound !== 'true') {
+        botaoImprimir.addEventListener('click', () => window.print());
+        botaoImprimir.dataset.estudosBound = 'true';
+    }
+}
+
+function configurarQuebrasDinamicasImpressao() {
+    if (window.__estudosPrintBreaksConfigured) {
+        return;
+    }
+    window.__estudosPrintBreaksConfigured = true;
+
+    const aplicarQuebras = () => {
+        atualizarQuebrasTitulosNaImpressao();
+        ajustarTextareasParaImpressao();
+        renderizarSumarioEstudo();
+    };
+
+    const limparQuebras = () => {
+        limparQuebrasTitulosNaImpressao();
+        restaurarTextareasAposImpressao();
+        renderizarSumarioEstudo();
+    };
+
+    window.addEventListener('beforeprint', aplicarQuebras);
+    window.addEventListener('afterprint', limparQuebras);
+
+    if (window.matchMedia) {
+        const mediaPrint = window.matchMedia('print');
+        const onPrintMediaChange = (event) => {
+            if (event.matches) {
+                aplicarQuebras();
+            } else {
+                limparQuebras();
+            }
+        };
+
+        if (typeof mediaPrint.addEventListener === 'function') {
+            mediaPrint.addEventListener('change', onPrintMediaChange);
+        } else if (typeof mediaPrint.addListener === 'function') {
+            mediaPrint.addListener(onPrintMediaChange);
+        }
+    }
+}
+
+function renderizarSumarioEstudo() {
+    const sumario = document.getElementById('sumariotexto');
+    if (!sumario) {
+        return;
+    }
+
+    const titulos = Array.from(document.querySelectorAll('.estudos-title-block h2, .calculosfuncoes h3, .exibircalculomotores h3')).filter((titulo) => {
+        // Deve estar após o sumário no documento
+        if (!(sumario.compareDocumentPosition(titulo) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+            return false;
+        }
+
+        // Verifica visibilidade de elemento e de seus ancestrais
+        let elemento = titulo;
+        while (elemento && elemento !== document.body) {
+            const estilo = window.getComputedStyle(elemento);
+            if (estilo.display === 'none' || estilo.visibility === 'hidden') {
+                return false;
+            }
+            elemento = elemento.parentElement;
+        }
+
+        const texto = titulo.textContent.trim().replace(/\s+/g, ' ');
+        if (!texto) {
+            return false;
+        }
+
+        // Exclui subtítulos que são apenas etapas de fórmula ou cálculos internos
+        if (
+            texto.startsWith('Conversão para P.U') ||
+            texto.startsWith('Fórmula:') ||
+            texto.startsWith('Calculo do dial:') ||
+            texto.startsWith('Parâmetros Considerados') ||
+            texto.includes('Curto-Circuito Trifásico no Primário') ||
+            texto.startsWith('Impedância do Relé') ||
+            texto.startsWith('Impedância dos Condutores') ||
+            texto.startsWith('Impedância do TC') ||
+            texto.startsWith('Impedância Total') ||
+            texto.startsWith('Cálculo da Tensão de Saturação')
+        ) {
+            return false;
+        }
+
+        return true;
+    });
+
+    sumario.replaceChildren();
+
+    titulos.forEach((titulo, indice) => {
+        if (!titulo.id) {
+            titulo.id = `estudos-sumario-topico-${indice + 1}`;
+        }
+
+        const item = document.createElement('div');
+        const ehSubitem = titulo.tagName === 'H3';
+        item.className = `estudos-sumario-item${ehSubitem ? ' estudos-sumario-subitem' : ''}`;
+
+        const link = document.createElement('a');
+        link.href = `#${titulo.id}`;
+        link.textContent = titulo.textContent.trim().replace(/\s+/g, ' ');
+
+        item.appendChild(link);
+        sumario.appendChild(item);
+    });
+}
+
+function ajustarTextareasParaImpressao() {
+    document.querySelectorAll('textarea').forEach((ta) => {
+        ta.dataset.originalHeight = ta.style.height || '';
+        ta.style.height = 'auto';
+        ta.style.height = (ta.scrollHeight + 8) + 'px';
+    });
+}
+
+function restaurarTextareasAposImpressao() {
+    document.querySelectorAll('textarea').forEach((ta) => {
+        ta.style.height = ta.dataset.originalHeight || '';
+    });
+}
+
+function limparQuebrasTitulosNaImpressao() {
+    document.querySelectorAll('.estudos-title-force-break-print').forEach((el) => {
+        el.classList.remove('estudos-title-force-break-print');
+    });
+    aplicarVisibilidadeSaturacaoTC();
+}
+
+function atualizarQuebrasTitulosNaImpressao() {
+    limparQuebrasTitulosNaImpressao();
+    aplicarVisibilidadeMagnetizacaoReal();
+    aplicarVisibilidadeSaturacaoTC();
+
+    // Seções principais que devem iniciar em nova página de forma lógica:
+    const idsQuebraPagina = [
+        'tituloestudodeprotecao',
+        'titulo-justificativa-apresentacao',
+        'titulo-diagrama-unifilar',
+        'titulo-calculo-trafos',
+        'titulo-tabela-trafos',
+        'titulo-tc-protecao',
+        'titulo-curvas-fase',
+        'titulo-curvas-neutro',
+        'tituloreles',
+        'titulo-curva-protecao',
+        'titulo-notas-obrigatorias'
+    ];
+
+    idsQuebraPagina.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el && el.style.display !== 'none' && el.offsetParent !== null) {
+            el.classList.add('estudos-title-force-break-print');
+        }
+    });
+
+    // Se o diagrama unifilar estiver ausente ou oculto, iniciar a página no cálculo dos trafos
+    const diagramaBox = document.getElementById('diagramaunifilar');
+    const galeria = document.getElementById('gallery');
+    const semDiagrama = !diagramaBox || diagramaBox.style.display === 'none' || !galeria || !galeria.querySelector('img');
+    if (semDiagrama) {
+        const tituloTrafos = document.getElementById('titulo-calculo-trafos');
+        if (tituloTrafos) {
+            tituloTrafos.classList.add('estudos-title-force-break-print');
+        }
+    }
+}
+
+function obterPrimeiroBlocoAposTitulo(titulo, proximoTitulo) {
+    let cursor = titulo.nextElementSibling;
+
+    while (cursor && cursor !== proximoTitulo) {
+        const tag = cursor.tagName ? cursor.tagName.toLowerCase() : '';
+        const vazio = !cursor.textContent || cursor.textContent.trim() === '';
+        if (tag !== 'br' && !vazio) {
+            return cursor;
+        }
+        cursor = cursor.nextElementSibling;
+    }
+
+    return null;
+}
+
+function obterAlturaSecao(titulo, proximoTitulo) {
+    let altura = obterAlturaExterna(titulo);
+    let cursor = titulo.nextElementSibling;
+
+    while (cursor && cursor !== proximoTitulo) {
+        altura += obterAlturaExterna(cursor);
+        cursor = cursor.nextElementSibling;
+    }
+
+    return altura;
+}
+
+function obterAlturaExterna(elemento) {
+    const estilo = window.getComputedStyle(elemento);
+    const margemSuperior = parseFloat(estilo.marginTop) || 0;
+    const margemInferior = parseFloat(estilo.marginBottom) || 0;
+    const altura = elemento.getBoundingClientRect().height || 0;
+
+    return altura + margemSuperior + margemInferior;
+}
+
+function obterImagConformeStatusMagnetizacaoReal() {
+    const statusMagnetizacaoReal = localStorage.getItem('magnetizacaoreal');
+    const imagPadrao = parseFloat(localStorage.getItem('imagtotalSelecionada'));
+    const imagReal = parseFloat(localStorage.getItem('inmagrealSelecionada'));
+
+    const imagPadraoValida = Number.isFinite(imagPadrao);
+    const imagRealValida = Number.isFinite(imagReal);
+    const usarMagnetizacaoReal = statusMagnetizacaoReal === 'ligado' && imagRealValida;
+
+    const imagAplicada = usarMagnetizacaoReal
+        ? imagReal
+        : (imagPadraoValida ? imagPadrao : NaN);
+
+    return {
+        imagAplicada,
+        imagPadrao,
+        imagReal,
+        usarMagnetizacaoReal
+    };
+}
+
+
+
+// -----------------------------------------------------------
+//Função para carregar PARAMETROS ELETRICOS do localStorage e exibir na página
+
+function carregarVariaveisEstudo() {
+
+    const tensaoAtendimento = localStorage.getItem('tensaoSelecionada');
+    if (tensaoAtendimento !== null) {
+        const tensaoEl = document.getElementById('tensao-atendimento');
+        if (tensaoEl) {
+            tensaoEl.textContent = tensaoAtendimento + ' kV';
+        }
+    }
+
+    const demandacalculada = localStorage.getItem('demandaSelecionada');
+    const demandadecontrato = localStorage.getItem('demandadecontrato');
+    document.querySelectorAll('.demanda-contratada-consumo').forEach(el => {
+        if (demandadecontrato !== null && !isNaN(demandadecontrato)) {
+            el.textContent = demandadecontrato + ' kW';
+        }
+    });
+
+    const fatorPotencia = localStorage.getItem('fatorPotenciaSelecionada');
+    if (fatorPotencia !== null) {
+        const fatorEl = document.getElementById('fator-potencia');
+        if (fatorEl) {
+            fatorEl.textContent = fatorPotencia * 100 + '%';
+        }
+    }
+
+    const iccPontoConexao = localStorage.getItem('curtoSelecionada');
+    if (iccPontoConexao !== null) {
+        const iccEl = document.getElementById('icc-ponto-conexao');
+        if (iccEl) {
+            iccEl.textContent = iccPontoConexao + ' A';
+        }
+    }
+
+    const releProtecao = localStorage.getItem('TabelaSelecionadaHTML');
+    if (releProtecao !== null) {
+        const releEl = document.getElementById('rele-protecao');
+        if (releEl) {
+            // Remove tudo antes do primeiro "-" (incluindo o "-")
+            const textoLimpo = releProtecao.replace(/^[^-]*-/, '').trim();
+            releEl.textContent = textoLimpo;
+        }
+    }
+
+
+
+
+
+
+    const geradorSalvo = JSON.parse(localStorage.getItem("geradorJSON")) || {};
+    const geradorDiesel = parseFloat(geradorSalvo.potencia) || 0;
+
+    if (geradorDiesel !== null) {
+        const geradorEl = document.getElementById('gerador-diesel');
+        if (geradorEl) {
+            geradorEl.textContent = geradorDiesel + ' kVA';
+        }
+    }
+
+
+    // ---------FIM DO CARREGAMENTO DAS VARIAVEIS DOS PARAMETROS ELETRICO -------------------
+
+    //-----------------FUNÇÃO PARA CARREGA CAMPOS E CALCULOS DE CORRENTES DOS TRAFOS-------------
+
+    for (let i = 1; i <= 20; i++) { // Suporta até trafo20JSON e s-trf20
+        const trafoSalvo = JSON.parse(localStorage.getItem(`trafo${i}JSON`)) || {};
+        const potenciaTrafo = parseFloat(trafoSalvo.potencia) || 0;
+        const qtdeTrafo = parseFloat(trafoSalvo.qtde) || 0;
+        // Corrige para s-trf01, s-trf02 ... s-trf10 (com zero à esquerda para 1-9, sem zero para 10)
+        const trafoId = i < 10 ? `s-trf0${i}` : `s-trf${i}`;
+        const trafoEl = document.getElementById(trafoId);
+        if (trafoEl) {
+            trafoEl.textContent = potenciaTrafo + ' kVA';
+        }
+
+
+        // if(trafoSalvo.potencia === null || trafoSalvo.potencia === undefined || isNaN(potenciaTrafo) || potenciaTrafo === 0) {
+        //     const calcTrafoClass = i < 10 ? `calculotrafos-texto tr${i}` : `calculotrafos-texto tr${i}`;
+        //     const calcTrafoEls = document.getElementsByClassName(calcTrafoClass);
+        //     Array.from(calcTrafoEls).forEach(el => {
+        //         el.style.display = 'none';
+        //     });
+        // }
+
+
+        if (
+            potenciaTrafo === 0 ||
+            qtdeTrafo === 0 ||
+            trafoSalvo.potencia === null ||
+            trafoSalvo.potencia === undefined ||
+            trafoSalvo.qtde === null ||
+            trafoSalvo.qtde === undefined
+        ) {
+            const calcTrafoClass = i < 10 ? `calculotrafos-texto-tr0${i}` : `calculotrafos-texto-tr${i}`;
+            const calcTrafoEls = document.getElementsByClassName(calcTrafoClass);
+            Array.from(calcTrafoEls).forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        // Preencher campo potencia da tabela de trafos
+        const potenciaId = i < 10 ? `potencia-0${i}` : `potencia-${i}`;
+        const potenciaEl = document.getElementById(potenciaId);
+        if (potenciaEl) {
+            potenciaEl.textContent = potenciaTrafo + ' kVA';
+        }
+
+        // Preencher campo de quantidade do trafo
+
+        // const qtdeTrafo = parseFloat(trafoSalvo.qtde) || 0;
+        const qtdeId = i < 10 ? `qtde-0${i}` : `qtde-${i}`;
+        const qtdeEl = document.getElementById(qtdeId);
+        if (qtdeEl) {
+            qtdeEl.textContent = qtdeTrafo;
+        }
+
+        // Preencher campo im-in-0x importando imin
+        const imin = trafoSalvo.imin || 0;
+        const imInId = i < 10 ? `im-in-0${i}` : `im-in-${i}`;
+        const imInEl = document.getElementById(imInId);
+        if (imInEl) {
+            imInEl.textContent = imin;
+        }
+
+        // Preencher campo t-0x importando tempo
+        const tempo = trafoSalvo.tempo || 0;
+        const tempoId = i < 10 ? `t-0${i}` : `t-${i}`;
+        const tempoEl = document.getElementById(tempoId);
+        if (tempoEl) {
+            tempoEl.textContent = tempo + ' s';
+        }
+
+
+
+
+        // Preencher campo de tensão do trafo
+        const tensaoTrafo = localStorage.getItem('tensaoSelecionada');
+        const denominadorId = i < 10 ? `v-trf0${i}` : `v-trf${i}`;
+        const denominadorEl = document.getElementById(denominadorId);
+        if (denominadorEl && tensaoTrafo !== null) {
+            denominadorEl.textContent = tensaoTrafo + ' *√3  kV';
+        }
+
+        // Preencher campo de corrente do trafo
+        const correnteTrafo = potenciaTrafo;
+        const correntesTrafos = JSON.parse(localStorage.getItem('correntestrafosJSON')) || {};
+        const trafoKey = `trafo${i}`;
+        const resultadoTrfId = i < 10 ? `resultado-trf0${i}` : `resultado-trf${i}`;
+
+        // Preencher impedância do trafo
+        const impedanciaTrafo = trafoSalvo.z || 0;
+        // Preencher campo den-ansi-tr0x
+        const impedanciaId = i < 10 ? `den-ansi-tr0${i}` : `den-ansi-tr${i}`;
+        const impedanciaEl = document.getElementById(impedanciaId);
+        if (impedanciaEl) {
+            impedanciaEl.textContent = impedanciaTrafo + ' %';
+        }
+        // Preencher campo z-0x
+        const zId = i < 10 ? `z-0${i}` : `z-${i}`;
+        const zEl = document.getElementById(zId);
+        if (zEl) {
+            zEl.textContent = impedanciaTrafo + ' %';
+        }
+        //----------------------------FIM DO PREENCHIMENTO DOS CAMPOS DE TRAFO--------------------------------
+
+        //--------------------INICIO DE FUNÇÃO QUE OCULTA OS CAMPOS DE TRAFOS QUE NÃO TEM VALOR DE CORRENTE OU QTDE-------------------
+
+
+
+
+
+
+
+
+
+
+
+        if (correntesTrafos[trafoKey] && correntesTrafos[trafoKey].intrafoindividual !== undefined) {
+            const resultadoTrfEl = document.getElementById(resultadoTrfId);
+            if (resultadoTrfEl) {
+                resultadoTrfEl.textContent = correntesTrafos[trafoKey].intrafoindividual.toFixed(2) + ' A';
+            }
+
+
+            // Preencher campo de corrente do trafo neutro
+            // Preencher campo de corrente do trafo neutro
+            const inAnsiId = i < 10 ? `in-ansi-tr0${i}` : `in-ansi-tr${i}`;
+            const inAnsiEl = document.getElementById(inAnsiId);
+            if (inAnsiEl) {
+                inAnsiEl.textContent = correntesTrafos[trafoKey].intrafoindividual.toFixed(2) + ' A';
+            }
+
+            // Preencher campo in-0x
+            const inId = i < 10 ? `in-0${i}` : `in-${i}`;
+            const inEl = document.getElementById(inId);
+            if (inEl) {
+                inEl.textContent = correntesTrafos[trafoKey].intrafoindividual.toFixed(2) + ' A';
+            }
+
+            // Preencher campo resultado-ansi-tr0x considerando intrafo
+            const resultadoAnsiTrId = i < 10 ? `resultado-ansi-tr0${i}` : `resultado-ansi-tr${i}`;
+            const resultadoAnsiTrEl = document.getElementById(resultadoAnsiTrId);
+            if (resultadoAnsiTrEl) {
+                resultadoAnsiTrEl.textContent = correntesTrafos[trafoKey].iansi.toFixed(2) + ' A';
+            }
+
+            // Preencher campo i-ansi-0x
+            const iAnsiId = i < 10 ? `i-ansi-0${i}` : `i-ansi-${i}`;
+            const iAnsiEl = document.getElementById(iAnsiId);
+            if (iAnsiEl) {
+                iAnsiEl.textContent = correntesTrafos[trafoKey].iansi.toFixed(2) + ' A';
+            }
+
+            // Preencher campo resultado-ansi-tr0x-neutro considerando iansi
+            const resultadoAnsiTrNeutroId = i < 10 ? `resultado-ansi-tr0${i}-neutro` : `resultado-ansi-tr${i}-neutro`;
+            const resultadoAnsiTrNeutroEl = document.getElementById(resultadoAnsiTrNeutroId);
+            if (resultadoAnsiTrNeutroEl) {
+                resultadoAnsiTrNeutroEl.textContent = correntesTrafos[trafoKey].iansi.toFixed(2) + ' A';
+            }
+
+            // Preencher campo i-nansi-0x
+            const iNansiId = i < 10 ? `i-nansi-0${i}` : `i-nansi-${i}`;
+            const iNansiEl = document.getElementById(iNansiId);
+            if (iNansiEl && correntesTrafos[trafoKey].inansi !== undefined) {
+                iNansiEl.textContent = correntesTrafos[trafoKey].inansi.toFixed(2) + ' A';
+            }
+
+            // Preencher campo resultado-neutro-tr0x considerando importação de inansi
+            const resultadoNeutroTrId = i < 10 ? `resultado-neutro-tr0${i}` : `resultado-neutro-tr${i}`;
+            const resultadoNeutroTrEl = document.getElementById(resultadoNeutroTrId);
+            if (resultadoNeutroTrEl && correntesTrafos[trafoKey].inansi !== undefined) {
+                resultadoNeutroTrEl.textContent = correntesTrafos[trafoKey].inansi.toFixed(2) + ' A';
+            }
+
+            // Preencher campo i-mag-0x
+            const iMagId = i < 10 ? `i-mag-0${i}` : `i-mag-${i}`;
+            const iMagEl = document.getElementById(iMagId);
+            if (iMagEl && correntesTrafos[trafoKey].imagindividual !== undefined) {
+                iMagEl.textContent = correntesTrafos[trafoKey].imagindividual.toFixed(2) + ' A';
+            }
+
+        }
+    }
+
+
+    // ----------------------INICIO CALCULO DE IMAG TOTAL DOS TRAFOS-----------------------------
+    // Preencher campo da In do maior trafo 
+    const inMaiorTrafo = parseFloat(localStorage.getItem('maiortrafoinSelecionada'));
+    const inMaiorTrafoEl = document.getElementById('in-maior-trafo');
+    if (inMaiorTrafoEl && !isNaN(inMaiorTrafo)) {
+        inMaiorTrafoEl.textContent =  "(" + inMaiorTrafo.toFixed(2);
+    }
+
+    // Preencher campo de maior fator IMIN
+    const maiorTrafoImin = parseFloat(localStorage.getItem('maiortrafoiminSelecionada'));
+    const maiorTrafoIminEl = document.getElementById('M-maior-trafo');
+    if (maiorTrafoIminEl && !isNaN(maiorTrafoImin)) {
+        maiorTrafoIminEl.textContent = ' x ' + maiorTrafoImin.toFixed(2) + ")";
+    }
+
+    // Preencher campo de maior trafo quando a quantidade do maior trafo for maior que 1
+    const maiorTrafoQtde = parseFloat(localStorage.getItem('maiortrafoqtdeSelecionada'));
+    const inTrafo2El = document.getElementById('in-trafo-1');
+    if (inTrafo2El) {
+        if (!isNaN(maiorTrafoQtde) && maiorTrafoQtde > 1) {
+            const maiorTrafoIn = parseFloat(localStorage.getItem('maiortrafoinSelecionada'));
+            inTrafo2El.textContent =  !isNaN(maiorTrafoIn) ? `+ ( ${maiorTrafoIn.toFixed(2)} x ${maiorTrafoQtde - 1} )` : '';
+
+            // inTrafo2El.textContent = !isNaN(maiorTrafoIn) ? maiorTrafoIn.toFixed(2) + ' A' : '';
+            inTrafo2El.style.display = '';
+        } else {
+            inTrafo2El.style.display = 'none';
+        }
+    }
+
+    // Preencher campo de corrente do trafo 2
+
+    // Preencher in-trafo-2 até in-trafo-20 em ordem decrescente de corrente, desconsiderando o maior corrente intrafoindividual
+    const correntesTrafos = JSON.parse(localStorage.getItem('correntestrafosJSON')) || {};
+    // Monta array de correntes (trafo2 a trafo20) ignorando o maior corrente
+    let trafosArray = [];
+    for (let i = 1; i <= 20; i++) {
+        const trafoKey = `trafo${i}`;
+        const trafoSalvo = JSON.parse(localStorage.getItem(`${trafoKey}JSON`)) || {};
+        const qtdeTrafo = parseFloat(trafoSalvo.qtde) || 0;
+        if (correntesTrafos[trafoKey] && correntesTrafos[trafoKey].intrafoindividual !== undefined) {
+            trafosArray.push({ i, corrente: correntesTrafos[trafoKey].intrafoindividual, qtde: qtdeTrafo });
+        }
+    }
+    // Descobre o maior corrente entre trafo2 a trafo20
+    const maiorCorrente = trafosArray.length > 0 ? Math.max(...trafosArray.map(t => t.corrente)) : null;
+    // Remove o maior corrente
+    trafosArray = trafosArray.filter(t => t.corrente !== maiorCorrente);
+    // Ordena em ordem decrescente
+    trafosArray.sort((a, b) => b.corrente - a.corrente);
+
+    // Preenche os campos in-trafo-2 até in-trafo-20 conforme ordem decrescente (sem o maior)
+    for (let idx = 0; idx < trafosArray.length; idx++) {
+        const inTrafoEl = document.getElementById(`in-trafo-${idx + 2}`);
+        if (inTrafoEl) {
+            // Se qtde > 1, mostra x qtde, senão só corrente
+            if (trafosArray[idx].qtde > 0 && trafosArray[idx].corrente > 0) {
+                inTrafoEl.textContent = `+ ( ${trafosArray[idx].corrente.toFixed(2)} x ${trafosArray[idx].qtde} )`;
+                // inTrafoEl.textContent = `+ ( ${trafosArray[idx].corrente.toFixed(2)} )`;
+            }
+            // else {
+
+            // }
+            inTrafoEl.style.display = '';
+        }
+    }
+    // Oculta os campos restantes se não houver trafo suficiente
+    for (let i = trafosArray.length + 1; i <= 20; i++) {
+        const inTrafoEl = document.getElementById(`in-trafo-${i}`);
+        if (inTrafoEl) {
+            inTrafoEl.style.display = 'none';
+        }
+    }
+
+
+    //preencher imag-total-norma-valor com o valor imagtotalSelecionada do localstorage
+    const imagTotalNormaValorEls = document.querySelectorAll('.imag-total-norma-valor');
+    const imagTotalNorma = localStorage.getItem('imagtotalSelecionada');
+    imagTotalNormaValorEls.forEach(el => {
+        if (imagTotalNorma !== null && !isNaN(imagTotalNorma)) {
+            el.textContent = parseFloat(imagTotalNorma).toFixed(2) + ' A';
+        }
+    });
+
+
+    // Preencher campo de imag total dos trafos conforme status de magnetização real
+    const { imagAplicada: imagTotal, imagPadrao: imagTotalPadrao } = obterImagConformeStatusMagnetizacaoReal();
+    const imagTotalEls = document.querySelectorAll('.imag-total-valor');
+    imagTotalEls.forEach(el => {
+        if (!isNaN(imagTotal)) {
+            el.textContent = imagTotal.toFixed(2) + ' A';
+        }
+    });
+
+    // ---------------FIM DE IMAG DOS TRAFOS -------------------------------------------------
+
+    // ----------------------INICIO CALCULO DE MAGNETIZACAO REAL-----------------------------
+
+    // Carregar corrente de curto no calculo de imag real no HTML
+    const curtoSelecionada = localStorage.getItem('curtoSelecionada');
+    const inrushCc3fEl = document.getElementById('inrush-cc3f');
+    if (inrushCc3fEl && curtoSelecionada !== null) {
+        inrushCc3fEl.textContent = curtoSelecionada + ' A';
+    }
+
+    // Carregar corrente de inrush no calculo de imag real no HTML
+    const inrushInEl = document.getElementById('inrush-in');
+    if (inrushInEl && !isNaN(imagTotalPadrao)) {
+        inrushInEl.textContent = imagTotalPadrao.toFixed(2) + ' A';
+    }
+
+    // Calcular 1/curtoSelecionada e preencher em divisao-icc com 2 casas decimais
+    const divisaoIccEl = document.getElementById('divisao-icc');
+    if (divisaoIccEl && curtoSelecionada !== null && !isNaN(curtoSelecionada) && parseFloat(curtoSelecionada) !== 0) {
+        divisaoIccEl.textContent = (1 / parseFloat(curtoSelecionada)).toFixed(6);
+    }
+
+    // Calcular 1/imagTotal e preencher em divisao-inrush com 2 casas decimais
+    const divisaoInrushEl = document.getElementById('divisao-inrush');
+    if (divisaoInrushEl && !isNaN(imagTotalPadrao) && imagTotalPadrao !== 0) {
+        divisaoInrushEl.textContent = (1 / imagTotalPadrao).toFixed(6);
+    }
+
+
+    // Calcular a soma das divisões e preencher em resultado-divisao
+    const resultadoDivisaoEl = document.getElementById('resultado-divisao');
+    if (
+        resultadoDivisaoEl &&
+        divisaoIccEl &&
+        divisaoInrushEl &&
+        !isNaN(parseFloat(divisaoIccEl.textContent)) &&
+        !isNaN(parseFloat(divisaoInrushEl.textContent))
+    ) {
+        const soma = parseFloat(divisaoIccEl.textContent) + parseFloat(divisaoInrushEl.textContent);
+        resultadoDivisaoEl.textContent = soma.toFixed(6);
+    }
+
+    // Calcular o resultado final da magnetização real
+    // Calcular o resultado final da magnetização real
+    const resultadoInrushRealEl = document.getElementById('resultado-inrush-real');
+    if (
+        resultadoInrushRealEl &&
+        divisaoIccEl &&
+        divisaoInrushEl &&
+        !isNaN(parseFloat(divisaoIccEl.textContent)) &&
+        !isNaN(parseFloat(divisaoInrushEl.textContent))
+    ) {
+        const soma = parseFloat(divisaoIccEl.textContent) + parseFloat(divisaoInrushEl.textContent);
+        if (soma !== 0) {
+            resultadoInrushRealEl.textContent = (1 / soma).toFixed(2) + ' A';
+        } else {
+            resultadoInrushRealEl.textContent = '';
+        }
+    }
+
+    // -----------------------FIM DE MAGNETIZACAO REAL--------------------------------
+
+    // ---------------INICIO DIMENSIONAMENTO DE TC------------------------------------
+
+    // Carregar corrente de curto no calculo de TC no HTML  
+    // const curtoSelecionadaTC = localStorage.getItem('curtoSelecionada');
+    // const curtoTCEl = document.getElementById('curtoTC');
+    // if (curtoTCEl && curtoSelecionadaTC !== null) {
+    //     curtoTCEl.textContent = curtoSelecionadaTC + ' A';
+    // }
+
+    let curtoSelecionadaTC = parseFloat(localStorage.getItem('curtoSelecionada'));
+let curtoTCEls = document.querySelectorAll('.curtoTC'); // pega todos os elementos com a classe
+
+if (curtoSelecionadaTC !== null) {
+    curtoTCEls.forEach(el => {
+        el.textContent = curtoSelecionadaTC + ' A';
+    });
+}
+
+
+
+
+    // Calcular curtoSelecionadaTC / 50 e preencher em tc-saturacao-primario
+    const tcSaturacaoPrimarioEl = document.getElementById('tc-saturacao-primario');
+    if (tcSaturacaoPrimarioEl && curtoSelecionadaTC !== null && !isNaN(curtoSelecionadaTC)) {
+        tcSaturacaoPrimarioEl.textContent = (parseFloat(curtoSelecionadaTC) / 50).toFixed(2);
+    }
+
+    //Preencher saturação do TC
+    const correnteMagnetizacaoSaturacaoTCEl = document.getElementById('corrente-magnetizacao-saturacao-tc');
+    if (correnteMagnetizacaoSaturacaoTCEl) {
+        correnteMagnetizacaoSaturacaoTCEl.textContent = (imagTotal / 20).toFixed(2) + ' A';
+    }
+
+    // importar o IP fase percentual do localStorage
+    const percentualIP = localStorage.getItem('PercentualIPSelecionada');
+    const percentualIPEl = document.getElementById('percentual-ip');
+    if (percentualIPEl && percentualIP !== null) {
+        percentualIPEl.textContent = percentualIP + ' %';
+    }
+
+    // Representar o numerador do calculo de ip de partida fase 
+    // Preencher campo numerador-potencia-nominal com demanda contratada
+    const numeradorPotenciaNominalEls = document.querySelectorAll('.numerador-potencia-nominal');
+    numeradorPotenciaNominalEls.forEach(el => {
+        if (demandacalculada !== null && !isNaN(demandacalculada)) {
+            el.textContent = demandacalculada;
+        }
+    });
+
+    const ipPartidaNumeradorEls = document.querySelectorAll('.ip-partida-numerador');
+    ipPartidaNumeradorEls.forEach(el => {
+        if (demandacalculada !== null && !isNaN(demandacalculada)) {
+            // Interpolação: mostra demanda + incremento percentual
+            const incremento = parseFloat((percentualIP) / 100);
+            el.textContent = `${demandacalculada} * ${incremento.toFixed(2)}`;
+
+            //             const incremento = (parseFloat(demandacalculada) * parseFloat(percentualIP) / 100);
+            // el.textContent = `${demandacalculada} + ${incremento.toFixed(2)}`;
+
+        }
+    });
+
+    // Para ip-partida-numerador-TC
+    const ipPartidaNumeradorTCEls = document.querySelectorAll('.ip-partida-numerador-TC');
+    ipPartidaNumeradorTCEls.forEach(el => {
+        if (demandadecontrato !== null && !isNaN(demandadecontrato)) {
+            const incremento = parseFloat((percentualIP) / 100);
+            el.textContent = `${demandadecontrato} * ${incremento.toFixed(2)}`;
+        }
+    });
+
+    // Incluir corrente nominal de fase
+    const correnteNominalFase = localStorage.getItem('Inominalfase');
+    const correnteNominalFaseEls = document.querySelectorAll('.corrente-nominal-fase');
+    correnteNominalFaseEls.forEach(el => {
+        if (correnteNominalFase !== null && !isNaN(correnteNominalFase)) {
+            el.textContent = parseFloat(correnteNominalFase).toFixed(2) + ' A';
+        }
+    });
+
+    // Representar o denominador do calculo de ip de partida fase
+    const ipPartidaDenominadorEls = document.querySelectorAll('.ip-partida-denominador');
+    ipPartidaDenominadorEls.forEach(el => {
+        if (tensaoAtendimento !== null && !isNaN(tensaoAtendimento) && fatorPotencia !== null && !isNaN(fatorPotencia)) {
+            el.textContent = `${tensaoAtendimento} × √3 × ${fatorPotencia}`;
+        }
+    });
+
+    // Preencher campo ip-partida-resultado considerando Ipdeconsumo
+    const ipDeConsumo = localStorage.getItem('Ipdeconsumo');
+    const ipPartidaResultadoEls = document.querySelectorAll('.ip-partida-resultado');
+    ipPartidaResultadoEls.forEach(el => {
+        if (ipDeConsumo !== null && !isNaN(ipDeConsumo)) {
+            el.textContent = parseFloat(ipDeConsumo).toFixed(2) + ' A';
+        }
+    });
+
+    const ipDeConsumoNum = parseFloat(ipDeConsumo);
+    const instFaseConsumoNum = parseFloat(localStorage.getItem('Instfaseconsumo'));
+
+    const correnteInstantaneaFaseDialEls = document.querySelectorAll('.corrente-instantanea-fase-dial');
+    correnteInstantaneaFaseDialEls.forEach(el => {
+        if (!isNaN(instFaseConsumoNum)) {
+            el.textContent = instFaseConsumoNum.toFixed(2) + ' A';
+        }
+    });
+
+    const correntePartidaFaseDialEls = document.querySelectorAll('.corrente-partida-fase-dial');
+    correntePartidaFaseDialEls.forEach(el => {
+        if (!isNaN(ipDeConsumoNum)) {
+            el.textContent = ipDeConsumoNum.toFixed(2) + ' A';
+        }
+    });
+
+    // Preencher campo ip-partida-resultado-TC considerando IpdeconsumoTC
+    const ipDeConsumoTC = demandadecontrato * ((parseFloat(percentualIP) / 100)) / (tensaoAtendimento * Math.sqrt(3) * fatorPotencia);
+
+    // console.log('fatorPotencia:', fatorPotencia); // Debug: verificar valor de fatorPotencia
+    // console.log('tensaoAtendimento:', tensaoAtendimento); // Debug: verificar valor de tensaoAtendimento
+    // console.log('percentualIP:', percentualIP); // Debug: verificar valor de percentualIP
+    // console.log('demandadecontrato:', demandadecontrato); // Debug: verificar valor de demandadecontrato
+    // console.log('ipDeConsumoTC:', ipDeConsumoTC); // Debug: verificar valor de ipDeConsumoTC
+    const ipPartidaResultadoTCEls = document.querySelectorAll('.ip-partida-resultado-TC');
+    ipPartidaResultadoTCEls.forEach(el => {
+        if (ipDeConsumoTC !== null && !isNaN(ipDeConsumoTC)) {
+            el.textContent = parseFloat(ipDeConsumoTC).toFixed(2) + ' A';
+        }
+    });
+
+    //calculo e preenchimento da corrente correspondente a 10% do TC de proteção
+    const TCdeprotecaoSelecionada = localStorage.getItem('TCdeprotecaoSelecionada');
+    const corrente10PercentTC = (parseFloat(TCdeprotecaoSelecionada)) * 0.1; // Corrente correspondente a 10% do TC de proteção
+    const corrente10PercentTCEls = document.querySelectorAll('.corrente-10-percent-tc');
+    corrente10PercentTCEls.forEach(el => {
+        if (TCdeprotecaoSelecionada !== null && !isNaN(TCdeprotecaoSelecionada)) {
+            el.textContent = corrente10PercentTC.toFixed(2) + ' A';
+        }
+    });
+
+    // Preencher campo tc-especificacao considerando TcEspecificacaoSelecionada
+    const tcEspecificacao = localStorage.getItem('TCdeprotecaoSelecionada');
+    const tcEspecificacaoEls = document.querySelectorAll('.tc-especificacao');
+    tcEspecificacaoEls.forEach(el => {
+        if (tcEspecificacao !== null && !isNaN(tcEspecificacao)) {
+            el.textContent = "Relação de transformação do TC = " + parseFloat(tcEspecificacao) + ' : 5 A';
+        }
+    });
+
+    // Preencher somente corrente primária do TC de proteção considerando TCdeprotecaoSelecionada
+    const tcCorrentePrimariaEls = document.querySelectorAll('.tc-corrente-primaria');
+    tcCorrentePrimariaEls.forEach(el => {
+        if (tcEspecificacao !== null && !isNaN(tcEspecificacao)) {
+            el.textContent = parseFloat(tcEspecificacao).toFixed(0) + ' A';
+        }
+    });
+
+    // Preencher campo RTC de protecao considerando RTCselecionado
+    const rtcEspecificacao = localStorage.getItem('RTCselecionado');
+    const rtcEspecificacaoEls = document.querySelectorAll('.rtc-especificacao');
+    rtcEspecificacaoEls.forEach(el => {
+        if (rtcEspecificacao !== null && !isNaN(rtcEspecificacao)) {
+            el.textContent = "RTC = " + parseFloat(rtcEspecificacao);
+        }
+    });
+
+
+    const rtcEspecificacaoEls2  = document.querySelectorAll('.rtc-valor-absoluto');
+    rtcEspecificacaoEls2.forEach(el => {
+        if (rtcEspecificacao !== null && !isNaN(rtcEspecificacao)) {
+            el.textContent = Math.abs(parseFloat(rtcEspecificacao));
+        }
+    });
+
+    //CALCULO DA CORRENTE DE CURTO CIRCUITO SECUNDARIA 
+
+const iccSecundariaEls = document.querySelectorAll('.icc-secundaria');
+if (curtoSelecionadaTC !== null && !isNaN(curtoSelecionadaTC)) {
+    iccSecundariaEls.forEach(el => {
+        el.textContent = (curtoSelecionadaTC / rtcEspecificacao).toFixed(2) + ' A';
+    });
+}
+
+
+    // Preencher valor puro em tc-especificacao-valor
+    const tcEspecificacaoValorEls = document.querySelectorAll('.tc-especificacao-valor');
+    tcEspecificacaoValorEls.forEach(el => {
+        if (tcEspecificacao !== null && !isNaN(tcEspecificacao)) {
+            el.textContent = parseFloat(tcEspecificacao);
+        }
+    });
+
+
+
+    // Preencher campos de TP primária e secundária
+    const tpPrimariaFF = localStorage.getItem('tensaoprimariaFF');
+    const tpPrimariaFN = localStorage.getItem('tensaoprimariaFN');
+    const tpSecundariaFF = localStorage.getItem('tensaoSecundariaFFTP');
+    const tpSecundariaFN = localStorage.getItem('tensaoSecundariaFNTP');
+    const rtpLabel = localStorage.getItem('TPdeprotecaoSelecionada');
+    const tpFechamento = localStorage.getItem('ligacaodabobinaSelecionada');
+
+    // Preencher campos de TP primária e secundária usando classes
+    document.querySelectorAll('.tp-fechamento').forEach(el => {
+        if (tpFechamento !== null) el.textContent = tpFechamento;
+    });
+    document.querySelectorAll('.tp-primaria-ff').forEach(el => {
+        if (tpPrimariaFF !== null) el.textContent = tpPrimariaFF + ' V';
+    });
+    document.querySelectorAll('.tp-primaria-fn').forEach(el => {
+        if (tpPrimariaFN !== null) el.textContent = tpPrimariaFN + ' V';
+    });
+    document.querySelectorAll('.tp-secundaria-ff').forEach(el => {
+        if (tpSecundariaFF !== null) el.textContent = tpSecundariaFF + ' V';
+    });
+    document.querySelectorAll('.tp-secundaria-fn').forEach(el => {
+        if (tpSecundariaFN !== null) el.textContent = tpSecundariaFN + ' V';
+    });
+    document.querySelectorAll('.rtp-label').forEach(el => {
+        if (rtpLabel !== null) el.textContent = rtpLabel + ' :1';
+    });
+
+
+    const ipPUSelecionada = localStorage.getItem('ipPUSelecionada');
+    const correnteIpPuEls = document.querySelectorAll('.corrente-ip-pu');
+    correnteIpPuEls.forEach(el => {
+        if (ipPUSelecionada !== null && !isNaN(ipPUSelecionada)) {
+            el.textContent = parseFloat(ipPUSelecionada).toFixed(2) + ' P.U';
+        }
+    });
+
+    const curvaFaseSelecionada = localStorage.getItem('curvafaseSelecionada');
+    const curvaFaseEls = document.querySelectorAll('.curva-fase');
+    curvaFaseEls.forEach(el => {
+        if (curvaFaseSelecionada !== null) {
+            el.textContent = curvaFaseSelecionada;
+        }
+    });
+    // -----------------FIM DIMENSIONAMENTO DE TC-------------------------------------------
+
+//-----INICIO DIMENSIONAMENTO DE TC POR SATURAÇÃO (ABNT NBR 6856:2021) -----------------
+
+    // 1. Coleta e normalização de parâmetros do TC e do circuito secundário
+    const rawIpSat = localStorage.getItem('tcPrimarioSaturacao') ||
+                     localStorage.getItem('TCdeprotecaoEscolhido') ||
+                     localStorage.getItem('TCdeprotecaoSelecionada') || '100';
+    const numIpSat = parseFloat(rawIpSat) || 100;
+
+    const rawIsSat = localStorage.getItem('correnteSecundariaTC') || '5';
+    const numIsSat = parseFloat(rawIsSat) || 5;
+
+    const numRtcSat = numIsSat > 0 ? (numIpSat / numIsSat) : 20;
+
+    const numSbSat = parseFloat(localStorage.getItem('potenciaNominalTC')) || 25;
+    const numErroSat = parseFloat(localStorage.getItem('erroSaturacaoTC')) || 10;
+    const numAlfSat = parseFloat(localStorage.getItem('fatorMultiplicidadeTC')) || 20;
+
+    const numCompSat = parseFloat(localStorage.getItem('comprimentoCondutorTC')) || 3;
+    const numBitolaSat = parseFloat(localStorage.getItem('bitolaCondutorTC')) || 2.5;
+    const numRcabSat = parseFloat(localStorage.getItem('resistividadeCondutorTC')) || 6.72;
+
+    const rawSreleSat = localStorage.getItem('potenciabobinaRele');
+    const numSreleSat = (rawSreleSat !== null && !isNaN(parseFloat(rawSreleSat))) ? parseFloat(rawSreleSat) : 0.50;
+
+    const numXrSat = parseFloat(localStorage.getItem('relacaoXRCurto')) || 0;
+    const numKtcSat = parseFloat(localStorage.getItem('ktcFatorImpedancia')) || 0.20;
+
+    const rawIccSat = localStorage.getItem('curtoSelecionada') ||
+                      localStorage.getItem('curtoTC') ||
+                      localStorage.getItem('curtoCalculada') || '5000';
+    const numIccSat = parseFloat(rawIccSat) || 5000;
+
+    // 2. Cálculos Normativos (ABNT NBR 6856:2021)
+    // Impedância dos cabos: ida e volta
+    const numZcaboSat = 2 * (numCompSat / 1000) * numRcabSat;
+    // Impedância interna do TC
+    const numZtcSat = (numKtcSat * numSbSat) / Math.pow(numIsSat, 2);
+    // Impedância do relé
+    const numZreleSat = numSreleSat / Math.pow(numIsSat, 2);
+    // Burden nominal
+    const numZbSat = numSbSat / Math.pow(numIsSat, 2);
+    // Impedância total secundária
+    const numZtotalSat = numZcaboSat + numZtcSat + numZreleSat;
+
+    // Corrente secundária de curto-circuito
+    const numIsecCcSat = numRtcSat > 0 ? (numIccSat / numRtcSat) : 0;
+
+    // Tensão requerida pela falta com fator assimétrico (1 + X/R)
+    let numVreqSat = numIsecCcSat * numZtotalSat;
+    if (numXrSat > 0) {
+        numVreqSat = numVreqSat * (1 + numXrSat);
+    }
+    // Margem normativa de 20%
+    const numVreqMargemSat = 1.2 * numVreqSat;
+
+    // Tensão nominal de saturação suportada pelo TC
+    const numVsatSat = numIsSat > 0 ? ((numSbSat * numAlfSat) / numIsSat) : 0;
+
+    // Fator limite de exatidão real (ALF real)
+    const numAlfRealSat = numZtotalSat > 0 ? (numAlfSat * (numZtcSat + numZbSat) / numZtotalSat) : 0;
+
+    // Equivalência norma antiga ABNT NBR 6856:1992
+    const numVtermAntigaSat = Math.round(numAlfSat * numIsSat * numZbSat);
+    const textoNormaAntigaSat = `${numErroSat}B${numVtermAntigaSat}`;
+    const textoNormaNovaSat = `${numSbSat} VA ${numErroSat}P${numAlfSat}`;
+
+    // Avaliação de Saturação
+    const aprovadoSaturacao = (numIccSat > 0) ? (numVsatSat >= numVreqMargemSat) : true;
+
+    // 3. Preenchimento de Todos os Elementos da Tabela e Memória no HTML
+    const setAllText = (selector, val) => {
+        document.querySelectorAll(selector).forEach(el => { el.textContent = val; });
+    };
+
+    setAllText('.saturacao-estudos-ip', numIpSat.toString());
+    setAllText('.saturacao-estudos-is', numIsSat.toString());
+    setAllText('.saturacao-estudos-rtc', numRtcSat.toFixed(0));
+    setAllText('.saturacao-estudos-especificacao-nova', textoNormaNovaSat);
+    setAllText('.saturacao-estudos-sb', numSbSat.toString());
+    setAllText('.saturacao-estudos-erro', numErroSat.toString());
+    setAllText('.saturacao-estudos-alf', numAlfSat.toString());
+    setAllText('.saturacao-estudos-especificacao-antiga', textoNormaAntigaSat);
+    setAllText('.saturacao-estudos-vterm-antiga', numVtermAntigaSat.toString());
+
+    setAllText('.saturacao-estudos-icc', numIccSat.toString());
+    setAllText('.saturacao-estudos-xr', numXrSat.toFixed(2));
+    setAllText('.saturacao-estudos-fator-xr', (1 + numXrSat).toFixed(2));
+    setAllText('.saturacao-estudos-ktc', numKtcSat.toFixed(2));
+    setAllText('.saturacao-estudos-comprimento', numCompSat.toString());
+    setAllText('.saturacao-estudos-bitola', numBitolaSat.toString());
+    setAllText('.saturacao-estudos-resistividade', numRcabSat.toFixed(2));
+    setAllText('.saturacao-estudos-potencia-rele', numSreleSat.toFixed(2));
+
+    setAllText('.saturacao-estudos-zcabo', numZcaboSat.toFixed(5));
+    setAllText('.saturacao-estudos-num-ztc', (numKtcSat * numSbSat).toFixed(2));
+    setAllText('.saturacao-estudos-ztc', numZtcSat.toFixed(5));
+    setAllText('.saturacao-estudos-zrele', numZreleSat.toFixed(5));
+    setAllText('.saturacao-estudos-zb', numZbSat.toFixed(5));
+    setAllText('.saturacao-estudos-ztotal', numZtotalSat.toFixed(5));
+
+    setAllText('.saturacao-estudos-isec', numIsecCcSat.toFixed(2));
+    setAllText('.saturacao-estudos-vreq', numVreqSat.toFixed(2));
+    setAllText('.saturacao-estudos-vreq-margem', numVreqMargemSat.toFixed(2));
+    setAllText('.saturacao-estudos-num-vsat', (numSbSat * numAlfSat).toFixed(0));
+    setAllText('.saturacao-estudos-vsat', numVsatSat.toFixed(2));
+    setAllText('.saturacao-estudos-alf-real', numAlfRealSat.toFixed(2));
+
+    // Compatibilidade com classes anteriores
+    setAllText('.potencia-bobina-rele', numSreleSat.toString());
+    setAllText('.resultante-impedancia-tc-neutro', (numSreleSat / Math.pow(5, 2)).toFixed(5));
+    setAllText('.resultante-impedancia-tc-fase', ((numSreleSat / Math.pow(5, 2)) * 3).toFixed(5));
+    setAllText('.resultante-impedancia-tc', numZreleSat.toFixed(5));
+    setAllText('.condutor-resistividade', numRcabSat.toString());
+    setAllText('.condutor-bitola', numBitolaSat.toString());
+    setAllText('.condutor-comprimento', numCompSat.toString());
+    setAllText('.resultante-impedancia-condutor', numZcaboSat.toFixed(5));
+    setAllText('.resultante-impedancia-tc-estimada', numZtcSat.toFixed(5));
+    setAllText('.porcentagem-impedancia-tc-estimada', `${(numKtcSat * 100).toFixed(0)}%`);
+    setAllText('.resultante-impedancia-total', numZtotalSat.toFixed(5));
+    setAllText('.icc-secundaria', numIsecCcSat.toFixed(2));
+    setAllText('.v-sat-calculada', numVsatSat.toFixed(2) + ' V');
+
+    // 4. Atualização do Card de Parecer Técnico de Saturação
+    const statusCard = document.getElementById('estudos-saturacao-status-card');
+    const statusTitle = document.getElementById('estudos-saturacao-status-title');
+    const statusDetail = document.getElementById('estudos-saturacao-status-detail');
+    const statusBadge = document.getElementById('estudos-saturacao-status-badge');
+
+    if (statusCard && statusTitle && statusDetail && statusBadge) {
+        if (numIccSat <= 0) {
+            statusCard.className = 'estudos-saturacao-status-card estudos-saturacao-status-card--aprovado';
+            statusTitle.textContent = 'Aguardando Nível de Curto-Circuito (Icc)';
+            statusDetail.innerHTML = 'Informe o valor da corrente de curto-circuito na aba de dimensionamento para análise do risco de saturação.';
+            statusBadge.className = 'estudos-saturacao-status-badge estudos-saturacao-status-badge--verde';
+            statusBadge.textContent = 'AGUARDANDO DADOS';
+        } else if (aprovadoSaturacao) {
+            statusCard.className = 'estudos-saturacao-status-card estudos-saturacao-status-card--aprovado';
+            statusTitle.textContent = 'TC Aprovado - Não Satura sob Falta (ABNT NBR 6856:2021)';
+            statusDetail.innerHTML = `A tensão limite nominal suportada pelo TC (<strong>V<sub>sat</sub> = ${numVsatSat.toFixed(2)} V</strong>) é superior à tensão exigida pela falta com margem de segurança de 20% (<strong>1,2 × V<sub>req</sub> = ${numVreqMargemSat.toFixed(2)} V</strong>).<br>O fator de exatidão real é <strong>ALF<sub>real</sub> = ${numAlfRealSat.toFixed(2)}</strong> (suporta até ${(numAlfRealSat * numIsSat).toFixed(1)} A no secundário sem distorção), operando na região linear e garantindo atuação seletiva e confiável do relé.`;
+            statusBadge.className = 'estudos-saturacao-status-badge estudos-saturacao-status-badge--verde';
+            statusBadge.textContent = 'APROVADO';
+        } else {
+            statusCard.className = 'estudos-saturacao-status-card estudos-saturacao-status-card--reprovado';
+            statusTitle.textContent = 'TC Reprovado - Risco de Saturação sob Curto-Circuito (ABNT NBR 6856:2021)';
+            statusDetail.innerHTML = `A tensão exigida sob falta com margem de segurança de 20% (<strong>1,2 × V<sub>req</sub> = ${numVreqMargemSat.toFixed(2)} V</strong>) supera a capacidade nominal suportada pelo TC (<strong>V<sub>sat</sub> = ${numVsatSat.toFixed(2)} V</strong>).<br>O fator de exatidão operacional real é <strong>ALF<sub>real</sub> = ${numAlfRealSat.toFixed(2)}</strong>, insuficiente para a corrente secundária de falta (${numIsecCcSat.toFixed(1)} A = ${(numIsecCcSat / numIsSat).toFixed(1)} × I<sub>s</sub>). O TC sofrerá saturação severa, podendo inibir ou atrasar a atuação do relé de proteção.`;
+            statusBadge.className = 'estudos-saturacao-status-badge estudos-saturacao-status-badge--vermelho';
+            statusBadge.textContent = 'RISCO DE SATURAÇÃO';
+        }
+    }
+
+//------ FIM DIMENSIONAMENTO DE TC POR SATURAÇÃO -----------------
+
+    // Preencher campos fator-alfa-fase, fator-beta-fase, fator-k-fase importando de dadoscurvausariofase
+
+    const dadosCurvaUsuarioFase = JSON.parse(localStorage.getItem('dadoscurvausariofase')) || {};
+    const alfaFase = dadosCurvaUsuarioFase.alfa || 0;
+    const betaFase = dadosCurvaUsuarioFase.beta || 0;
+    const kFase = dadosCurvaUsuarioFase.k || 0;
+
+    const alfaFaseEls = document.querySelectorAll('.fator-alfa-fase');
+    alfaFaseEls.forEach(el => {
+        el.textContent = alfaFase;
+    });
+
+    const betaFaseEls = document.querySelectorAll('.fator-beta-fase');
+    betaFaseEls.forEach(el => {
+        el.textContent = betaFase;
+    });
+
+    const kFaseEls = document.querySelectorAll('.fator-k-fase');
+    kFaseEls.forEach(el => {
+        el.textContent = kFase;
+    });
+
+    // Calcular fator m = Iinst / Ip e preencher em fator-m
+    // Preencher todos os elementos com a classe 'fator-m'
+    const fatorMEls = document.querySelectorAll('.fator-m');
+    if (!isNaN(instFaseConsumoNum) && !isNaN(ipDeConsumoNum) && ipDeConsumoNum !== 0) {
+        const fatorM = instFaseConsumoNum / ipDeConsumoNum;
+        fatorMEls.forEach(el => {
+            el.textContent = fatorM.toFixed(2);
+        });
+    }
+
+    // Preencher campo tempo-mag-fase com valor 0.10
+    const tempomagFase = 0.100;
+    const tempoMagFaseEls = document.querySelectorAll('.tempo-mag-fase');
+    tempoMagFaseEls.forEach(el => {
+        el.textContent = tempomagFase.toFixed(2) + ' s ou ' + (tempomagFase * 1000).toFixed(0) + ' ms';
+
+    });
+
+    //Preencher formulas do dial 
+    atualizarFormulasCalculoDial();
+
+    // Função centralizada para atualizar todas as fórmulas do cálculo do dial
+    function atualizarFormulasCalculoDial(tentativa = 0) {
+        // Verificar se MathJax está disponível antes de prosseguir
+        if (typeof MathJax === 'undefined' || !MathJax.typesetPromise) {
+            if (tentativa < 40) {
+                setTimeout(() => atualizarFormulasCalculoDial(tentativa + 1), 300);
+            }
+            return;
+        }
+
+        // Obter valores do localStorage
+        const instFaseConsumo = parseFloat(localStorage.getItem('Instfaseconsumo'));
+        const ipPartidaFase = parseFloat(localStorage.getItem('Ipdeconsumo'));
+        const tempomagFase = 0.100;
+
+        const dadosCurva = JSON.parse(localStorage.getItem('dadoscurvausariofase')) || {};
+        const betaFase = dadosCurva.beta || 'β';
+        const alfaFase = dadosCurva.alfa || 'α';
+        const kFase = dadosCurva.k || 'k';
+
+        const parsedIp = ipPartidaFase;
+
+        // Preencher fórmula para .formula1
+        const latex1 = `DT = \\left( \\frac{\\left( \\frac{${'Iinst'}}{${'Ip'}} \\right)^{\\alpha}- ${'k'}}{\\beta}  \\right) \\times ${'t'}`;
+        const formulaEl1 = document.querySelector(".formula1");
+        if (formulaEl1) {
+            formulaEl1.innerHTML = `\\(${latex1}\\)`;
+        }
+
+        // Preencher fórmula para .formula2
+        const latex2 = `DT = \\left( \\frac{\\left( \\frac{${instFaseConsumo.toFixed(3)}}{${parseFloat(ipPartidaFase).toFixed(3)}} \\right)^{${Number(alfaFase).toFixed(3)}}- ${Number(kFase).toFixed(3)}}{${Number(betaFase).toFixed(3)}}  \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        const formulaEl2 = document.querySelector(".formula2");
+        if (formulaEl2) {
+            formulaEl2.innerHTML = `\\(${latex2}\\)`;
+        }
+
+        // Preencher fórmula para .formula3 (mesma lógica que formula2)
+        // calcular resultado da fração Iinst / Ip e usar esse valor direto na fórmula
+        let fracValue = null;
+        if (!isNaN(instFaseConsumo) && !isNaN(parsedIp) && parsedIp !== 0) {
+            fracValue = instFaseConsumo / parsedIp;
+        }
+
+        let latex3;
+        if (fracValue !== null) {
+            // utiliza o valor numérico da fração diretamente
+            latex3 = `DT = \\left( \\frac{\\left( ${fracValue.toFixed(3)} \\right)^{${Number(alfaFase).toFixed(3)}}- ${Number(kFase).toFixed(3)}}{${Number(betaFase).toFixed(3)}}  \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        } else {
+            // fallback para exibir a fração caso não seja possível calcular (p.ex. valores ausentes)
+            const ipDisplay = !isNaN(parsedIp) ? parsedIp.toFixed(3) : 'Ip';
+            const iinstDisplay = !isNaN(instFaseConsumo) ? instFaseConsumo.toFixed(3) : 'Iinst';
+            latex3 = `DT = \\left( \\frac{\\left( \\frac{${iinstDisplay}}{${ipDisplay}} \\right)^{${Number(alfaFase).toFixed(3)}}- ${Number(kFase).toFixed(3)}}{${Number(betaFase).toFixed(3)}}  \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        }
+        const formulaEl3 = document.querySelector(".formula3");
+        if (formulaEl3) {
+            formulaEl3.innerHTML = `\\(${latex3}\\)`;
+        }
+
+        // Preencher fórmula4 usando o resultado da exponenciação do fracValue (se disponível)
+        let expValue = null;
+        if (fracValue !== null && !isNaN(fracValue) && !isNaN(alfaFase)) {
+            expValue = Math.pow(fracValue, alfaFase);
+        }
+
+        let latex4;
+        if (expValue !== null && !isNaN(expValue)) {
+            latex4 = `DT = \\left( \\frac{${expValue.toFixed(3)}- ${Number(kFase).toFixed(3)}}{${Number(betaFase).toFixed(3)}}  \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        } else if (fracValue !== null && !isNaN(fracValue)) {
+            latex4 = `DT = \\left( \\frac{\\left( ${fracValue.toFixed(3)} \\right)^{${Number(alfaFase).toFixed(3)}}- ${Number(kFase).toFixed(3)}}{${Number(betaFase).toFixed(3)}}  \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        } else {
+            const ipDisplay = !isNaN(parsedIp) ? parsedIp.toFixed(3) : 'Ip';
+            const iinstDisplay = !isNaN(instFaseConsumo) ? instFaseConsumo.toFixed(3) : 'Iinst';
+            latex4 = `DT = \\left( \\frac{\\left( \\frac{${iinstDisplay}}{${ipDisplay}} \\right)^{${Number(alfaFase).toFixed(3)}}}{${Number(betaFase).toFixed(3)}} - ${Number(kFase).toFixed(3)} \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        }
+
+        const formulaEl4 = document.querySelector(".formula4");
+        if (formulaEl4) {
+            formulaEl4.innerHTML = `\\(${latex4}\\)`;
+        }
+
+        // Formula 5
+        const formulaEl5 = document.querySelector('.formula5');
+        let expValueLocal = null;
+        if (fracValue !== null && !isNaN(fracValue) && !isNaN(Number(alfaFase))) {
+            expValueLocal = Math.pow(fracValue, Number(alfaFase));
+        }
+
+        const kNum = Number(kFase);
+        let resultadoExpMenosK = null;
+        if (expValueLocal !== null && !isNaN(expValueLocal) && !isNaN(kNum)) {
+            resultadoExpMenosK = expValueLocal - kNum;
+        }
+
+        const betaNum = Number(betaFase);
+        const tNum = Number(tempomagFase);
+
+        let latex5;
+        if (resultadoExpMenosK !== null && !isNaN(resultadoExpMenosK)) {
+            latex5 = `DT = \\left( \\frac{${resultadoExpMenosK.toFixed(3)}}{${isNaN(betaNum) ? betaFase : betaNum.toFixed(3)}} \\right) \\times ${isNaN(tNum) ? tempomagFase : tNum.toFixed(3)}`;
+        } else if (expValueLocal !== null && !isNaN(expValueLocal)) {
+            latex5 = `DT = \\left( \\frac{${expValueLocal.toFixed(3)} - ${kNum.toFixed(3)}}{${isNaN(betaNum) ? betaFase : betaNum.toFixed(3)}} \\right) \\times ${isNaN(tNum) ? tempomagFase : tNum.toFixed(3)}`;
+        } else {
+            const ipDisplay = !isNaN(parsedIp) ? parsedIp.toFixed(3) : 'Ip';
+            const iinstDisplay = !isNaN(instFaseConsumo) ? instFaseConsumo.toFixed(3) : 'Iinst';
+            latex5 = `DT = \\left( \\frac{\\left( \\frac{${iinstDisplay}}{${ipDisplay}} \\right)^{${Number(alfaFase).toFixed(3)}} - ${kNum.toFixed(3)}}{${Number(betaFase).toFixed(3)}} \\right) \\times ${parseFloat(tempomagFase).toFixed(3)}`;
+        }
+
+        if (formulaEl5) {
+            formulaEl5.innerHTML = `\\(${latex5}\\)`;
+        }
+
+        // Formula 6
+        const el6 = document.querySelector('.formula6');
+        if (el6) {
+            if (resultadoExpMenosK !== null && isFinite(resultadoExpMenosK) && isFinite(betaNum) && betaNum !== 0) {
+                const divisao = resultadoExpMenosK / betaNum;
+                const latex6 = `DT = \\left( ${divisao.toFixed(3)} \\right) \\times ${tempomagFase.toFixed(3)}`;
+                el6.style.display = '';
+                el6.innerHTML = `\\(${latex6}\\)`;
+            } else {
+                el6.innerHTML = '';
+                el6.style.display = 'none';
+            }
+        }
+
+        // Formula 7
+        const el7 = document.querySelector('.formula7');
+        if (el7) {
+            if (fracValue !== null && isFinite(fracValue) && isFinite(Number(alfaFase)) && isFinite(betaNum) && betaNum !== 0 && isFinite(kNum)) {
+                const expValueF7 = Math.pow(fracValue, Number(alfaFase));
+                if (isFinite(expValueF7)) {
+                    const numerador = expValueF7 - kNum;
+                    if (isFinite(numerador)) {
+                        const divisao = numerador / betaNum;
+                        if (isFinite(divisao)) {
+                            const resultadoFinal = divisao * tempomagFase;
+                            el7.style.display = '';
+                            el7.innerHTML = `DT = ${resultadoFinal.toFixed(3)}`;
+                        } else {
+                            el7.innerHTML = '';
+                            el7.style.display = 'none';
+                        }
+                    } else {
+                        el7.innerHTML = '';
+                        el7.style.display = 'none';
+                    }
+                } else {
+                    el7.innerHTML = '';
+                    el7.style.display = 'none';
+                }
+            } else {
+                el7.innerHTML = '';
+                el7.style.display = 'none';
+            }
+        }
+
+        const formulasDial = Array.from(document.querySelectorAll('.formula1, .formula2, .formula3, .formula4, .formula5, .formula6, .formula7'));
+        if (formulasDial.length > 0) {
+            MathJax.typesetPromise(formulasDial).catch(err => console.error('Erro ao renderizar fórmulas do dial:', err));
+        }
+    }
+    // Preencher campo dial-fase com dialCalculadoPlantaSemMotores
+    const dialCalculadoPlantaSemMotores = localStorage.getItem('dialCalculadoPlantaSemMotores');
+    const dialFaseEls = document.querySelectorAll('.dial-fase-calculado');
+    dialFaseEls.forEach(el => {
+        if (dialCalculadoPlantaSemMotores !== null && !isNaN(dialCalculadoPlantaSemMotores)) {
+            el.textContent = parseFloat(dialCalculadoPlantaSemMotores).toFixed(2);
+        }
+    });
+
+    const textoDialAjustado = document.getElementById('texto_dial_ajustado');
+    if (textoDialAjustado) {
+        const dialCalculadoStorage = parseFloat(localStorage.getItem('dialCalculado'));
+        const dialSemMotoresStorage = parseFloat(dialCalculadoPlantaSemMotores);
+        const ocultar = localStorage.getItem('tabelaMotoresPreenchida') === 'Sim'
+            && !isNaN(dialCalculadoStorage) && !isNaN(dialSemMotoresStorage)
+            && dialCalculadoStorage > dialSemMotoresStorage;
+        textoDialAjustado.style.display = ocultar ? 'none' : '';
+    }
+
+    // Preencher campo dial-fase-ajustado com dialFaseAjustado
+    const dialFaseAjustado = localStorage.getItem('dialfaseSelecionada');
+    const dialFaseAjustadoEls = document.querySelectorAll('.dial-fase-ajustado');
+    dialFaseAjustadoEls.forEach(el => {
+        if (dialFaseAjustado !== null && !isNaN(dialFaseAjustado)) {
+            el.textContent = parseFloat(dialFaseAjustado).toFixed(2);
+        }
+    });
+
+
+
+    // Preencher campo tolerancia-imag com imagpercentualSelecionada
+    const imagPercentualSelecionada = localStorage.getItem('imagpercentualSelecionada');
+    const toleranciaImagEls = document.querySelectorAll('.imag-tolerancia-percentual');
+    toleranciaImagEls.forEach(el => {
+        if (imagPercentualSelecionada !== null && !isNaN(imagPercentualSelecionada)) {
+            el.textContent = imagPercentualSelecionada + ' %';
+        }
+    });
+
+    // Preencher campo tolerancia-imag com imagTotal e imagPercentualSelecionada
+    const valorToleranciaImagEls = document.querySelectorAll('.valor-torlerancia-imag');
+    valorToleranciaImagEls.forEach(el => {
+        if (imagTotal !== null && !isNaN(imagTotal) && imagPercentualSelecionada !== null && !isNaN(imagPercentualSelecionada)) {
+            const valor = parseFloat((imagPercentualSelecionada) / 100);
+            el.textContent = '* ' + valor.toFixed(2);
+        }
+    });
+
+    // Preencher campo tolerancia-ip com ippercentualSelecionada
+    const instFaseResultadoEls = document.querySelectorAll('.inst-fase-resultado');
+    instFaseResultadoEls.forEach(el => {
+        if (!isNaN(instFaseConsumoNum)) {
+            el.textContent = instFaseConsumoNum.toFixed(2) + ' A';
+        }
+    });
+
+    // Preencher campo inst-valor-pu com iinstPUSelecionada
+    const iinstPUSelecionada = localStorage.getItem('iinstPUSelecionada');
+    const instValorPuEls = document.querySelectorAll('.inst-valor-pu');
+    instValorPuEls.forEach(el => {
+        if (iinstPUSelecionada !== null && !isNaN(iinstPUSelecionada)) {
+            el.textContent = parseFloat(iinstPUSelecionada).toFixed(2) + ' P.U';
+        }
+    });
+
+    // Preencher campo Desequelibrio-neutro com desequilibrioSelecionada
+    const desequilibrioSelecionada = localStorage.getItem('desequilibrioSelecionada');
+    // console.log('desequilibrioSelecionada:', desequilibrioSelecionada); // Debug: verificar valor de desequilibrioSelecionada
+    const desequilibrioNeutroEls = document.querySelectorAll('.Desequelibrio-neutro');
+    desequilibrioNeutroEls.forEach(el => {
+        if (desequilibrioSelecionada !== null && !isNaN(desequilibrioSelecionada)) {
+            el.textContent = desequilibrioSelecionada + ' %';
+        }
+    });
+
+    // Preencher campo in-neutro com inominalneutroconsumo
+    const inominalNeutroConsumo = localStorage.getItem('Inominalneutroconsumo');
+    const inNeutroEls = document.querySelectorAll('.in-neutro');
+    inNeutroEls.forEach(el => {
+        if (inominalNeutroConsumo !== null && !isNaN(inominalNeutroConsumo)) {
+            el.textContent = parseFloat(inominalNeutroConsumo).toFixed(2) + ' A';
+        }
+    });
+
+    // Preencher campo ip-neutro com IpneutroSelecionada
+    const ipNeutroSelecionada = localStorage.getItem('IpdeneutroSelecionada');
+    const ipNeutroEls = document.querySelectorAll('.ip-neutro');
+    ipNeutroEls.forEach(el => {
+        if (ipNeutroSelecionada !== null && !isNaN(ipNeutroSelecionada)) {
+            el.textContent = parseFloat(ipNeutroSelecionada).toFixed(2) + ' A';
+        }
+    });
+
+    // Preencher campo in-neutro-PU com ipneutroPUSelecionada
+    const ipneutroPUSelecionada = localStorage.getItem('ipneutroPUSelecionada');
+    const inNeutroPuEls = document.querySelectorAll('.ip-neutro-PU');
+    inNeutroPuEls.forEach(el => {
+        if (ipneutroPUSelecionada !== null && !isNaN(ipneutroPUSelecionada)) {
+            el.textContent = parseFloat(ipneutroPUSelecionada).toFixed(2) + ' P.U';
+        }
+    });
+
+
+    const dialNeutroSelecionada = localStorage.getItem('dialneutroSelecionada');
+    const tempoNeutroIpEls = document.querySelectorAll('.tempo-neutro-ip');
+    tempoNeutroIpEls.forEach(el => {
+        if (dialNeutroSelecionada !== null && !isNaN(dialNeutroSelecionada)) {
+            el.textContent = parseFloat(dialNeutroSelecionada).toFixed(2) + " s";
+        }
+    });
+
+
+    // Preencher campo inst-neutro-resultado com InstneutroSelecionada
+    const instNeutroSelecionada = localStorage.getItem('IinstneutroSelecionada');
+    const instNeutroResultadoEls = document.querySelectorAll('.inst-neutro-resultado');
+    instNeutroResultadoEls.forEach(el => {
+        if (instNeutroSelecionada !== null && !isNaN(instNeutroSelecionada)) {
+            el.textContent = parseFloat(instNeutroSelecionada).toFixed(2) + ' A';
+        }
+    });
+
+    // console.log(instNeutroSelecionada);
+
+
+    const instneutroPUSelecionada = localStorage.getItem('instneutroPUSelecionada');
+    const instNeutroPuEls = document.querySelectorAll('.inst-neutro-PU');
+    instNeutroPuEls.forEach(el => {
+        if (instneutroPUSelecionada !== null && !isNaN(instneutroPUSelecionada)) {
+            el.textContent = parseFloat(instneutroPUSelecionada).toFixed(2) + ' P.U';
+        }
+    });
+
+    //----------PRRENCHIMENTO GERADOR A DIESEL----------------------------------------
+
+
+
+
+
+
+
+    //PREENCHE POTENCIA EM KVA DO GERADOR NO HTML
+    const potenciaAparenteGeradorEls = document.querySelectorAll('.potencia-aparente-gerador');
+    potenciaAparenteGeradorEls.forEach(el => {
+        if (geradorSalvo.potencia !== undefined && geradorSalvo.potencia !== null && !isNaN(geradorSalvo.potencia)) {
+            el.textContent = geradorSalvo.potencia + ' kVA';
+        }
+    });
+
+    // Preencher fator de potência do gerador
+    const fatorPotenciaGeradorEls = document.querySelectorAll('.fator-potencia-gerador');
+    fatorPotenciaGeradorEls.forEach(el => {
+        if (geradorSalvo.fatorpotencia !== undefined && geradorSalvo.fatorpotencia !== null && !isNaN(geradorSalvo.fatorpotencia)) {
+            el.textContent = (geradorSalvo.fatorpotencia * 1).toFixed(0) + ' %';
+        }
+    });
+
+    // Preencher tolerância do gerador
+    const toleranciaGeradorEls = document.querySelectorAll('.tolerancia-gerador');
+    if (geradorSalvo.tolerancia !== undefined && geradorSalvo.tolerancia !== null && !isNaN(geradorSalvo.tolerancia)) {
+        toleranciaGeradorEls.forEach(el => {
+            el.textContent = geradorSalvo.tolerancia + ' %';
+        });
+    }
+
+
+
+    const potenciaReversaGerador = localStorage.getItem('potenciaReversaGerador');
+    const potenciaReversaGeradorEls = document.querySelectorAll('.potencia-reversa-gerador');
+    potenciaReversaGeradorEls.forEach(el => {
+        if (potenciaReversaGerador !== null && !isNaN(potenciaReversaGerador)) {
+            el.textContent = potenciaReversaGerador + ' W';
+        }
+    });
+
+    // Preencher campo potencia-reversa-geradorkw apenas com valor em kW
+    const potenciaReversaGeradorKwEls = document.querySelectorAll('.potencia-reversa-geradorkw');
+    potenciaReversaGeradorKwEls.forEach(el => {
+        if (potenciaReversaGerador !== null && !isNaN(potenciaReversaGerador)) {
+            el.textContent = (potenciaReversaGerador / 1000).toFixed(2) + ' kW';
+        }
+    });
+
+    const denominadorPotReversaEls = document.querySelectorAll('.denominador-potreversa-ajuste-pu');
+    denominadorPotReversaEls.forEach(el => {
+        if (
+            tpPrimariaFF !== null && !isNaN(tpPrimariaFF) &&
+            tcEspecificacao !== null && !isNaN(tcEspecificacao)
+        ) {
+            el.textContent = `${tpPrimariaFF} × √3 × ${tcEspecificacao}`;
+        }
+    });
+
+    const potenciadieselIPU = localStorage.getItem('potenciadieselPU');
+    const pAjustePuEls = document.querySelectorAll('.potreversa-ajuste-pu');
+    pAjustePuEls.forEach(el => {
+        if (potenciadieselIPU !== null && !isNaN(potenciadieselIPU)) {
+            el.textContent = parseFloat(potenciadieselIPU).toFixed(2) + ' P.U';
+        }
+    });
+
+
+    // Verifica se o gerador a diesel está habilitado e exibe os campos correspondentes---------------
+    const habilitaGeradorEls = document.querySelectorAll('.habilitageradoradiesel');
+
+    if (
+        geradorSalvo.potencia !== undefined && geradorSalvo.potencia !== null && !isNaN(geradorSalvo.potencia) && geradorSalvo.potencia !== "" &&
+        geradorSalvo.fatorpotencia !== undefined && geradorSalvo.fatorpotencia !== null && !isNaN(geradorSalvo.fatorpotencia) && geradorSalvo.fatorpotencia !== "" &&
+        geradorSalvo.tolerancia !== undefined && geradorSalvo.tolerancia !== null && !isNaN(geradorSalvo.tolerancia) && geradorSalvo.tolerancia !== ""
+    ) {
+        // console.log('sim');
+        // Habilitar elementos relacionados ao gerador a diesel
+        habilitaGeradorEls.forEach(el => {
+            el.style.display = '';
+            el.classList.remove('tabelaparametrizacaoreles');
+            el.classList.remove('calculogeradordiesel');
+        });
+    } else {
+        habilitaGeradorEls.forEach(el => {
+            el.style.display = 'none';
+        });
+        // console.log('não');
+    }
+    // FIM DE PREENCHEMENTO GERADOR A DIESEL----------------------------------------
+
+
+
+
+
+
+
+
+    //exibir div do class="correnteminima" somente se o valor inomimalminimaTC for Sim
+    // const inomimalMinimaTC = localStorage.getItem('inomimalminimaTC');
+    // const correnteMinimaEls = document.querySelectorAll('.correnteminima');
+
+    // correnteMinimaEls.forEach(el => {
+    //     el.style.display = (inomimalMinimaTC === 'Sim') ? '' : 'none';
+    // });
+
+    //LEMBRAR DE INCLUIR LOGICA PARA APARECER E REMOVER OS CALCULOS QUANDO NÃO HOUVER VALOR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Recarregar a página após salvar as opções
+    //  location.reload();
+
+}
+
+function imprimirPaginaEmPDF() {
+    window.print();
+}
+
+
+function atualizarFormula() {
+    const campos = ["beta", "imag", "in", "alpha", "k", "dt"];
+    const valores = campos.reduce((obj, id) => {
+        const element = document.getElementById(id);
+        obj[id] = element ? element.textContent : '';
+        // console.log(`${id}:`, obj[id]); // Debug
+        return obj;
+    }, {});
+
+    // console.log('Valores:', valores); // Debug
+    const latex = `t = \\left( \\frac{${valores.beta}}{\\left( \\frac{${valores.imag}}{${valores.in}} \\right)^{${valores.alpha}}} - ${valores.k} \\right) \\times ${valores.dt}`;
+    const formulaEl = document.getElementById("formula");
+
+    if (formulaEl && typeof MathJax !== 'undefined') {
+        formulaEl.innerHTML = `\\(${latex}\\)`;
+        MathJax.typesetPromise([formulaEl]).catch(err => console.log('Erro MathJax:', err));
+    } else {
+        // console.log('MathJax não disponível ou elemento formula não encontrado');
+    }
+}
+
+function atualizarFormula2() {
+
+}
+
+
+
+
+// Função para carregar script dinamicamente
+function carregarScript(src, callback) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = callback;
+    script.onerror = () => console.error('Erro ao carregar script:', src);
+    document.head.appendChild(script);
+}
+
+function verificarMathJax() {
+    if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+
+        atualizarFormula();
+        atualizarFormula2();
+    } else {
+
+        setTimeout(verificarMathJax, 500);
+    }
+}
+
+
+// ...existing code...
+
+// Função para carregar dados do localStorage e exibir na div tabelareles
+function carregarTabelaReles() {
+
+    const tabelaRelesDiv = document.getElementById('tabelareles');
+
+    // Recupera os dados do localStorage
+    const dadosArmazenados = localStorage.getItem('Tabelasalva');
+
+    // console.log('Dados encontrados no localStorage:', dadosArmazenados); //Debug adicional
+
+    if (dadosArmazenados) {
+        // Define o conteúdo HTML da div com os dados recuperados
+        tabelaRelesDiv.innerHTML = dadosArmazenados;
+    } else {
+        // console.warn('Nenhum dado encontrado no localStorage para Tabelasalva');
+        tabelaRelesDiv.innerHTML = '<p>Nenhum dado encontrado.</p>';
+    }
+
+
+}
+
+
+function adicionarEstilosTabelaParametrizacaoReles() {
+    return;
+}
+
+function aplicarVisibilidadeMagnetizacaoReal() {
+    const blocoMagnetizacaoReal = document.getElementById('bloco-magnetizacao-real');
+    const tituloMagnetizacaoReal = document.getElementById('titulo-calculomagnetizacaoreal');
+    const calculoMagnetizacaoReal = document.getElementById('calculomagnetizacaoreal');
+    const magnetizacaoReal = localStorage.getItem('magnetizacaoreal');
+    const exibirMagnetizacaoReal = magnetizacaoReal === 'ligado';
+
+    const displayValor = exibirMagnetizacaoReal ? '' : 'none';
+
+    if (blocoMagnetizacaoReal) {
+        blocoMagnetizacaoReal.style.display = displayValor;
+    }
+    if (tituloMagnetizacaoReal) {
+        tituloMagnetizacaoReal.style.display = displayValor;
+    }
+    if (calculoMagnetizacaoReal) {
+        calculoMagnetizacaoReal.style.display = displayValor;
+    }
+}
+
+function aplicarVisibilidadeSaturacaoTC() {
+    const categoria = (localStorage.getItem('usuarioCategoria') || '').toLowerCase();
+    const blocoSaturacao = document.getElementById('bloco-calculo-saturacao-tc') ||
+        document.getElementById('criteriocalculotcimpedancia')?.closest('.estudos-secao-bloco');
+    if (blocoSaturacao) {
+        if (categoria === 'usuario') {
+            blocoSaturacao.style.display = 'none';
+        } else {
+            blocoSaturacao.style.display = '';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    aplicarVisibilidadeMagnetizacaoReal();
+    aplicarVisibilidadeSaturacaoTC();
+
+    const gallery = document.getElementById("gallery");
+    const tituloDiagramaUnifilar = document.getElementById("titulo-diagrama-unifilar");
+    const diagramaUnifilar = document.getElementById("diagramaunifilar");
+
+    if (!gallery) return;
+
+    gallery.innerHTML = "";
+
+    // Exibe a imagem salva no localStorage (se existir)
+    const imagemSelecionada = localStorage.getItem("imagemSelecionada");
+    if (imagemSelecionada) {
+        const img = document.createElement("img");
+        img.src = imagemSelecionada;
+        img.classList.add('estudos-gallery-image');
+        gallery.appendChild(img);
+
+        if (tituloDiagramaUnifilar) {
+            tituloDiagramaUnifilar.style.display = "";
+        }
+        if (diagramaUnifilar) {
+            diagramaUnifilar.style.display = "";
+        }
+    } else {
+        if (tituloDiagramaUnifilar) {
+            tituloDiagramaUnifilar.style.display = "none";
+        }
+        if (diagramaUnifilar) {
+            diagramaUnifilar.style.display = "none";
+        }
+    }
+
+    renderizarSumarioEstudo();
+});
+
+// Limpa a imagemSelecionada e a galeria
+// clearButton.addEventListener("click", () => {
+//     localStorage.removeItem("imagemSelecionada");
+//     gallery.innerHTML = "";
+// });
+
+
+
+function exibirCorrenteMinimaSeNecessario() {
+    // Certifique-se de que o valor está correto e sem espaços extras
+    const inomimalMinimaTC = localStorage.getItem('inominalminimaTC');
+    const correnteMinimaEls = document.querySelectorAll('.correnteminima');
+    // Adicione um log para depuração
+    // console.log('inomimalMinimaTC:', inomimalMinimaTC, 'Elementos encontrados:', correnteMinimaEls.length);
+    correnteMinimaEls.forEach(el => {
+        el.style.display = (inomimalMinimaTC === "Sim") ? '' : 'none';
+    });
+}
+
+// --------------------------------------------------------------// 
+// Código para gerar a curva tempo inverso em SVG
+// Esta função gera uma curva de tempo
+// Função para gerar a curva tempo inverso em SVG da animação
+function gerarCurvaTempoInversoSVG(dial, beta, alfa, k, ip, iMin, iMax, pontos) {
+    let d = "";
+    let primeiro = true;
+    for (let i = 0; i <= pontos; i++) {
+        let corrente = iMin + (iMax - iMin) * (i / pontos);
+        let denominador = Math.pow(corrente / ip, alfa) - k;
+        if (denominador <= 0) continue;
+        let tempo = dial * (beta / denominador);
+        if (tempo > 1000) tempo = 1000; // Limite para visualização
+        let svgX = 50 + (corrente - iMin) * 500 / (iMax - iMin);
+        let svgY = 350 - (tempo * 300 / 1000);
+        if (primeiro) {
+            d += `M${svgX},${svgY}`;
+            primeiro = false;
+        } else {
+            d += ` L${svgX},${svgY}`;
+        }
+    }
+    return d;
+}
+
+// Parâmetros do exemplo
+const dial = 90000;
+const beta = 300;
+const alfa = 2;
+const k = 1;
+const ip = 0.5;
+const iMin = ip * 2.01; // Começa um pouco acima de ip
+const iMax = 300;
+const pontos = 1000;
+
+const dInverso = gerarCurvaTempoInversoSVG(dial, beta, alfa, k, ip, iMin, iMax, pontos);
+
+const svg = document.querySelector("svg");
+const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+path.setAttribute("class", "curva-inversa");
+path.setAttribute("fill", "none");
+path.setAttribute("stroke", "#ff0080");
+path.setAttribute("stroke-width", "3");
+path.setAttribute("stroke-dasharray", "1000");
+path.setAttribute("stroke-dashoffset", "1000");
+path.setAttribute("d", dInverso);
+svg.appendChild(path);
+// --------------------------------------------------------------
+// Fim do Js do SVG

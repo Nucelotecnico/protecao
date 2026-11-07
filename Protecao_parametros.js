@@ -1,0 +1,801 @@
+// document.addEventListener('DOMContentLoaded', function () {
+//     function atualizarCamposGD() {
+//         var potenciaGD = document.getElementById('potenciaGDhtml');
+//         // Usa valor salvo se campo estiver vazio
+//         var potenciaGDValor = potenciaGD && potenciaGD.value && potenciaGD.value.trim() !== '' ? potenciaGD.value : localStorage.getItem('potenciaGDcontratada');
+//         var show = potenciaGDValor && potenciaGDValor.trim() !== '';
+
+//         // Oculta/exibe as linhas da tabela
+//         var linhaFatorPotenciaGD = potenciaGD.closest('tr').nextElementSibling;
+//         var linhaTipoUsina = linhaFatorPotenciaGD.nextElementSibling;
+//         var linhaTipoModalidade = linhaTipoUsina.nextElementSibling;
+//         var linhaTipoParalelismo = linhaTipoModalidade.nextElementSibling;
+
+//         if (linhaFatorPotenciaGD) linhaFatorPotenciaGD.style.display = show ? '' : 'none';
+//         if (linhaTipoUsina) linhaTipoUsina.style.display = show ? '' : 'none';
+//         // Modalidade só aparece se for Sem Inversor
+//         var tipoUsina = document.getElementById('tipoUsina');
+//         if (linhaTipoModalidade) linhaTipoModalidade.style.display = show && tipoUsina && tipoUsina.value === 'Sem Inversor' ? '' : 'none';
+//         if (linhaTipoParalelismo) linhaTipoParalelismo.style.display = show ? '' : 'none';
+//     }
+//     var potenciaGD = document.getElementById('potenciaGDhtml');
+//     if (potenciaGD) {
+//         potenciaGD.addEventListener('input', atualizarCamposGD);
+//         potenciaGD.addEventListener('change', atualizarCamposGD);
+//     }
+//     atualizarCamposGD();
+// });
+//FUNÇÃO PARA SALVAR OS CAMPOS PREENCHIDOS NO LOCAL STORAGE E REALIZAR ALGUNS CÁLCULOS NECESSÁRIOS PARA A PROTEÇÃO
+
+function salvarOpcao() {
+    //alert("Parâmetros elétricos salvos com sucesso!");
+
+    //inicializa duas variaveis do tipo constante, um obtem o valor da ID meu select
+    //que corresponde ao valor armazenado no campo de selecao e a outra armazena o valor desse campo
+    const tensaoMT = document.getElementById("tensaoprimaria_mt");
+    const tensaoBT = document.getElementById("tensaoprimaria_bt");
+    const tensao = document.getElementById("tensaoprimaria");
+
+    let tensaoSelecionada = "";
+    if (tensaoMT && tensaoMT.value) {
+        tensaoSelecionada = tensaoMT.value;
+    } else if (tensaoBT && tensaoBT.value) {
+        tensaoSelecionada = tensaoBT.value;
+    } else if (tensao && tensao.value) {
+        tensaoSelecionada = tensao.value;
+    }
+
+    if (tensao) {
+        tensao.value = tensaoSelecionada;
+    }
+    localStorage.setItem("tensaoSelecionada", tensaoSelecionada);
+
+    //-----------------------------------------------------------------------------------------
+
+    const demandaPotencia = document.getElementById("demandaConsumo");
+    const demandadecontrato = demandaPotencia.value;
+    //localStorage.setItem("demandaSelecionada", demandaSelecionada);
+    localStorage.setItem("demandadecontrato", demandadecontrato);
+
+    //-----------------------------------------------------------------------------------------
+    const fatorPotencia = document.getElementById("fatorPotencia");
+    if (!fatorPotencia || fatorPotencia.value === "" || isNaN(fatorPotencia.value) || fatorPotencia.value <= 0) {
+        fatorPotencia.value = 92; // Valor padrão se o campo estiver vazio
+    }
+    const fatorPotenciaSelecionada = fatorPotencia.value / 100;
+    localStorage.setItem("fatorPotenciaSelecionada", fatorPotenciaSelecionada);
+
+
+    //-----------------------------------------------------------------------------------------
+    const desequilibrio = document.getElementById("desequilibrio");
+    if (!desequilibrio || desequilibrio.value === "" || isNaN(desequilibrio.value) || desequilibrio.value <= 0) {
+        desequilibrio.value = 33; // Valor padrão se o campo estiver vazio
+    }
+    const desequilibrioSelecionada = desequilibrio.value;
+    localStorage.setItem("desequilibrioSelecionada", desequilibrioSelecionada);
+
+    console.log("Desequilibrio selecionada:", desequilibrioSelecionada); // Debug: verificar valor de desequilibrioSelecionada
+
+    //-----------------------------------------------------------------------------------------
+
+    const potenciaGD = document.getElementById("potenciaGDhtml");
+    const potenciaGDcontratada = potenciaGD.value;
+    localStorage.setItem("potenciaGDcontratada", potenciaGDcontratada);
+    //localStorage.setItem("potenciaGDSelecionada", potenciaGDSelecionada);
+    //-----------------------------------------------------------------------------------------
+    // --- Novo bloco para tipoUsina ---
+    const tipoUsina = document.getElementById("tipoUsina");
+    let tipoUsinaSelecionada = "";
+    if (!tipoUsina || tipoUsina.value === "" || typeof tipoUsina.value !== "string") {
+        tipoUsinaSelecionada = "Com Inversor"; // Valor padrão se o campo estiver vazio
+        if (tipoUsina) tipoUsina.value = tipoUsinaSelecionada;
+    } else {
+        tipoUsinaSelecionada = tipoUsina.value;
+    }
+    localStorage.setItem("tipoUsinaGDSelecionada", tipoUsinaSelecionada);
+
+    //-----------------------------------------------------------------------------------------
+
+    // Persistência do campo TIPO DE MODALIDADE
+    const tipoModalidade = document.getElementById("TipoModalidade");
+    const valorAjustadoTipoModalidade = document.getElementById("valorAjustadoTipoModalidade");
+    let tipoModalidadeSelecionado = "Isolado";
+    if (tipoModalidade && tipoModalidade.value !== "") {
+        tipoModalidadeSelecionado = tipoModalidade.value;
+    }
+    localStorage.setItem("tipoModalidadeSelecionado", tipoModalidadeSelecionado);
+    if (valorAjustadoTipoModalidade) {
+        valorAjustadoTipoModalidade.textContent = tipoModalidadeSelecionado;
+    }
+    if (tipoModalidade) {
+        tipoModalidade.value = tipoModalidadeSelecionado;
+    }
+
+    //-----------------------------------------------------------------------------------------------
+    // Persistência do campo TIPO DE PARALELISMO
+    const tipoParalelismo = document.getElementById("tipoParalelismo");
+    const valorAjustadoTipoParalelismo = document.getElementById("valorAjustadoTipoParalelismo");
+    let tipoParalelismoSelecionado = "Com Injeção";
+    if (tipoParalelismo && tipoParalelismo.value !== "") {
+        tipoParalelismoSelecionado = tipoParalelismo.value;
+    }
+    localStorage.setItem("tipoParalelismoSelecionado", tipoParalelismoSelecionado);
+    if (valorAjustadoTipoParalelismo) {
+        valorAjustadoTipoParalelismo.textContent = tipoParalelismoSelecionado;
+    }
+    if (tipoParalelismo) {
+        tipoParalelismo.value = tipoParalelismoSelecionado;
+    }
+
+
+    //-----------------------------------------------------------------------------------------
+
+    const fatorPotenciaGD = document.getElementById("fatorPotenciaGDhtml");
+    if (!fatorPotenciaGD || fatorPotenciaGD.value === "" || isNaN(fatorPotenciaGD.value) || fatorPotenciaGD.value <= 0) {
+        fatorPotenciaGD.value = 92; // Valor padrão se o campo estiver vazio
+    }
+    const fatorPotenciaGDSelecionada = fatorPotenciaGD.value / 100;
+    localStorage.setItem("fatorPotenciaGDSelecionada", fatorPotenciaGDSelecionada);
+    //-----------------------------------------------------------------------------------------
+
+
+    //-----------------------------------------------------------------------------------------
+    const iccTrifasicaGemini = localStorage.getItem("ICCtrifasicagemini");
+    const curto = document.getElementById("icctrifasica");
+    let curtoSelecionada;
+    if (iccTrifasicaGemini) {
+        curtoSelecionada = iccTrifasicaGemini;
+    } else {
+        curtoSelecionada = curto.value;
+    }
+    localStorage.setItem("curtoSelecionada", curtoSelecionada);
+
+
+
+    //-----------------------------------------------------------------------------------------
+
+
+
+    //CALCULAR A I NOMINAL DA GD
+
+    const inominalGD = (potenciaGDcontratada * 1000) / (tensaoSelecionada * Math.sqrt(3) * fatorPotenciaGDSelecionada) / 1000;
+    localStorage.setItem("InominalfaseGD", inominalGD.toFixed(2));
+
+    //-----------------------------------------------------------------------------------------
+    // CALCULAR A I NOMINAL DE NEUTRO GD
+
+    let inominalneutroGD = inominalGD * desequilibrioSelecionada / 100;
+    if (inominalneutroGD > 40) {
+        inominalneutroGD = 40;
+    }
+    localStorage.setItem("InominalneutroGD", inominalneutroGD.toFixed(2));
+
+
+    //-----------------------------------------------------------------------------------------
+
+
+
+    //Armazenar informações de input do gerador no formato JSON e armazenar no local storage
+    const potenciagerador = document.getElementById("potenciageradorhtml")?.value || "";
+    const fatorpotenciagerador = document.getElementById("fatorpotenciageradorhtml")?.value || 80;
+    const toleranciagerador = document.getElementById("toleranciageradorhtml")?.value || 5;
+
+    const gerador = {
+        potencia: potenciagerador,
+        fatorpotencia: fatorpotenciagerador,
+        tolerancia: toleranciagerador
+    };
+
+    localStorage.setItem("geradorJSON", JSON.stringify(gerador));
+
+
+
+
+    // Recarrega a página após salvar as opções
+    location.reload();
+
+}
+
+//-funções na inicialização do DOM 
+
+document.addEventListener('DOMContentLoaded', function () {
+    var tipoUsina = document.getElementById('tipoUsina');
+    var rowTipoModalidade = document.getElementById('rowTipoModalidade');
+    if (tipoUsina && rowTipoModalidade) {
+        tipoUsina.addEventListener('change', function () {
+            var potenciaGD = document.getElementById('potenciaGDhtml');
+            var valorBruto = potenciaGD ? potenciaGD.value.trim() : '';
+            var gdPreenchido = valorBruto !== '';
+            rowTipoModalidade.style.display = gdPreenchido && tipoUsina.value === 'Sem Inversor' ? '' : 'none';
+        });
+    }
+
+    var potenciaGD = document.getElementById('potenciaGDhtml');
+    if (potenciaGD) {
+        potenciaGD.addEventListener('input', atualizarCamposGD);
+        potenciaGD.addEventListener('change', atualizarCamposGD);
+        potenciaGD.addEventListener('blur', atualizarCamposGD);
+        potenciaGD.addEventListener('keyup', atualizarCamposGD);
+    }
+    atualizarCamposGD();
+});
+
+// document.addEventListener('DOMContentLoaded', function () {
+//     var tipoUsina = document.getElementById('tipoUsina');
+//     var rowTipoModalidade = document.getElementById('rowTipoModalidade');
+//     var tipoParalelismo = document.getElementById('tipoParalelismo');
+//     var valorAjustadoTipoParalelismo = document.getElementById('valorAjustadoTipoParalelismo');
+//     tipoUsina.addEventListener('change', function () {
+//         if (tipoUsina.value === 'Sem Inversor') {
+//             rowTipoModalidade.style.display = '';
+//         } else {
+//             rowTipoModalidade.style.display = 'none';
+//         }
+//     });
+//     // Inicializa o estado correto ao carregar
+//     if (tipoUsina.value === 'Sem Inversor') {
+//         rowTipoModalidade.style.display = '';
+//     } else {
+//         rowTipoModalidade.style.display = 'none';
+//     }
+
+//     // Inicializa valorAjustadoTipoParalelismo com 'Com Injeção'
+//     if (tipoParalelismo) {
+//         tipoParalelismo.value = 'Com Injeção';
+//     }
+//     if (valorAjustadoTipoParalelismo) {
+//         valorAjustadoTipoParalelismo.textContent = 'Com Injeção';
+//     }
+// });
+
+// fim das funções na inicialização do DOM
+
+function obterPotenciaGeradorValida() {
+    const potenciaInput = document.getElementById("potenciageradorhtml");
+    const valorBruto = potenciaInput && typeof potenciaInput.value === "string"
+        ? potenciaInput.value.trim().replace(",", ".")
+        : "";
+
+    if (!valorBruto) {
+        return 0;
+    }
+
+    const potencia = Number(valorBruto);
+    if (!Number.isFinite(potencia) || potencia <= 0) {
+        return 0;
+    }
+
+    return potencia;
+}
+
+function atualizarVisibilidadeCamposGerador() {
+    const mostrarCampos = obterPotenciaGeradorValida() > 0;
+
+    const linhasDependentes = [
+        document.getElementById("rowFatorPotenciaGerador"),
+        document.getElementById("rowToleranciaGerador"),
+        document.getElementById("rowPotenciaReversaGerador"),
+        document.getElementById("rowPotenciaReversaGeradorPU")
+    ];
+
+    linhasDependentes.forEach(function (linha) {
+        if (!linha) return;
+        if (mostrarCampos) {
+            linha.classList.remove("campo-oculto");
+        } else {
+            linha.classList.add("campo-oculto");
+        }
+    });
+}
+
+function atualizarCamposGD() {
+    var potenciaGD = document.getElementById('potenciaGDhtml');
+    var valorBruto = potenciaGD ? potenciaGD.value.trim() : '';
+    var show = valorBruto !== '';
+
+    var linhasDependentes = [
+        document.getElementById('rowFatorPotenciaGD'),
+        document.getElementById('rowTipoUsina'),
+        document.getElementById('rowTipoParalelismo')
+    ];
+    linhasDependentes.forEach(function (linha) {
+        if (!linha) return;
+        linha.style.display = show ? '' : 'none';
+    });
+
+    var tipoUsina = document.getElementById('tipoUsina');
+    var rowModalidade = document.getElementById('rowTipoModalidade');
+    if (rowModalidade) {
+        rowModalidade.style.display = show && tipoUsina && tipoUsina.value === 'Sem Inversor' ? '' : 'none';
+    }
+}
+
+function aplicarRestricoesCategoriaUsuario() {
+    const categoriaUsuario = (localStorage.getItem("usuarioCategoria") || "").toLowerCase().trim();
+    if (categoriaUsuario !== "usuario") {
+        return;
+    }
+
+    const camposAdmin = document.querySelectorAll(".displayadm");
+    camposAdmin.forEach(function (campo) {
+        if (campo instanceof HTMLElement) {
+            campo.classList.add("campo-oculto");
+        }
+    });
+}
+
+function configurarNavegacaoHeader() {
+    const headerTitulo = document.querySelector("h1");
+    if (!headerTitulo) {
+        return;
+    }
+
+    headerTitulo.addEventListener("click", function (event) {
+        const alvo = event.target instanceof HTMLElement
+            ? event.target.closest("button[data-nav-target]")
+            : null;
+
+        if (!(alvo instanceof HTMLButtonElement)) {
+            return;
+        }
+
+        const destino = alvo.dataset.navTarget;
+        if (destino) {
+            window.location.href = destino;
+        }
+    });
+}
+
+function configurarTensaoConexaoMTBT() {
+    const tensaoMT = document.getElementById("tensaoprimaria_mt");
+    const tensaoBT = document.getElementById("tensaoprimaria_bt");
+    const tensaoHidden = document.getElementById("tensaoprimaria");
+    const valorAjustado = document.getElementById("valorAjustadoTensaoPrimaria");
+
+    if (!tensaoMT || !tensaoBT) return;
+
+    tensaoMT.addEventListener("change", function () {
+        if (this.value) {
+            tensaoBT.value = "";
+            if (tensaoHidden) tensaoHidden.value = this.value;
+            if (valorAjustado) valorAjustado.textContent = this.value + " KV";
+        } else if (!tensaoBT.value) {
+            if (tensaoHidden) tensaoHidden.value = "";
+            if (valorAjustado) valorAjustado.textContent = "-";
+        }
+    });
+
+    tensaoBT.addEventListener("change", function () {
+        if (this.value) {
+            tensaoMT.value = "";
+            if (tensaoHidden) tensaoHidden.value = this.value;
+            if (valorAjustado) valorAjustado.textContent = this.value + " KV";
+        } else if (!tensaoMT.value) {
+            if (tensaoHidden) tensaoHidden.value = "";
+            if (valorAjustado) valorAjustado.textContent = "-";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", configurarTensaoConexaoMTBT);
+
+
+window.onload = function () {
+    // -----------------manter o botão vermelho selecionado-------------------
+    const botaoParametro = document.getElementById("botaoparametrohtml");
+    if (botaoParametro) {
+        botaoParametro.classList.add("nav-active");
+    }
+    const headerTitulo = document.querySelector("h1");
+    if (headerTitulo) {
+        headerTitulo.classList.add("loaded");
+    }
+    configurarNavegacaoHeader();
+    // --------------------------------------------------------------------------
+
+    //------REGISTRAR LOGIN E MOSTRAR SOMENTE OPÇÕES DE USUARIO-----------------------------------------------------------------------------------
+    // ocultar campos para usuarios que não sejam adm 
+    // Oculta todos os campos com a classe "displayadm" se o usuário não for "adm"
+    // Verificar se o usuário está registrado no banco de dados do Supabase
+    const usuarioLogado = localStorage.getItem("usuario");
+    if (!usuarioLogado) {
+        window.location.href = "index.html"; // ou a página inicial desejada
+    }
+
+    //---------------------------------------------------------------------------------------
+    // REMOVIDO: Este código foi substituído pelo controle-acesso.js
+    // O controle de visibilidade dos botões agora é feito de forma centralizada
+    // pelo arquivo controle-acesso.js que é carregado em todas as páginas
+    //---------------------------------------------------------------------------------------
+
+
+    // Recupera a opção selecionada do localStorage e define no campo correspondente
+    //-----------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------
+    // importarICC();
+    calculoGerador();
+
+    //-----------------------------------------------------------------------------------------
+
+
+    const tensao = document.getElementById("tensaoprimaria");
+    const tensaoMT = document.getElementById("tensaoprimaria_mt");
+    const tensaoBT = document.getElementById("tensaoprimaria_bt");
+    const tensaoSalva = localStorage.getItem("tensaoSelecionada");
+
+    if (tensaoSalva) {
+        if (tensao) {
+            tensao.value = tensaoSalva;
+        }
+        const valoresMT = ["13.8", "22.0", "34.5", "13.2"];
+        const valoresBT = ["0.220", "0.380", "0.440"];
+        if (tensaoMT && tensaoBT) {
+            if (valoresMT.includes(String(tensaoSalva))) {
+                tensaoMT.value = tensaoSalva;
+                tensaoBT.value = "";
+            } else if (valoresBT.includes(String(tensaoSalva))) {
+                tensaoBT.value = tensaoSalva;
+                tensaoMT.value = "";
+            }
+        }
+    }
+    //-----------------------------------------------------------------------------------------
+
+    const demanda = document.getElementById("demandaConsumo");
+    const demandaSalva = localStorage.getItem("demandadecontrato");
+    if (demandaSalva) {
+        demanda.value = demandaSalva;
+    }
+    //-----------------------------------------------------------------------------------------
+    const fatorp = document.getElementById("fatorPotencia");
+    const fatorpSalva = localStorage.getItem("fatorPotenciaSelecionada");
+    if (fatorpSalva) {
+        fatorp.value = fatorpSalva * 100;
+    }
+    //-----------------------------------------------------------------------------------------
+    const desequilibrio = document.getElementById("desequilibrio");
+    const desequilibrioSalva = localStorage.getItem("desequilibrioSelecionada");
+    if (desequilibrioSalva) {
+        desequilibrio.value = desequilibrioSalva;
+    }
+    //-----------------------------------------------------------------------------------------
+    const potenciaGD = document.getElementById("potenciaGDhtml");
+    const potenciaGDSalva = localStorage.getItem("potenciaGDcontratada");
+    if (potenciaGDSalva) {
+        potenciaGD.value = potenciaGDSalva;
+    }
+    //-----------------------------------------------------------------------------------------
+    const fatorPotenciaGD = document.getElementById("fatorPotenciaGDhtml") || 92;
+    const fatorPotenciaGDSalva = localStorage.getItem("fatorPotenciaGDSelecionada");
+    if (fatorPotenciaGDSalva) {
+        fatorPotenciaGD.value = fatorPotenciaGDSalva * 100;
+    }
+    //-----------------------------------------------------------------------------------------
+    // Lógica para restaurar tipoUsinaGDSelecionada
+    const tipoUsina = document.getElementById("tipoUsina");
+    const tipoUsinaSalva = localStorage.getItem("tipoUsinaGDSelecionada") || "Com Inversor";
+    if (tipoUsina) {
+        tipoUsina.value = tipoUsinaSalva;
+    }
+    const valorAjustadoTipoUsina = document.getElementById("valorAjustadoTipoUsina");
+    if (valorAjustadoTipoUsina) {
+        valorAjustadoTipoUsina.textContent = tipoUsinaSalva;
+    }
+
+    //-----------------------------------------------------------------------------------------
+    // Lógica para restaurar tipoModalidadeSelecionado
+    const tipoModalidade = document.getElementById("TipoModalidade");
+    const tipoModalidadeSalva = localStorage.getItem("tipoModalidadeSelecionado") || "Isolado";
+    if (tipoModalidade) {
+        tipoModalidade.value = tipoModalidadeSalva;
+    }
+    const valorAjustadoTipoModalidade = document.getElementById("valorAjustadoTipoModalidade");
+    if (valorAjustadoTipoModalidade) {
+        valorAjustadoTipoModalidade.textContent = tipoModalidadeSalva;
+    }
+    //-----------------------------------------------------------------------------------------------
+    // Lógica para restaurar tipoParalelismoSelecionado
+    const tipoParalelismo = document.getElementById("tipoParalelismo");
+    const tipoParalelismoSalva = localStorage.getItem("tipoParalelismoSelecionado") || "Com Injeção";
+    if (tipoParalelismo) {
+        tipoParalelismo.value = tipoParalelismoSalva;
+    }
+    const valorAjustadoTipoParalelismo = document.getElementById("valorAjustadoTipoParalelismo");
+    if (valorAjustadoTipoParalelismo) {
+        valorAjustadoTipoParalelismo.textContent = tipoParalelismoSalva;
+    }
+
+    //-----------------------------------------------------------------------------------------
+    const curto = document.getElementById("icctrifasica");
+    const curtoSalva = localStorage.getItem("curtoSelecionada");
+    if (curtoSalva) {
+        curto.value = curtoSalva;
+    }
+
+
+    //persistir os valores ajustados no html com as variaveis do localstorage, caso não tenha valor, o campo assume valores genericos
+    const tensaoajustadahtml = document.getElementById("valorAjustadoTensaoPrimaria");
+    const tensaoajustadastorage = localStorage.getItem("tensaoSelecionada");
+    if (tensaoajustadastorage) {
+        tensaoajustadahtml.textContent = tensaoajustadastorage + " kV";
+    } else {
+        tensaoajustadahtml.textContent = "13.8" + " kV";
+    }
+
+    const demandaajustadahtml = document.getElementById("valorAjustadoDemandaConsumo");
+    const demandaajustadastorage = localStorage.getItem("demandadecontrato");
+    if (demandaajustadastorage) {
+        demandaajustadahtml.textContent = demandaajustadastorage + " kW";
+    } else {
+        demandaajustadahtml.textContent = "0" + " kW";
+    }
+
+    const fatorpajustadahtml = document.getElementById("valorAjustadoFatorPotencia");
+    const fatorpajustadastorage = localStorage.getItem("fatorPotenciaSelecionada");
+    if (fatorpajustadastorage !== "" && fatorpajustadastorage !== null && fatorpajustadastorage != 0) {
+        fatorpajustadahtml.textContent = fatorpajustadastorage * 100 + " %";
+    } else {
+        fatorpajustadahtml.textContent = "92" + " %";
+    }
+
+    const desequilibrioajustadahtml = document.getElementById("valorAjustadoDesequilibrio");
+    const desequilibrioajustadastorage = localStorage.getItem("desequilibrioSelecionada");
+    if (desequilibrioajustadastorage !== "" && desequilibrioajustadastorage !== null && desequilibrioajustadastorage != 0) {
+        desequilibrioajustadahtml.textContent = desequilibrioajustadastorage + " %";
+    } else {
+        desequilibrioajustadahtml.textContent = "33" + " %";
+    }
+
+    const potenciaGDajustadahtml = document.getElementById("valorAjustadoPotenciaGD");
+    const potenciaGDajustadastorage = localStorage.getItem("potenciaGDcontratada");
+    if (potenciaGDajustadastorage) {
+        potenciaGDajustadahtml.textContent = potenciaGDajustadastorage + " kW";
+    } else {
+        potenciaGDajustadahtml.textContent = "0" + " kW";
+    }
+
+    const fatorPotenciaGDajustadahtml = document.getElementById("valorAjustadoFatorPotenciaGD");
+    const fatorPotenciaGDajustadastorage = localStorage.getItem("fatorPotenciaGDSelecionada");
+    if (fatorPotenciaGDajustadastorage !== "" && fatorPotenciaGDajustadastorage !== null && fatorPotenciaGDajustadastorage != 0) {
+        fatorPotenciaGDajustadahtml.textContent = fatorPotenciaGDajustadastorage * 100 + " %";
+    } else {
+        fatorPotenciaGDajustadahtml.textContent = "92" + " %";
+    }
+
+    const curtoajustadahtml = document.getElementById("valorAjustadoICCTri");
+    const curtoajustadastorage = localStorage.getItem("curtoSelecionada");
+    if (curtoajustadastorage) {
+        curtoajustadahtml.textContent = curtoajustadastorage + " A";
+    } else {
+        curtoajustadahtml.textContent = "0" + " A";
+    }
+
+
+    // Persisti os valores do gerador a diesel no HTML
+
+    // Exibir valores armazenados do gerador a diesel no HTML
+    const geradorSalvo = JSON.parse(localStorage.getItem("geradorJSON")) || {};
+    if (geradorSalvo) {
+        if (document.getElementById("potenciageradorhtml")) {
+            document.getElementById("potenciageradorhtml").value = geradorSalvo.potencia || "";
+        }
+        if (document.getElementById("fatorpotenciageradorhtml")) {
+            document.getElementById("fatorpotenciageradorhtml").value = geradorSalvo.fatorpotencia || "";
+        }
+        if (document.getElementById("toleranciageradorhtml")) {
+            document.getElementById("toleranciageradorhtml").value = geradorSalvo.tolerancia || "";
+        }
+    }
+
+    const potenciaReversaArmazenada = parseFloat(localStorage.getItem("potenciaReversaGerador"));
+    const labelPotenciaReversa = document.getElementById("potenciareversageradorhtml");
+    if (labelPotenciaReversa && !isNaN(potenciaReversaArmazenada)) {
+        labelPotenciaReversa.textContent = potenciaReversaArmazenada.toFixed(2) + " W";
+    }
+
+    const potenciaReversaPUArmazenada = parseFloat(localStorage.getItem("potenciadieselPU"));
+    const labelPotenciaReversaPU = document.getElementById("potenciareversageradorPUhtml");
+    if (labelPotenciaReversaPU && !isNaN(potenciaReversaPUArmazenada)) {
+        labelPotenciaReversaPU.textContent = potenciaReversaPUArmazenada.toFixed(4) + " P.U";
+    }
+
+
+    const potenciaGeradorAjustadaHtml = document.getElementById("valorAjustadoPotenciaGerador");
+    const potenciaGeradorAjustadaStorage = geradorSalvo.potencia || 0;
+    if (potenciaGeradorAjustadaStorage && potenciaGeradorAjustadaStorage !== "0" && potenciaGeradorAjustadaStorage !== "") {
+        potenciaGeradorAjustadaHtml.textContent = potenciaGeradorAjustadaStorage + " kVA";
+    } else {
+        potenciaGeradorAjustadaHtml.textContent = "0 kVA";
+    }
+
+    const fatorPotenciaGeradorAjustadaHtml = document.getElementById("valorAjustadoFatorPotenciaGerador");
+    const fatorPotenciaGeradorAjustadaStorage = geradorSalvo.fatorpotencia || 0;
+    if (fatorPotenciaGeradorAjustadaStorage && fatorPotenciaGeradorAjustadaStorage !== "0" && fatorPotenciaGeradorAjustadaStorage !== "") {
+        fatorPotenciaGeradorAjustadaHtml.textContent = fatorPotenciaGeradorAjustadaStorage + " %";
+    } else {
+        fatorPotenciaGeradorAjustadaHtml.textContent = "80 %";
+    }
+
+    const toleranciaGeradorAjustadaHtml = document.getElementById("valorAjustadoToleranciaGerador");
+    const toleranciaGeradorAjustadaStorage = geradorSalvo.tolerancia || 0;
+    if (toleranciaGeradorAjustadaStorage && toleranciaGeradorAjustadaStorage !== "0" && toleranciaGeradorAjustadaStorage !== "") {
+        toleranciaGeradorAjustadaHtml.textContent = toleranciaGeradorAjustadaStorage + " %";
+    } else {
+        toleranciaGeradorAjustadaHtml.textContent = "5 %";
+    }
+
+    const potenciaGeradorInput = document.getElementById("potenciageradorhtml");
+    if (potenciaGeradorInput) {
+        potenciaGeradorInput.addEventListener("input", atualizarVisibilidadeCamposGerador);
+        potenciaGeradorInput.addEventListener("change", atualizarVisibilidadeCamposGerador);
+        potenciaGeradorInput.addEventListener("blur", atualizarVisibilidadeCamposGerador);
+        potenciaGeradorInput.addEventListener("keyup", atualizarVisibilidadeCamposGerador);
+    }
+
+    atualizarVisibilidadeCamposGerador();
+    aplicarRestricoesCategoriaUsuario();
+    atualizarCamposGD();
+
+
+}
+
+
+//Função para calcular a potência reversa do gerador
+function calculoGerador() {
+    const geradorSalvo = JSON.parse(localStorage.getItem("geradorJSON")) || {};
+    const potenciagerador = parseFloat(geradorSalvo.potencia) || 0;
+    const fatorpotenciagerador = geradorSalvo.fatorpotencia !== undefined && geradorSalvo.fatorpotencia !== ""
+        ? parseFloat(geradorSalvo.fatorpotencia)
+        : 80;
+    // Se não houver valor no localStorage, assume valor 5
+    const toleranciagerador = geradorSalvo.tolerancia !== undefined && geradorSalvo.tolerancia !== ""
+        ? parseFloat(geradorSalvo.tolerancia)
+        : 5;
+    const tempogeradoradiesel = 15;
+    const statusfuncao32diesel = potenciagerador > 0 ? "Habilitado" : "Desabilitado";
+    const tcProtecaoArmazenada = parseFloat(localStorage.getItem("TCdeprotecaoSelecionada")) || 0;
+    const tensaoArmazenada = parseFloat(localStorage.getItem("tensaoSelecionada")) || 0;
+
+    // Potência reversa = potência * fator de potência * tolerância
+    const potenciaReversa = (potenciagerador * 1000) * (fatorpotenciagerador / 100) * (toleranciagerador / 100);
+
+    let potenciadieselPU = 0;
+    if (potenciaReversa === 0 || tensaoArmazenada === 0 || tcProtecaoArmazenada === 0) {
+        potenciadieselPU = 0;
+    } else {
+        potenciadieselPU = potenciaReversa / (tensaoArmazenada * 1000 * tcProtecaoArmazenada * Math.sqrt(3));
+
+    }
+
+
+
+    localStorage.setItem("statusfuncao32diesel", statusfuncao32diesel);
+    localStorage.setItem("potenciaReversaGerador", potenciaReversa);
+    
+    localStorage.setItem("tempogeradoradiesel", tempogeradoradiesel);
+    localStorage.setItem("potenciadieselPU", potenciadieselPU);
+
+
+
+
+
+
+
+    // Exemplo: exibir no console ou salvar no localStorage
+    console.log("Potência do gerador:", potenciagerador);
+    console.log("Fator de potência do gerador:", fatorpotenciagerador);
+    console.log("Tolerância do gerador:", toleranciagerador);
+    console.log("Tempo do gerador a diesel:", tempogeradoradiesel);
+    console.log("Status função 32 diesel:", statusfuncao32diesel);
+    console.log("TC Proteção armazenada:", tcProtecaoArmazenada);
+    console.log("Tensão armazenada:", tensaoArmazenada);
+    console.log("Potência reversa do gerador:", potenciaReversa);
+    console.log("Potência reversa do gerador em pu:", potenciadieselPU);
+
+
+}
+
+
+
+
+
+
+
+
+
+
+function importarICC() {
+
+    const iccTrifasicaGemini = localStorage.getItem("ICCtrifasicagemini");
+    const curtoajustadahtml = document.getElementById("valorAjustadoICCTri");
+    if (iccTrifasicaGemini) {
+        curtoajustadahtml.textContent = iccTrifasicaGemini + " A";
+        localStorage.setItem("curtoSelecionada", iccTrifasicaGemini);
+    } else {
+        const curtoajustadastorage = localStorage.getItem("curtoSelecionada");
+        curtoajustadahtml.textContent = curtoajustadastorage ? curtoajustadastorage + " A" : "0 A";
+    }
+
+    location.reload();
+}
+
+function limparICC() {
+
+    localStorage.removeItem("ICCtrifasicagemini");
+    const curtoajustadahtml = document.getElementById("valorAjustadoICCTri");
+    const curtoajustadastorage = localStorage.getItem("curtoSelecionada");
+    curtoajustadahtml.textContent = curtoajustadastorage ? curtoajustadastorage + " A" : "0 A";
+
+    location.reload();
+
+}
+
+
+
+
+// Event listener para capturar Enter em qualquer lugar da página
+document.addEventListener('keydown', function (event) {
+    // Verificar se a tecla pressionada é Enter (código 13 ou 'Enter')
+    if (event.key === 'Enter' || event.keyCode === 13) {
+        // Evitar comportamento padrão (submissão de formulário)
+        event.preventDefault();
+
+        // Chamar a função salvar
+        salvarOpcao();
+
+        console.log('✅ Salvamento ativado por Enter');
+    }
+});
+
+
+
+
+// --------------------------------------------------------------// 
+// Código para gerar a curva tempo inverso em SVG
+// Esta função gera uma curva de tempo
+// Função para gerar a curva tempo inverso em SVG da animação
+function gerarCurvaTempoInversoSVG(dial, beta, alfa, k, ip, iMin, iMax, pontos) {
+    let d = "";
+    let primeiro = true;
+    for (let i = 0; i <= pontos; i++) {
+        let corrente = iMin + (iMax - iMin) * (i / pontos);
+        let denominador = Math.pow(corrente / ip, alfa) - k;
+        if (denominador <= 0) continue;
+        let tempo = dial * (beta / denominador);
+        if (tempo > 1000) tempo = 1000; // Limite para visualização
+        let svgX = 50 + (corrente - iMin) * 500 / (iMax - iMin);
+        let svgY = 350 - (tempo * 300 / 1000);
+        if (primeiro) {
+            d += `M${svgX},${svgY}`;
+            primeiro = false;
+        } else {
+            d += ` L${svgX},${svgY}`;
+        }
+    }
+    return d;
+}
+
+// Parâmetros do exemplo
+const dial = 90000;
+const beta = 300;
+const alfa = 2;
+const k = 1;
+const ip = 0.5;
+const iMin = ip * 2.01; // Começa um pouco acima de ip
+const iMax = 300;
+const pontos = 1000;
+
+const dInverso = gerarCurvaTempoInversoSVG(dial, beta, alfa, k, ip, iMin, iMax, pontos);
+
+const svg = document.querySelector("svg");
+const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+path.setAttribute("class", "curva-inversa");
+path.setAttribute("fill", "none");
+path.setAttribute("stroke", "#ff0080");
+path.setAttribute("stroke-width", "3");
+path.setAttribute("stroke-dasharray", "1000");
+path.setAttribute("stroke-dashoffset", "1000");
+path.setAttribute("d", dInverso);
+svg.appendChild(path);
+// --------------------------------------------------------------
+// Fim do Js do SVG

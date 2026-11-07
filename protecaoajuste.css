@@ -1,0 +1,840 @@
+#tabelaneutro .dial-ideal-celula,
+#tabelaneutro .curva-ideal-celula {
+    background: #fff89a !important;
+    color: #111 !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    font-size: 13px !important;
+    line-height: 1.1 !important;
+    max-width: 120px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 6px 4px !important;
+}
+
+#tabelafase th,
+#tabelafase td,
+#tabelafase .dial-ideal-celula,
+#tabelafase .curva-ideal-celula,
+#tabelafase td.exibirmagreal {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+}
+
+/* --- DESTAQUE PARA DIAL IDEAL CALCULADO, CURVA IDEAL E MAGNETIZAÇÃO REAL CALCULADA --- */
+#tabelafase .dial-ideal-celula,
+#tabelafase .curva-ideal-celula,
+#tabelafase .exibirmagreal {
+    background-color: #fff700 !important;
+    color: #111 !important;
+    font-weight: bold !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+}
+
+/* --- FIM DESTAQUE --- */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #8fbc8f, #1c641c);
+    background-attachment: fixed;
+    text-align: center;
+}
+
+/* Oculta botões restritos por padrão */
+#botaoconfightml:not(.btn-permitido),
+#botaoajustesGDhtml:not(.btn-permitido),
+#botaotabelaGDhtml:not(.btn-permitido),
+#botaoestudosGDhtml:not(.btn-permitido),
+#botaoanalisehtml:not(.btn-permitido) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Força exibição dos botões permitidos */
+#botaoconfightml.btn-permitido,
+#botaodiagramahtml.btn-permitido,
+#botaoparametrohtml.btn-permitido,
+#botaotrafohtml.btn-permitido,
+#botaotptchtml.btn-permitido,
+#botaoajustehtml.btn-permitido,
+#botaotabelarelehtml.btn-permitido,
+#botaoestudoshtml.btn-permitido,
+#botaoajustesGDhtml.btn-permitido,
+#botaotabelaGDhtml.btn-permitido,
+#botaoestudosGDhtml.btn-permitido,
+#botaoanalisehtml.btn-permitido,
+#botaosairhtml.btn-permitido {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+/* Força ocultação dos botões bloqueados */
+h1 button.btn-bloqueado {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+h1 {
+    opacity: 0;
+    transition: opacity 0.2s ease-in;
+}
+
+h1.loaded {
+    opacity: 1;
+}
+
+.brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+}
+
+.brand-title {
+    font-family: 'Impact', 'Arial Black', cursive, sans-serif;
+    font-size: 2em;
+    letter-spacing: 2px;
+    color: rgb(2, 68, 2);
+}
+
+.brand-svg {
+    width: 4%;
+    height: 2em;
+    vertical-align: middle;
+}
+
+.alertapotminima-caption {
+    font-weight: bold;
+    background-color: rgb(186, 59, 59);
+    color: rgb(250, 250, 250);
+    font-size: 14px;
+    caption-side: top;
+    padding: 5px;
+    border: 0px solid white;
+    display: none;
+}
+
+.alertapotminima-caption.ativo {
+    display: table-caption;
+}
+
+.caption-principal {
+    font-weight: bold;
+    background-color: rgb(2, 68, 2) !important;
+    color: rgb(227, 224, 64) !important;
+    font-size: 20px;
+    caption-side: top;
+    padding: 5px;
+    border: 0;
+}
+
+.dial-ideal-celula, .curva-ideal-celula {
+    background-color: #fff89a !important;
+    color: black !important;
+    width: 100%;
+}
+
+.linha-oculta {
+    display: none;
+}
+
+.botao-legendas {
+    float: right;
+    margin-right: 30px;
+}
+
+button:not(.dark-mode-toggle) {
+    color: rgb(227, 224, 64);
+    font-size: 10px;
+    margin-bottom: 10px;
+    margin: 20px;
+    border: #34335c solid 2px;
+    background-color: rgb(2, 68, 2);
+    width: 100px;
+    height: 50px;
+    line-height: 1px;
+    border-radius: 10px;
+}
+
+button:not(.dark-mode-toggle):hover {
+    background-color: #cf0808;
+}
+
+canvas {
+    background-color: rgb(255, 255, 255);
+    border: 5px solid black;
+    max-width: 100%;
+    max-height: 650px;
+    border-radius: 30px;
+}
+
+.grafico-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    flex: 0 1 46%;
+    min-width: 320px;
+    align-self: stretch;
+}
+
+#grafico {
+    width: 100%;
+    max-width: 760px;
+    height: 100%;
+    min-height: 560px;
+
+}
+
+#botaoSalvar {
+    margin-top: 15px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+
+}
+
+.conteiner-geral {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 12px;
+    width: min(98%, 1400px);
+    max-width: 98%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.tabelas-lado-esquerdo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 0 1 52%;
+    min-width: 320px;
+    max-width: 52%;
+    box-sizing: border-box;
+}
+
+.tabela-containerfase {
+    table-layout: fixed;
+    /* background-color: linear-gradient(to bottom, #8fbc8f, #8fbc8f); */
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0px;
+    /* color: rgb(224, 248, 6); */
+    font-size: 12px;
+    border: none;
+    border-collapse: collapse;
+    margin-left: 0px;
+    border-radius: 5px;
+
+}
+
+thead {
+    /* background-color: linear-gradient(to bottom, #8fbc8f, #8fbc8f); */
+    color: rgb(224, 248, 6);
+}
+
+th {
+    /* border: 3px solid rgb(0, 0, 0); */
+    padding: 1px;
+    text-align: left;
+    /* color: rgb(224, 248, 6); */
+    border-radius: 5px;
+    /* border-color: linear-gradient(to bottom, #8fbc8f, #8fbc8f); */
+
+
+}
+
+td {
+    text-align: left;
+    /* border: 3px solid rgb(0, 0, 0); */
+    padding: 1px;
+    text-align: left;
+    border-radius: 5px;
+    color: rgb(224, 248, 6);
+    background-color: rgb(2, 68, 2);
+
+    border-color: transparent;
+
+}
+
+#tabelafase {
+    width: 100%;
+    /* Garante que a tabela ocupe toda a largura disponível */
+    table-layout: fixed;
+    /* Mantém colunas com largura uniforme */
+    border-collapse: collapse;
+    /* Elimina espaços extras entre células */
+    border-radius: 5px;
+
+}
+
+
+/* --- ESTILO MODERNO PARA TABELA DE AJUSTES (USUÁRIO) --- */
+#tabelafase {
+    width: 100%;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    border: 1.5px solid #b2e0b2 !important;
+    background: #e8fbe8 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    box-shadow: 0 2px 18px 0 rgba(44, 44, 44, 0.10) !important;
+    font-size: 15px !important;
+}
+
+#tabelafase th {
+    background: #c6f7c6 !important;
+    color: #1c641c !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    border-bottom: 2px solid #b2e0b2 !important;
+    text-align: left !important;
+    padding: 14px 10px !important;
+    letter-spacing: 0.5px !important;
+}
+
+#tabelafase td {
+    background: #e8fbe8 !important;
+    color: #111 !important;
+    font-size: 15px !important;
+    font-weight: normal !important;
+    text-align: left !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 12px 8px !important;
+    vertical-align: middle !important;
+    white-space: nowrap !important;
+    border-radius: 0 !important;
+}
+
+#tabelafase th:first-child,
+#tabelafase td:first-child {
+    border-top-left-radius: 18px !important;
+    border-bottom-left-radius: 18px !important;
+}
+
+#tabelafase th:last-child,
+#tabelafase td:last-child {
+    border-top-right-radius: 18px !important;
+    border-bottom-right-radius: 18px !important;
+}
+
+#tabelafase .input-container input[type="number"],
+#tabelafase .input-container input[type="text"] {
+    background: #fff !important;
+    color: #111 !important;
+    border: 1.5px solid #1c641c !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-width: 60px !important;
+    min-height: 0 !important;
+    text-align: left !important;
+    font-size: 15px !important;
+    box-sizing: border-box !important;
+}
+
+#tabelafase .input-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* --- FIM ESTILO MODERNO TABELA DE AJUSTES --- */
+
+#tabelafase .input-container input,
+#tabelafase .input-container label {
+    width: 90%;
+    /* Faz com que os inputs e labels ocupem toda a célula */
+    display: block;
+    /* Garante alinhamento uniforme */
+}
+
+.exibirmagreal {
+    display: none;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 3px;
+    vertical-align: middle;
+    text-align: left;
+    border-radius: 5px;
+    background-color: #ffeb3b !important;
+    color: #000;
+}
+
+.exibirmagreal.ativo {
+    display: table-cell;
+}
+
+.tabela-containerneutro {
+    table-layout: fixed;
+    /* background-color: linear-gradient(to bottom, #8fbc8f, #8fbc8f); */
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0px;
+    /* color: rgb(224, 248, 6); */
+    font-size: 12px;
+    border: none;
+    border-collapse: collapse;
+    margin-left: 0px;
+    border-radius: 5px;
+}
+
+th {
+    /* border: 3px solid rgb(0, 0, 0); */
+    padding: 1px;
+    text-align: left;
+    /* color: rgb(224, 248, 6); */
+    border-radius: 5px;
+    /* border-color: linear-gradient(to bottom, #8fbc8f, #8fbc8f); */
+}
+
+td {
+    text-align: left;
+    /* border: 3px solid rgb(0, 0, 0); */
+    padding: 1px;
+    text-align: left;
+    border-radius: 5px;
+    color: rgb(224, 248, 6);
+    background-color: rgb(2, 68, 2);
+
+    border-color: transparent;
+}
+
+#tabelaneutro {
+    width: 100%;
+    /* Garante que a tabela ocupe toda a largura disponível */
+    table-layout: fixed;
+    /* Mantém colunas com largura uniforme */
+    border-collapse: collapse;
+    /* Elimina espaços extras entre células */
+    border-radius: 5px;
+}
+
+#tabelaneutro th,
+#tabelaneutro td {
+
+
+    padding: 3px;
+    /* Adiciona espaçamento interno */
+    text-align: left;
+    /* Centraliza o conteúdo */
+    border: 1px solid white;
+    border-color: white;
+    /* Mantém bordas visíveis */
+    background-color: rgb(67, 77, 206);
+    border-radius: 5px;
+}
+
+#tabelaneutro .input-container input,
+#tabelaneutro .input-container label {
+    width: 90%;
+    /* Faz com que os inputs e labels ocupem toda a célula */
+    display: block;
+    /* Garante alinhamento uniforme */
+}
+
+select {
+    text-align: left;
+    width: 100%;
+    height: 32px;
+    margin-left: 0px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border: 1px solid #96bb96;
+    border-radius: 8px;
+    color: #0f2f0f;
+    font-weight: 600;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input {
+    height: 32px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border: 1px solid #96bb96;
+    border-radius: 8px;
+    color: #0f2f0f;
+    font-weight: 600;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+input::placeholder {
+    color: #5f7a5f;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #7faa7f;
+    box-shadow: 0 0 0 3px rgba(156, 196, 156, 0.28);
+    background-color: #ffffff;
+}
+
+
+
+/* FAZ FICAR PISCANDO O ALERTA DE POTÊNCIA MÍNIMA */
+.piscando-lento {
+    animation: piscarLento 1.5s infinite;
+}
+
+@keyframes piscarLento {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* FIM DA LOGICA DE PISCAR ALERTA DE POTÊNCIA MÍNIMA */
+
+
+
+    /* --- PADRÃO VISUAL DE TABELAS (ajuste67cons.css) --- */
+    #tabelafase {
+        width: 95%;
+        margin: 0 auto 16px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0 2px 18px 0 rgba(44, 44, 44, 0.10);
+        background: #e8fbe8;
+        border: 1.5px solid #b2e0b2;
+        min-height: 220px;
+    }
+
+    #tabelafase th,
+    #tabelafase td {
+        padding: 3px 4px;
+        text-align: left;
+        border: none;
+        background: #e8fbe8;
+        font-size: 15px;
+        box-shadow: none;
+        color: #111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #tabelafase th {
+        background: #c6f7c6;
+        color: #1c641c;
+        font-size: 16px;
+        font-weight: bold;
+        border-bottom: 2px solid #b2e0b2;
+        letter-spacing: 0.5px;
+    }
+
+    #tabelafase tr {
+        transition: background 0.18s;
+    }
+
+    #tabelafase tbody tr:hover {
+        background: #d6f5d6;
+    }
+
+    #tabelaneutro {
+        width: 95%;
+        margin: 0 auto 16px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0 2px 18px 0 rgba(44, 44, 44, 0.10);
+        background: #e6ecfa;
+        border: 1.5px solid #b2d7e0;
+        min-height: 220px;
+    }
+
+    #tabelaneutro th,
+    #tabelaneutro td {
+        padding: 3px 4px;
+        text-align: left;
+        border: none;
+        background: #e6ecfa;
+        font-size: 15px;
+        box-shadow: none;
+        color: #111;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    #tabelaneutro th {
+        background: #c6e4f7;
+        color: #1c641c;
+        font-size: 16px;
+        font-weight: bold;
+        border-bottom: 2px solid #b2d7e0;
+        letter-spacing: 0.5px;
+    }
+
+    #tabelaneutro tr {
+        transition: background 0.18s;
+    }
+
+    #tabelaneutro tbody tr:hover {
+        background: #d6e4f7;
+    }
+
+    #tabelafase .input-container input,
+    #tabelafase .input-container label,
+    #tabelaneutro .input-container input,
+    #tabelaneutro .input-container label {
+        width: 90%;
+        display: block;
+    }
+
+    .tabela-titulo {
+
+        width: 100%;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        padding: 0px 0 0px 0;
+        background: transparent;
+        color: #073507;
+        border-radius: 0;
+        border: none;
+        letter-spacing: 1px;
+        box-shadow: none;
+        margin-bottom: 0;
+    } */
+
+
+
+
+    /* --- FIM PADRÃO VISUAL DE TABELAS --- */
+
+
+    /* --- FORÇA ESTILO FINAL IGUAL ajuste67cons PARA #tabelafase --- */
+    #tabelafase {
+        width: 95% !important;
+        margin: 0 auto 16px auto !important;
+        border-radius: 18px !important;
+        overflow: hidden !important;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+        box-shadow: 0 2px 18px 0 rgba(44, 44, 44, 0.10) !important;
+        background: #e8fbe8 !important;
+        border: 1.5px solid #b2e0b2 !important;
+        min-height: 220px !important;
+    }
+
+    #tabelafase th,
+    #tabelafase td {
+        padding: 3px 4px !important;
+        text-align: left !important;
+        border: none !important;
+        background: #e8fbe8 !important;
+        font-size: 15px !important;
+        box-shadow: none !important;
+        color: #111 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-height: 0 !important;
+        line-height: 1.1 !important;
+    }
+
+    #tabelafase th {
+        background: #c6f7c6 !important;
+        color: #1c641c !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        border-bottom: 2px solid #b2e0b2 !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    #tabelafase tr {
+        transition: background 0.18s !important;
+    }
+
+    #tabelafase tbody tr:hover {
+        background: #d6f5d6 !important;
+    }
+
+    #tabelafase .input-container input,
+    #tabelafase .input-container label {
+        width: 90% !important;
+        display: block !important;
+    }
+
+    #tabelafase .dial-ideal-celula,
+    #tabelafase .curva-ideal-celula {
+        background: #fff89a !important;
+        color: #111 !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        font-size: 13px !important;
+        line-height: 1.1 !important;
+        max-width: 120px !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        padding: 6px 4px !important;
+    }
+
+    #tabelafase td.exibirmagreal {
+        background: #ffeb3b !important;
+        color: #111 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+
+   
+
+    /* --- FIM DO ESTILO FINAL --- */
+    /* --- ESTILO BASEADO EM ajuste67cons.css PARA TABELA DE FASE --- */
+    #tabelafase {
+        width: 95%;
+        margin: 0 auto 16px auto;
+        border-radius: 18px;
+        overflow: hidden;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0 2px 18px 0 rgba(44, 44, 44, 0.10);
+        background: #e8fbe8;
+        border: 1.5px solid #b2e0b2;
+        min-height: 220px;
+    }
+
+    #tabelafase th,
+    #tabelafase td {
+        padding: 3px 4px !important;
+        text-align: left !important;
+        border: none !important;
+        background: #e8fbe8 !important;
+        font-size: 15px !important;
+        box-shadow: none !important;
+        color: #111 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        min-height: 0 !important;
+        line-height: 1.1 !important;
+    }
+
+    #tabelafase th {
+        background: #c6f7c6 !important;
+        color: #1c641c !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        border-bottom: 2px solid #b2e0b2 !important;
+        letter-spacing: 0.5px !important;
+    }
+
+    #tabelafase tr {
+        transition: background 0.18s !important;
+    }
+
+    #tabelafase tbody tr:hover {
+        background: #d6f5d6 !important;
+    }
+
+    #tabelafase .input-container input,
+    #tabelafase .input-container label {
+        width: 90% !important;
+        display: block !important;
+    }
+
+    #tabelafase .dial-ideal-celula, .curva-ideal-celula,
+    #tabelafase td.exibirmagreal {
+        background: #fff89a !important;
+        color: #111 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-weight: bold !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+    }
+
+    #tabelafase .dial-ideal-celula:hover,
+    #tabelafase .curva-ideal-celula:hover,
+    #tabelaneutro .dial-ideal-celula:hover,
+    #tabelaneutro .curva-ideal-celula:hover {
+        filter: brightness(0.94);
+        outline: 1.5px dashed #1c641c;
+    }
+
+    /* --- PAINEL DE DIAGNÓSTICO AUTOMÁTICO DE COORDENAÇÃO --- */
+    .painel-diagnostico-coordenacao {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 760px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 2px solid #024402;
+        border-radius: 14px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .diagnostico-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        border: 1.5px solid transparent;
+    }
+
+    .diagnostico-badge--ok {
+        background: #dcfce7;
+        color: #14532d;
+        border-color: #22c55e;
+    }
+
+    .diagnostico-badge--alerta {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #ef4444;
+    }
+
+    .diagnostico-badge--info {
+        background: #f1f5f9;
+        color: #334155;
+        border-color: #94a3b8;
+    }
+
+    /* --- FIM DO ESTILO BASEADO EM ajuste67cons.css --- */

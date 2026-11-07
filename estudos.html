@@ -1,0 +1,2735 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- Critical CSS: Oculta botões restritos IMEDIATAMENTE -->
+        <link rel="stylesheet" href="animacao.css">
+        <link rel="stylesheet" href="botoes-header.css">
+        <link rel="stylesheet" href="estudos.css" type="text/css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+        <!-- <script src="estudos.js"></script> -->
+        <title>ESTUDOS</title>
+        <script src="controle-acesso.js"></script>
+
+
+
+
+
+
+</head>
+
+<body>
+        <div class="estudos-brand-row no-print">
+                <span class="estudos-brand-title" id="titulodapagina">
+                        COORDINATION WEB
+                </span>
+                <svg class="estudos-brand-svg" viewBox="0 0 350 350">
+                        <line x1="50" y1="350" x2="550" y2="350" class="eixo" />
+                        <line x1="50" y1="50" x2="50" y2="350" class="eixo" />
+                        <!-- Curva de tempo definido -->
+                        <polyline class="curva-definida" fill="none" stroke="#00ff88" stroke-width="3"
+                                stroke-dasharray="1000" stroke-dashoffset="1000"
+                                points="100,50,50, 50, 50,200, 200,200,200,350, 200,200" />
+                </svg>
+        </div>
+        <h1 class="no-print">
+
+                <button id="botaoconfightml" class="dark-mode-toggle"
+                        onclick="window.location.href='config.html';">CONFIGURAÇÕES</button>
+                <button id="botaodiagramahtml" class="dark-mode-toggle"
+                        onclick="window.location.href='Diagramas.html';">DIAGRAMAS</button>
+                <button id="botaoparametrohtml" class="dark-mode-toggle"
+                        onclick="window.location.href='Protecao_parametros.html';">PARÂMETROS</button>
+                <button id="botaotrafohtml" class="dark-mode-toggle"
+                        onclick="window.location.href='transformadores.html';">TRAFOS</button>
+                <button id="botaotptchtml" class="dark-mode-toggle"
+                        onclick="window.location.href='TP-TC.html';">TP/TC</button>
+                <button id="botaoajustehtml" class="dark-mode-toggle"
+                        onclick="window.location.href='protecaoajuste.html';">AJUSTES</button>
+                <button id="botaoajustesGDhtml" class="dark-mode-toggle"
+                        onclick="window.location.href='ajustesGD.html';">AJUSTES GD</button>
+                <button id="botaotabelarelehtml" class="dark-mode-toggle"
+                        onclick="window.location.href='tabelarele.html';">TABELA</button>
+                <button id="botaoestudoshtml" class="dark-mode-toggle"
+                        onclick="window.location.href='estudos.html';">ESTUDOS</button>
+                <button id="botaotabelaGDhtml" class="dark-mode-toggle"
+                        onclick="window.location.href='tabelaGD.html';">TABELA
+                        GD</button>
+                <button id="botaoestudosGDhtml" class="dark-mode-toggle"
+                        onclick="window.location.href='estudosGD.html';">ESTUDOS GD</button>
+                <button id="botaoanalisehtml" class="dark-mode-toggle"
+                        onclick="window.location.href='analise.html';">ANÁLISE</button>
+                <button id="botaosairhtml" class="dark-mode-toggle"
+                        onclick="window.location.href='index.html';">SAIR</button>
+
+        </h1>
+        <br class="no-print">
+
+        <div class="estudos-print-wrap no-print">
+                <button id="estudos-print-btn" class="dark-mode-toggle estudos-print-btn">Imprimir</button>
+        </div>
+
+        <div class="estudos-folha-selo-container">
+        <div id="tabelaselo">
+                <table class="estudos-selo-table">
+                        <colgroup>
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+                                <col class="estudos-col-10">
+
+
+
+                        </colgroup>
+                        <tr>
+                                <td class="estudos-selo-h400-top" colspan="6" rowspan="4">
+                                        Local para selo de análise de conformidade com normas CEMIG e ABNT
+                                </td>
+                                <td colspan="3">
+                                        <div>Informações complementares</div>
+                                        <div>Coordenadas, transformador, nº orçamento, etc.</div>
+                                        <input class="estudos-input-w90">
+                                </td>
+                                <td colspan="1" rowspan="4" class="vertical estudos-selo-vertical-col">
+                                        PARA USO DA CEMIG
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="3">
+                                        <div>Carga instalada (kW)</div>
+                                        <input class="estudos-input-w90">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="3">
+                                        <div>Demanda da instalação (kVA)</div>
+                                        <input class="estudos-input-w90">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="3">
+                                        <div>Demanda de contrato (kW)</div>
+                                        <input class="estudos-input-w90" data-local-storage-field="demandadecontrato">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="7">
+                                        <div>Dados e logotipo do projetista (opcional)</div>
+                                        <input class="estudos-input-w90" data-form-field="dadosProjetista">
+                                </td>
+                                <td colspan="3">
+                                        <div>Formato do projeto</div>
+                                        <input class="estudos-input-w90" data-form-field="formatoProjeto">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="10">
+                                        <div>Título / conteúdo</div>
+                                        <input class="estudos-input-w90" data-form-field="tituloConteudo">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="4">
+                                        <div>Nome do empreendimento</div>
+                                        <input class="estudos-input-w90" data-form-field="nomeEmpreendimento">
+                                </td>
+                                <td colspan="3">
+                                        <div>CPF/CNPJ</div>
+                                        <input class="estudos-input-w80" data-form-field="cpfCnpjEmpreendimento">
+                                </td>
+                                <td colspan="3">
+                                        <div>Finalidade</div>
+                                        <input class="estudos-input-w90" data-form-field="finalidade">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="4">
+                                        <div>Endereço</div>
+                                        <input class="estudos-input-w90" data-form-field="enderecoEmpreendimento">
+                                </td>
+                                <td colspan="3">
+                                        <div>Bairro</div>
+                                        <input class="estudos-input-w80" data-form-field="bairroEmpreendimento">
+                                </td>
+                                <td colspan="3">
+                                        <div>Cidade</div>
+                                        <input class="estudos-input-w90" data-form-field="cidadeEmpreendimento">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="10">
+                                        <div>Número e data da ART de projeto</div>
+                                        <input class="estudos-input-w90" data-form-field="artProjeto">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="4">
+                                        <div>Proprietário<br>Nome</div>
+                                        <input class="estudos-input-w90" data-form-field="nomeProprietario">
+                                </td>
+                                <td colspan="3">
+                                        <div>CPF/CNPJ / Identidade</div>
+                                        <input class="estudos-input-w80" data-form-field="documentoProprietario">
+                                </td>
+                                <td colspan="3">
+                                        <div>Telefone</div>
+                                        <input class="estudos-input-w90" data-form-field="telefoneProprietario">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-50" colspan="4">
+                                        <div>Contratante (se houver)<br>Nome</div>
+                                        <input class="estudos-input-w90" data-form-field="nomeContratante">
+                                </td>
+                                <td colspan="3">
+                                        <div>CPF/CNPJ / Identidade</div>
+                                        <input class="estudos-input-w80" data-form-field="documentoContratante">
+                                </td>
+                                <td colspan="3">
+                                        <div>Telefone</div>
+                                        <input class="estudos-input-w90" data-form-field="telefoneContratante">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="10">
+                                        <div>Endereço completo para correspondência do PROPRIETÁRIO</div>
+                                        <input class="estudos-input-w90" data-form-field="enderecoCorrespondenciaProprietario">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td colspan="10">
+                                        <div>Endereço completo para correspondência do PROJETISTA</div>
+                                        <input class="estudos-input-w90" data-form-field="enderecoCorrespondenciaProjetista">
+                                </td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-h-100" colspan="4">
+                                        <div>RT (Engª)</div>
+                                        <input class="estudos-input-w90" data-form-field="registroRT">
+                                        <div>Nome</div>
+                                        <input class="estudos-input-w90" data-form-field="nomeRT">
+                                        <div>Telefone</div>
+                                        <input class="estudos-input-w90" data-form-field="telefoneRT">
+                                </td>
+                                <td colspan="3">
+                                        <div class="estudos-h-50">CREA / Estado</div>
+                                        <input class="estudos-input-w80" data-form-field="creaEstado">
+                                </td>
+                                <td colspan="1">
+                                        <div class="estudos-h-50">Folha</div>
+                                        <input class="estudos-input-w80" data-selo-folha>
+                                </td>
+                                <td colspan="2">
+                                        <div class="estudos-h-50">Data</div>
+                                        <input class="estudos-input-w80" data-form-field="dataProjeto">
+                                </td>
+                        </tr>
+                </table>
+        </div>
+        </div>
+
+        <div class="estudos-title-block" id="tituloestudodeprotecao">
+                <h2>ESTUDOS DE PROTEÇÃO E SELETIVIDADE</h2>
+        </div>
+
+        <br>
+
+
+                <div class="estudos-title-block" id="sumarioestudodeprotecao">
+                <h2>SUMÁRIO</h2>
+                </div>
+
+                <div class="estudos-flex-col-center" id="sumariotexto">
+                    
+                </div>
+
+        <br>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-justificativa-apresentacao">
+                        <h2>Justificativa de apresentação</h2>
+                </div>
+                <div class="estudos-flex-col-center" id="objetivotexto">
+                        <textarea class="estudos-textarea-lg">
+        Este memorial de cálculo de proteção tem como objetivo apresentar os estudos de proteção referentes à conexão de cliente de carga ao sistema, incluindo dados elétricos, cálculos, dimensionamentos, ajustes das proteções no relé e plotagem de gráficos.
+                        </textarea>
+                </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Informações da Conexão</h2>
+                </div>
+                <div id="tabelaparametrosiniciais">
+                        <table>
+                                <tr>
+                                        <th>Tensão de Atendimento:</th>
+                                        <td id="tensao-atendimento"></td>
+                                </tr>
+                                <tr>
+                                        <th>Demanda Contratada:</th>
+                                        <td class="demanda-contratada-consumo"></td>
+                                </tr>
+                                <tr>
+                                        <th>Fator de Potência:</th>
+                                        <td id="fator-potencia"></td>
+                                </tr>
+                                <tr>
+                                        <th>Icc 3∅ Ponto de Conexão:</th>
+                                        <td class="curtoTC"></td>
+                                </tr>
+                                <tr>
+                                        <th>Relé de Proteção:</th>
+                                        <td id="rele-protecao"></td>
+                                </tr>
+                                <tr class="habilitageradoradiesel">
+                                        <th>Gerador a Diesel:</th>
+                                        <td id="gerador-diesel"></td>
+                                </tr>
+                        </table>
+                </div>
+        </div>
+
+        <br>
+        <div class="estudos-secao-bloco" id="bloco-diagrama-unifilar">
+                <div class="estudos-title-block estudos-title-break-start" id="titulo-diagrama-unifilar">
+                        <h2>Diagrama Unifilar:</h2>
+                </div>
+                <br>
+                <div class="estudos-diagrama-box" id="diagramaunifilar">
+                        <div class="estudos-max210-center" id="gallery"></div>
+                </div>
+        </div>
+
+         <br>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-calculo-trafos">
+                        <h2>Cálculo das Correntes Nominais dos Transformadores</h2>
+                </div>
+
+
+                <br>
+                <div id="calculotrafos">
+                
+                         
+
+                <div class="calculotrafos-texto-tr01">
+                        <span>In TRF01 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf01">
+                                <span class="estudos-block-center" id="numerador-trf01">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf01">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf01">
+                                <span class="estudos-block-center" id="s-trf01"></span>
+                                <span class="estudos-frac-den" id="v-trf01"></span>
+                        </span>
+                        = <span id="resultado-trf01"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr02">
+                        <span>In TRF02 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf02">
+                                <span class="estudos-block-center" id="numerador-trf02">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf02">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf02">
+                                <span class="estudos-block-center" id="s-trf02"></span>
+                                <span class="estudos-frac-den" id="v-trf02"></span>
+                        </span>
+                        = <span id="resultado-trf02"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr03">
+                        <span>In TRF03 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf03">
+                                <span class="estudos-block-center" id="numerador-trf03">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf03">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf03">
+                                <span class="estudos-block-center" id="s-trf03"></span>
+                                <span class="estudos-frac-den" id="v-trf03"></span>
+                        </span>
+                        = <span id="resultado-trf03"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr04">
+                        <span>In TRF04 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf04">
+                                <span class="estudos-block-center" id="numerador-trf04">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf04">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf04">
+                                <span class="estudos-block-center" id="s-trf04"></span>
+                                <span class="estudos-frac-den" id="v-trf04"></span>
+                        </span>
+                        = <span id="resultado-trf04"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr05">
+                        <span>In TRF05 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf05">
+                                <span class="estudos-block-center" id="numerador-trf05">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf05">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf05">
+                                <span class="estudos-block-center" id="s-trf05"></span>
+                                <span class="estudos-frac-den" id="v-trf05"></span>
+                        </span>
+                        = <span id="resultado-trf05"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr06">
+                        <span>In TRF06 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf06">
+                                <span class="estudos-block-center" id="numerador-trf06">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf06">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf06">
+                                <span class="estudos-block-center" id="s-trf06"></span>
+                                <span class="estudos-frac-den" id="v-trf06"></span>
+                        </span>
+                        = <span id="resultado-trf06"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr07">
+                        <span>In TRF07 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf07">
+                                <span class="estudos-block-center" id="numerador-trf07">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf07">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf07">
+                                <span class="estudos-block-center" id="s-trf07"></span>
+                                <span class="estudos-frac-den" id="v-trf07"></span>
+                        </span>
+                        = <span id="resultado-trf07"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr08">
+                        <span>In TRF08 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf08">
+                                <span class="estudos-block-center" id="numerador-trf08">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf08">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf08">
+                                <span class="estudos-block-center" id="s-trf08"></span>
+                                <span class="estudos-frac-den" id="v-trf08"></span>
+                        </span>
+                        = <span id="resultado-trf08"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr09">
+                        <span>In TRF09 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf09">
+                                <span class="estudos-block-center" id="numerador-trf09">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf09">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf09">
+                                <span class="estudos-block-center" id="s-trf09"></span>
+                                <span class="estudos-frac-den" id="v-trf09"></span>
+                        </span>
+                        = <span id="resultado-trf09"></span>
+                </div><br>
+                <div class="calculotrafos-texto-tr10">
+                        <span>In TRF10 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf10">
+                                <span class="estudos-block-center" id="numerador-trf10">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf10">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf10">
+                                <span class="estudos-block-center" id="s-trf10"></span>
+                                <span class="estudos-frac-den" id="v-trf10"></span>
+                        </span>
+                        = <span id="resultado-trf10"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr11">
+                        <span>In TRF11 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf11">
+                                <span class="estudos-block-center" id="numerador-trf11">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf11">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf11">
+                                <span class="estudos-block-center" id="s-trf11"></span>
+                                <span class="estudos-frac-den" id="v-trf11"></span>
+                        </span>
+                        = <span id="resultado-trf11"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr12">
+                        <span>In TRF12 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf12">
+                                <span class="estudos-block-center" id="numerador-trf12">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf12">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf12">
+                                <span class="estudos-block-center" id="s-trf12"></span>
+                                <span class="estudos-frac-den" id="v-trf12"></span>
+                        </span>
+                        = <span id="resultado-trf12"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr13">
+                        <span>In TRF13 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf13">
+                                <span class="estudos-block-center" id="numerador-trf13">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf13">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf13">
+                                <span class="estudos-block-center" id="s-trf13"></span>
+                                <span class="estudos-frac-den" id="v-trf13"></span>
+                        </span>
+                        = <span id="resultado-trf13"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr14">
+                        <span>In TRF14 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf14">
+                                <span class="estudos-block-center" id="numerador-trf14">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf14">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf14">
+                                <span class="estudos-block-center" id="s-trf14"></span>
+                                <span class="estudos-frac-den" id="v-trf14"></span>
+                        </span>
+                        = <span id="resultado-trf14"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr15">
+                        <span>In TRF15 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf15">
+                                <span class="estudos-block-center" id="numerador-trf15">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf15">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf15">
+                                <span class="estudos-block-center" id="s-trf15"></span>
+                                <span class="estudos-frac-den" id="v-trf15"></span>
+                        </span>
+                        = <span id="resultado-trf15"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr16">
+                        <span>In TRF16 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf16">
+                                <span class="estudos-block-center" id="numerador-trf16">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf16">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf16">
+                                <span class="estudos-block-center" id="s-trf16"></span>
+                                <span class="estudos-frac-den" id="v-trf16"></span>
+                        </span>
+                        = <span id="resultado-trf16"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr17">
+                        <span>In TRF17 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf17">
+                                <span class="estudos-block-center" id="numerador-trf17">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf17">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf17">
+                                <span class="estudos-block-center" id="s-trf17"></span>
+                                <span class="estudos-frac-den" id="v-trf17"></span>
+                        </span>
+                        = <span id="resultado-trf17"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr18">
+                        <span>In TRF18 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf18">
+                                <span class="estudos-block-center" id="numerador-trf18">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf18">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf18">
+                                <span class="estudos-block-center" id="s-trf18"></span>
+                                <span class="estudos-frac-den" id="v-trf18"></span>
+                        </span>
+                        = <span id="resultado-trf18"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr19">
+                        <span>In TRF19 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf19">
+                                <span class="estudos-block-center" id="numerador-trf19">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf19">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf19">
+                                <span class="estudos-block-center" id="s-trf19"></span>
+                                <span class="estudos-frac-den" id="v-trf19"></span>
+                        </span>
+                        = <span id="resultado-trf19"></span>
+                </div><br>
+
+                <div class="calculotrafos-texto-tr20">
+                        <span>In TRF20 =</span>
+                        <span class="estudos-inline-middle" id="formula-trf20">
+                                <span class="estudos-block-center" id="numerador-trf20">S</span>
+                                <span class="estudos-frac-den" id="denominador-trf20">V &times;
+                                        &radic;3</span>
+                        </span>
+                        =
+                        <span class="estudos-inline-middle" id="valores-trf20">
+                                <span class="estudos-block-center" id="s-trf20"></span>
+                                <span class="estudos-frac-den" id="v-trf20"></span>
+                        </span>
+                        = <span id="resultado-trf20"></span>
+                </div>
+                </div>
+        </div>
+<br>
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Cálculo das Correntes ANSI e NANSI</h2>
+                </div>
+<br>
+                <div id="calculoANSIeNANSI">
+
+                <div class="estudos-times-block">
+                        <div class="estudos-mb-12">
+                                <span>I<sub>FASE ANSI</sub></span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">100</span>
+                                        <span class="estudos-frac-den">Z(%)</span>
+                                </span>
+                                &times; In (do transformador)
+                        </div>
+                        <div>
+                                <span>I<sub>NEUTRO ANSI</sub></span>
+                                =
+                                0,58 &times; I<sub>FASE ANSI</sub>
+                        </div>
+                </div>
+
+
+                <div class="estudos-auto-001">
+                        <div class="calculotrafos-texto-tr01 estudos-mb-8">
+                                <span>I FASE ANSI TR01</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr01">
+                                        <span class="estudos-block-center" id="num-ansi-tr01">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr01"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr01"></span>
+                                =
+                                <span id="resultado-ansi-tr01"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr02 estudos-mb-8">
+                                <span>I FASE ANSI TR02</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr02">
+                                        <span class="estudos-block-center" id="num-ansi-tr02">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr02"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr02"></span>
+                                =
+                                <span id="resultado-ansi-tr02"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr03 estudos-mb-8">
+                                <span>I FASE ANSI TR03</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr03">
+                                        <span class="estudos-block-center" id="num-ansi-tr03">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr03"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr03"></span>
+                                =
+                                <span id="resultado-ansi-tr03"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr04 estudos-mb-8">
+                                <span>I FASE ANSI TR04</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr04">
+                                        <span class="estudos-block-center" id="num-ansi-tr04">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr04"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr04"></span>
+                                =
+                                <span id="resultado-ansi-tr04"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr05 estudos-mb-8">
+                                <span>I FASE ANSI TR05</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr05">
+                                        <span class="estudos-block-center" id="num-ansi-tr05">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr05"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr05"></span>
+                                =
+                                <span id="resultado-ansi-tr05"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr06 estudos-mb-8">
+                                <span>I FASE ANSI TR06</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr06">
+                                        <span class="estudos-block-center" id="num-ansi-tr06">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr06"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr06"></span>
+                                =
+                                <span id="resultado-ansi-tr06"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr07 estudos-mb-8">
+                                <span>I FASE ANSI TR07</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr07">
+                                        <span class="estudos-block-center" id="num-ansi-tr07">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr07"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr07"></span>
+                                =
+                                <span id="resultado-ansi-tr07"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr08 estudos-mb-8">
+                                <span>I FASE ANSI TR08</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr08">
+                                        <span class="estudos-block-center" id="num-ansi-tr08">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr08"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr08"></span>
+                                =
+                                <span id="resultado-ansi-tr08"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr09 estudos-mb-8">
+                                <span>I FASE ANSI TR09</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr09">
+                                        <span class="estudos-block-center" id="num-ansi-tr09">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr09"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr09"></span>
+                                =
+                                <span id="resultado-ansi-tr09"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr10 estudos-mb-8">
+                                <span>I FASE ANSI TR10</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr10">
+                                        <span class="estudos-block-center" id="num-ansi-tr10">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr10"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr10"></span>
+                                =
+                                <span id="resultado-ansi-tr10"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr11 estudos-mb-8">
+                                <span>I FASE ANSI TR11</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr11">
+                                        <span class="estudos-block-center" id="num-ansi-tr11">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr11"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr11"></span>
+                                =
+                                <span id="resultado-ansi-tr11"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr12 estudos-mb-8">
+                                <span>I FASE ANSI TR12</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr12">
+                                        <span class="estudos-block-center" id="num-ansi-tr12">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr12"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr12"></span>
+                                =
+                                <span id="resultado-ansi-tr12"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr13 estudos-mb-8">
+                                <span>I FASE ANSI TR13</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr13">
+                                        <span class="estudos-block-center" id="num-ansi-tr13">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr13"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr13"></span>
+                                =
+                                <span id="resultado-ansi-tr13"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr14 estudos-mb-8">
+                                <span>I FASE ANSI TR14</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr14">
+                                        <span class="estudos-block-center" id="num-ansi-tr14">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr14"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr14"></span>
+                                =
+                                <span id="resultado-ansi-tr14"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr15 estudos-mb-8">
+                                <span>I FASE ANSI TR15</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr15">
+                                        <span class="estudos-block-center" id="num-ansi-tr15">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr15"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr15"></span>
+                                =
+                                <span id="resultado-ansi-tr15"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr16 estudos-mb-8">
+                                <span>I FASE ANSI TR16</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr16">
+                                        <span class="estudos-block-center" id="num-ansi-tr16">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr16"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr16"></span>
+                                =
+                                <span id="resultado-ansi-tr16"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr17 estudos-mb-8">
+                                <span>I FASE ANSI TR17</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr17">
+                                        <span class="estudos-block-center" id="num-ansi-tr17">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr17"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr17"></span>
+                                =
+                                <span id="resultado-ansi-tr17"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr18 estudos-mb-8">
+                                <span>I FASE ANSI TR18</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr18">
+                                        <span class="estudos-block-center" id="num-ansi-tr18">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr18"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr18"></span>
+                                =
+                                <span id="resultado-ansi-tr18"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr19 estudos-mb-8">
+                                <span>I FASE ANSI TR19</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr19">
+                                        <span class="estudos-block-center" id="num-ansi-tr19">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr19"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr19"></span>
+                                =
+                                <span id="resultado-ansi-tr19"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr20 estudos-mb-8">
+                                <span>I FASE ANSI TR20</span>
+                                =
+                                <span class="estudos-inline-middle" id="frac-ansi-tr20">
+                                        <span class="estudos-block-center" id="num-ansi-tr20">100</span>
+                                        <span class="estudos-frac-den" id="den-ansi-tr20"></span>
+                                </span>
+                                &times; <span id="in-ansi-tr20"></span>
+                                =
+                                <span id="resultado-ansi-tr20"></span>
+                        </div>
+
+                        <br>
+
+                        <div class="calculotrafos-texto-tr01 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR01</span>
+                                =
+                                <span id="coef-neutro-tr01">0,58</span> &times; <span
+                                        id="resultado-ansi-tr01-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr01"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr02 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR02</span>
+                                =
+                                <span id="coef-neutro-tr02">0,58</span> &times; <span
+                                        id="resultado-ansi-tr02-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr02"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr03 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR03</span>
+                                =
+                                <span id="coef-neutro-tr03">0,58</span> &times; <span
+                                        id="resultado-ansi-tr03-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr03"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr04 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR04</span>
+                                =
+                                <span id="coef-neutro-tr04">0,58</span> &times; <span
+                                        id="resultado-ansi-tr04-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr04"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr05 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR05</span>
+                                =
+                                <span id="coef-neutro-tr05">0,58</span> &times; <span
+                                        id="resultado-ansi-tr05-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr05"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr06 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR06</span>
+                                =
+                                <span id="coef-neutro-tr06">0,58</span> &times; <span
+                                        id="resultado-ansi-tr06-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr06"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr07 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR07</span>
+                                =
+                                <span id="coef-neutro-tr07">0,58</span> &times; <span
+                                        id="resultado-ansi-tr07-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr07"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr08 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR08</span>
+                                =
+                                <span id="coef-neutro-tr08">0,58</span> &times; <span
+                                        id="resultado-ansi-tr08-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr08"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr09 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR09</span>
+                                =
+                                <span id="coef-neutro-tr09">0,58</span> &times; <span
+                                        id="resultado-ansi-tr09-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr09"></span>
+                        </div><br>
+                        <div class="calculotrafos-texto-tr10 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR10</span>
+                                =
+                                <span id="coef-neutro-tr10">0,58</span> &times; <span
+                                        id="resultado-ansi-tr10-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr10"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr11 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR11</span>
+                                =
+                                <span id="coef-neutro-tr11">0,58</span> &times; <span
+                                        id="resultado-ansi-tr11-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr11"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr12 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR12</span>
+                                =
+                                <span id="coef-neutro-tr12">0,58</span> &times; <span
+                                        id="resultado-ansi-tr12-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr12"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr13 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR13</span>
+                                =
+                                <span id="coef-neutro-tr13">0,58</span> &times; <span
+                                        id="resultado-ansi-tr13-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr13"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr14 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR14</span>
+                                =
+                                <span id="coef-neutro-tr14">0,58</span> &times; <span
+                                        id="resultado-ansi-tr14-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr14"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr15 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR15</span>
+                                =
+                                <span id="coef-neutro-tr15">0,58</span> &times; <span
+                                        id="resultado-ansi-tr15-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr15"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr16 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR16</span>
+                                =
+                                <span id="coef-neutro-tr16">0,58</span> &times; <span
+                                        id="resultado-ansi-tr16-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr16"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr17 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR17</span>
+                                =
+                                <span id="coef-neutro-tr17">0,58</span> &times; <span
+                                        id="resultado-ansi-tr17-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr17"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr18 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR18</span>
+                                =
+                                <span id="coef-neutro-tr18">0,58</span> &times; <span
+                                        id="resultado-ansi-tr18-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr18"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr19 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR19</span>
+                                =
+                                <span id="coef-neutro-tr19">0,58</span> &times; <span
+                                        id="resultado-ansi-tr19-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr19"></span>
+                        </div><br>
+
+                        <div class="calculotrafos-texto-tr20 estudos-mb-8">
+                                <span>I NEUTRO ANSI TR20</span>
+                                =
+                                <span id="coef-neutro-tr20">0,58</span> &times; <span
+                                        id="resultado-ansi-tr20-neutro"></span>
+                                =
+                                <span id="resultado-neutro-tr20"></span>
+                        </div>
+                </div>
+
+
+
+
+        </div>
+        </div>
+<br>
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-tabela-trafos">
+                        <h2>Tabela Transformadores</h2>
+                </div>
+
+                <div id="tabelatransformadores">
+
+                <table>
+                        <tr>
+                                <th>Trafo</th>
+                                <th>Potência (kVA)</th>
+                                <th>Qtde</th>
+                                <th>Z(%)</th>
+                                <th>IM/IN</th>
+                                <th>T(s)</th>
+                                <th>IN (A)</th>
+                                <th>I ANSI</th>
+                                <th>I NANSI</th>
+                                <th>I MAG</th>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr01">
+                                <td id="trafo-01">TRF01</td>
+                                <td id="potencia-01"></td>
+                                <td id="qtde-01"></td>
+                                <td id="z-01"></td>
+                                <td id="im-in-01"></td>
+                                <td id="t-01"></td>
+                                <td id="in-01"></td>
+                                <td id="i-ansi-01"></td>
+                                <td id="i-nansi-01"></td>
+                                <td id="i-mag-01"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr02">
+                                <td id="trafo-02">TRF02</td>
+                                <td id="potencia-02"></td>
+                                <td id="qtde-02"></td>
+                                <td id="z-02"></td>
+                                <td id="im-in-02"></td>
+                                <td id="t-02"></td>
+                                <td id="in-02"></td>
+                                <td id="i-ansi-02"></td>
+                                <td id="i-nansi-02"></td>
+                                <td id="i-mag-02"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr03">
+                                <td id="trafo-03">TRF03</td>
+                                <td id="potencia-03"></td>
+                                <td id="qtde-03"></td>
+                                <td id="z-03"></td>
+                                <td id="im-in-03"></td>
+                                <td id="t-03"></td>
+                                <td id="in-03"></td>
+                                <td id="i-ansi-03"></td>
+                                <td id="i-nansi-03"></td>
+                                <td id="i-mag-03"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr04">
+                                <td id="trafo-04">TRF04</td>
+                                <td id="potencia-04"></td>
+                                <td id="qtde-04"></td>
+                                <td id="z-04"></td>
+                                <td id="im-in-04"></td>
+                                <td id="t-04"></td>
+                                <td id="in-04"></td>
+                                <td id="i-ansi-04"></td>
+                                <td id="i-nansi-04"></td>
+                                <td id="i-mag-04"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr05">
+                                <td id="trafo-05">TRF05</td>
+                                <td id="potencia-05"></td>
+                                <td id="qtde-05"></td>
+                                <td id="z-05"></td>
+                                <td id="im-in-05"></td>
+                                <td id="t-05"></td>
+                                <td id="in-05"></td>
+                                <td id="i-ansi-05"></td>
+                                <td id="i-nansi-05"></td>
+                                <td id="i-mag-05"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr06">
+                                <td id="trafo-06">TRF06</td>
+                                <td id="potencia-06"></td>
+                                <td id="qtde-06"></td>
+                                <td id="z-06"></td>
+                                <td id="im-in-06"></td>
+                                <td id="t-06"></td>
+                                <td id="in-06"></td>
+                                <td id="i-ansi-06"></td>
+                                <td id="i-nansi-06"></td>
+                                <td id="i-mag-06"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr07">
+                                <td id="trafo-07">TRF07</td>
+                                <td id="potencia-07"></td>
+                                <td id="qtde-07"></td>
+                                <td id="z-07"></td>
+                                <td id="im-in-07"></td>
+                                <td id="t-07"></td>
+                                <td id="in-07"></td>
+                                <td id="i-ansi-07"></td>
+                                <td id="i-nansi-07"></td>
+                                <td id="i-mag-07"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr08">
+                                <td id="trafo-08">TRF08</td>
+                                <td id="potencia-08"></td>
+                                <td id="qtde-08"></td>
+                                <td id="z-08"></td>
+                                <td id="im-in-08"></td>
+                                <td id="t-08"></td>
+                                <td id="in-08"></td>
+                                <td id="i-ansi-08"></td>
+                                <td id="i-nansi-08"></td>
+                                <td id="i-mag-08"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr09">
+                                <td id="trafo-09">TRF09</td>
+                                <td id="potencia-09"></td>
+                                <td id="qtde-09"></td>
+                                <td id="z-09"></td>
+                                <td id="im-in-09"></td>
+                                <td id="t-09"></td>
+                                <td id="in-09"></td>
+                                <td id="i-ansi-09"></td>
+                                <td id="i-nansi-09"></td>
+                                <td id="i-mag-09"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr10">
+                                <td id="trafo-10">TRF10</td>
+                                <td id="potencia-10"></td>
+                                <td id="qtde-10"></td>
+                                <td id="z-10"></td>
+                                <td id="im-in-10"></td>
+                                <td id="t-10"></td>
+                                <td id="in-10"></td>
+                                <td id="i-ansi-10"></td>
+                                <td id="i-nansi-10"></td>
+                                <td id="i-mag-10"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr11">
+                                <td id="trafo-11">TRF11</td>
+                                <td id="potencia-11"></td>
+                                <td id="qtde-11"></td>
+                                <td id="z-11"></td>
+                                <td id="im-in-11"></td>
+                                <td id="t-11"></td>
+                                <td id="in-11"></td>
+                                <td id="i-ansi-11"></td>
+                                <td id="i-nansi-11"></td>
+                                <td id="i-mag-11"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr12">
+                                <td id="trafo-12">TRF12</td>
+                                <td id="potencia-12"></td>
+                                <td id="qtde-12"></td>
+                                <td id="z-12"></td>
+                                <td id="im-in-12"></td>
+                                <td id="t-12"></td>
+                                <td id="in-12"></td>
+                                <td id="i-ansi-12"></td>
+                                <td id="i-nansi-12"></td>
+                                <td id="i-mag-12"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr13">
+                                <td id="trafo-13">TRF13</td>
+                                <td id="potencia-13"></td>
+                                <td id="qtde-13"></td>
+                                <td id="z-13"></td>
+                                <td id="im-in-13"></td>
+                                <td id="t-13"></td>
+                                <td id="in-13"></td>
+                                <td id="i-ansi-13"></td>
+                                <td id="i-nansi-13"></td>
+                                <td id="i-mag-13"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr14">
+                                <td id="trafo-14">TRF14</td>
+                                <td id="potencia-14"></td>
+                                <td id="qtde-14"></td>
+                                <td id="z-14"></td>
+                                <td id="im-in-14"></td>
+                                <td id="t-14"></td>
+                                <td id="in-14"></td>
+                                <td id="i-ansi-14"></td>
+                                <td id="i-nansi-14"></td>
+                                <td id="i-mag-14"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr15">
+                                <td id="trafo-15">TRF15</td>
+                                <td id="potencia-15"></td>
+                                <td id="qtde-15"></td>
+                                <td id="z-15"></td>
+                                <td id="im-in-15"></td>
+                                <td id="t-15"></td>
+                                <td id="in-15"></td>
+                                <td id="i-ansi-15"></td>
+                                <td id="i-nansi-15"></td>
+                                <td id="i-mag-15"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr16">
+                                <td id="trafo-16">TRF16</td>
+                                <td id="potencia-16"></td>
+                                <td id="qtde-16"></td>
+                                <td id="z-16"></td>
+                                <td id="im-in-16"></td>
+                                <td id="t-16"></td>
+                                <td id="in-16"></td>
+                                <td id="i-ansi-16"></td>
+                                <td id="i-nansi-16"></td>
+                                <td id="i-mag-16"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr17">
+                                <td id="trafo-17">TRF17</td>
+                                <td id="potencia-17"></td>
+                                <td id="qtde-17"></td>
+                                <td id="z-17"></td>
+                                <td id="im-in-17"></td>
+                                <td id="t-17"></td>
+                                <td id="in-17"></td>
+                                <td id="i-ansi-17"></td>
+                                <td id="i-nansi-17"></td>
+                                <td id="i-mag-17"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr18">
+                                <td id="trafo-18">TRF18</td>
+                                <td id="potencia-18"></td>
+                                <td id="qtde-18"></td>
+                                <td id="z-18"></td>
+                                <td id="im-in-18"></td>
+                                <td id="t-18"></td>
+                                <td id="in-18"></td>
+                                <td id="i-ansi-18"></td>
+                                <td id="i-nansi-18"></td>
+                                <td id="i-mag-18"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr19">
+                                <td id="trafo-19">TRF19</td>
+                                <td id="potencia-19"></td>
+                                <td id="qtde-19"></td>
+                                <td id="z-19"></td>
+                                <td id="im-in-19"></td>
+                                <td id="t-19"></td>
+                                <td id="in-19"></td>
+                                <td id="i-ansi-19"></td>
+                                <td id="i-nansi-19"></td>
+                                <td id="i-mag-19"></td>
+                        </tr>
+                        <tr class="calculotrafos-texto-tr20">
+                                <td id="trafo-20">TRF20</td>
+                                <td id="potencia-20"></td>
+                                <td id="qtde-20"></td>
+                                <td id="z-20"></td>
+                                <td id="im-in-20"></td>
+                                <td id="t-20"></td>
+                                <td id="in-20"></td>
+                                <td id="i-ansi-20"></td>
+                                <td id="i-nansi-20"></td>
+                                <td id="i-mag-20"></td>
+                        </tr>
+                </table>
+        </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Cálculo Corrente de Magnetização Total</h2>
+                </div>
+
+                <div id="calculomagnetizacao">
+
+                <p>Imag total = (In maior trafo × M) + (In dos demais transformadores)</strong></p>
+                <p>Onde:</p>
+                <ul>
+                        <li>In maior trafo = Corrente nominal do transformador de maior potência</li>
+                        <li>M = Multiplicador de magnetização (Im/In)</li>
+                        <li>In dos demais transformadores = Corrente nominal dos demais transformadores</li>
+                        <p>
+                                <strong>Imag total =</strong><br>
+                                <span class="estudos-ml-12" style="padding: 35px">
+                                        <span id="in-maior-trafo"></span><span id="M-maior-trafo"></span>
+                                </span>
+                                <br>
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-1"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-2"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-3"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-4"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-5"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-6"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-7"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-8"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-9"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-10"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-11"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-12"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-13"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-14"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-15"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-16"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-17"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-18"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-19"></span>
+                                </span><br>
+
+                                <span class="estudos-ml-32">
+                                        <span id="in-trafo-20"></span>
+                                </span>
+                        </p>
+                        <!-- <p>Imag total = <span id="in-maior-trafo">20,92</span> × <span id="iminmaiortrafo">8,00</span> = <strong><span id="imag-total">167,35</span> A</strong></p> -->
+                        <p><strong>Imag total =</strong>
+                                <strong><span class="imag-total-norma-valor"></span> por 0,1 s ou 100 ms</strong>
+                        </p>
+                </div>
+        </div>
+
+        <div class="estudos-secao-bloco" id="bloco-magnetizacao-real">
+                <div class="estudos-title-block" id="titulo-calculomagnetizacaoreal">
+                        <h2>Cálculo de Magnetização Real</h2>
+                </div>
+
+                <div id="calculomagnetizacaoreal">
+
+
+
+
+                <p>Conforme bibliografia técnica, o calculo de magnetização pode ser
+                        feito considerando não somente as impedancias dos trafos internos mas também as
+                        impedâncias resultante das rede da concessionária , para tal pode se utilizar a expressão
+                        abaixo associando-se os valores:
+                <p>
+
+
+
+                <div class="estudos-times-block">
+                        <div class="estudos-mb-12">
+                                <strong>I<sub>inrush-real</sub></strong>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">
+                                                V<sub>ff</sub>
+                                                <span class="estudos-block-fs-08">
+                                                        <span class="estudos-frac-den">√3</span>
+                                                </span>
+                                        </span>
+                                        <span class="estudos-frac-den">&nbsp;
+                                                Z<sub>total</sub></span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">V<sub>ff</sub></span>
+                                        <span class="estudos-frac-den">√3</span>
+                                        <span class="estudos-frac-den"> &nbsp;
+                                                (Z<sub>s</sub> + Z<sub>in</sub>)</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">
+                                                V<sub>ff</sub>
+                                                <span class="estudos-block-fs-08">
+                                                        <span class="estudos-frac-den">√3</span>
+                                                </span>
+                                        </span>
+                                        <span class="estudos-frac-den">
+                                                &nbsp;
+                                                <span class="estudos-nowrap">
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">V<sub>ff</sub></span>
+                                                                <span class="estudos-frac-den">√3</span>
+                                                                <span class="estudos-frac-den">&nbsp;
+                                                                        I<sub>cc3∅</sub></span>
+                                                        </span>
+                                                        +
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">V<sub>ff</sub></span>
+                                                                <span class="estudos-frac-den">√3</span>
+                                                                <span class="estudos-frac-den">√3
+                                                                        &nbsp; I<sub>inrush</sub></span>
+                                                        </span>
+                                                </span>
+                                        </span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">1</span>
+                                        <span class="estudos-frac-den">
+                                                <span class="estudos-nowrap">
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">1</span>
+                                                                <span class="estudos-frac-den">I<sub>cc3∅</sub></span>
+                                                        </span>
+                                                        +
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">1</span>
+                                                                <span class="estudos-frac-den">I<sub>inrush</sub></span>
+                                                        </span>
+                                                </span>
+                                        </span>
+                                </span>
+                        </div>
+
+                        <div class="estudos-mb-12">
+                                <strong>I<sub>inrush-real</sub></strong>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">1</span>
+                                        <span class="estudos-frac-den">
+                                                <span class="estudos-nowrap">
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">1</span>
+                                                                <span class="estudos-frac-den" id="inrush-cc3f"></span>
+                                                        </span>
+                                                        +
+                                                        <span class="estudos-inline-middle">
+                                                                <span class="estudos-block-center">1</span>
+                                                                <span class="estudos-frac-den" id="inrush-in"></span>
+                                                        </span>
+                                                </span>
+                                        </span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">1</span>
+                                        <span class="estudos-frac-den">
+                                                <span id="divisao-icc"></span> + <span id="divisao-inrush"></span>
+                                        </span>
+                                </span>
+                        </div>
+
+                        <div>
+                                <strong>I<sub>inrush-real</sub></strong>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">1</span>
+                                        <span class="estudos-frac-den" id="resultado-divisao">
+
+                                        </span>
+                                </span>
+                                =
+                                <strong id="resultado-inrush-real"></strong>
+                        </div>
+                </div>
+        </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-tc-protecao">
+                        <h2>Critérios para dimensionamento dos transformadores de corrente (TC) de Proteção</h2>
+                </div>
+
+                <div id=calculostc>
+
+                <strong>1) Cobertura da corrente de curto-circuito:</strong>
+                <p>Para o cálculo da saturação por corrente de curto-circuito a norma prevê a capacidade do TC
+                        em suportar uma corrente de até 50 vezes a corrente de primário: </p>
+
+                <p>I primário TC >=
+                        <span class="estudos-inline-middle">
+                                <span class="estudos-block-center">Icc trifásica</span>
+                                <span class="estudos-frac-den">50</span>
+                        </span>
+
+                </p>
+                <p>I primário TC >=
+                        <span class="estudos-inline-middle">
+                                <span class="curtoTC"></span>
+                                <span class="estudos-frac-den">50</span>
+                        </span>
+                <p>I primário TC >= <span id="tc-saturacao-primario"></span> A</p>
+
+                </p>
+                <br>
+                <p><strong>2) Cobertura da Corrente de Magnetização:</strong>
+
+                <p>Para o cálculo da saturação por corrente de magnetização dos transformadores
+                        a norma prevê a capacidade do TC em suportar uma corrente de até 20 vezes a
+                        corrente
+                        de primário: </p>
+
+                <p>I primário TC >=
+                        <span class="estudos-inline-middle">
+                                <span class="estudos-block-center">I rush</span>
+                                <span class="estudos-frac-den">20</span>
+                        </span>
+
+
+                <p>I primário TC >=
+                        <span class="estudos-inline-middle">
+                                <span class="imag-total-valor estudos-block-center"></span>
+                                <span class="estudos-frac-den" id="corrente-magnetizacao-tc-divisor">20</span>
+                        </span>
+
+
+                <p>I primário TC >= <span id="corrente-magnetizacao-saturacao-tc"></span></p>
+                </p>
+                </p>
+
+                <br>
+
+                <p>
+                        <strong>3)Cobertura da Corrente de Partida Máxima:</strong>
+
+                <p>A corrente de primário do TC deve possuir capacidade nominal superior à corrente de
+                        partida da instalação:</p>
+
+                <p>Ip = <span class="estudos-inline-middle">
+                                <span class="estudos-block-center">P(kW) * tolerânica de
+                                        105%</span>
+                                <span class="estudos-frac-den">V
+                                        × √3 × 0,92</span>
+                        </span>
+                </p>
+
+                <p>Ip = <span class="estudos-inline-middle">
+                                <span class="ip-partida-numerador-TC estudos-block-center"></span>
+                                <span class="ip-partida-denominador estudos-frac-den"></span>
+                        </span>
+                        = <span class="ip-partida-resultado-TC"></span>
+                </p>
+                </p>
+
+
+                <p><span class="estudos-inline-middle">
+                                <span class="estudos-block-center">I primário TC >= Ip</span>
+
+                        </span></p>
+
+                I primário TC >=
+                <span class="estudos-inline-middle">
+                        <span class="ip-partida-resultado-TC"></span>
+
+                </span>
+
+                <br><br><br>
+
+                <strong>4) Critério de precisão de leitura do TC:</strong>
+
+                <p class="estudos-text-justify">Considerando as limitações de leitura dos transformadores de corrente
+                        (TCs) de proteção,
+                        cujo erro máximo permitido é de 10%, a medição torna-se confiável somente
+                        acima dessa faixa de sensibilidade. Portanto, deve-se garantir que a
+                        corrente de partida (Ip) da instalação seja igual ou superior ao valor correspondente
+                        à sensibilidade mínima do TC, assegurando precisão na detecção de corrente.</p>
+
+                <p>Ip >= 10% Corrente de primário TC</p>
+
+                <span> <span class="ip-partida-resultado-TC"></span> >= 10% Corrente de primário TC</span><br><br>
+
+                <span> <span class="ip-partida-resultado-TC"></span> >= <span
+                                class="corrente-10-percent-tc"></span></span>
+
+                <br><br>
+
+                <p><strong>5) Critério Normativo</strong>
+                <p>
+                        Os TC de proteção devem apresentar classificação mínima 12,5 VA 10P20,
+                         conforme ABNT NBR 6856. A carga secundária, expressa em VA, bem como a 
+                         relação de transformação devem ser especificadas pelo responsável técnico.
+                          O projeto deve considerar as condições específicas da instalação e assegurar 
+                          que não ocorrerá sobrecarga ou saturação dos TC 
+                          (para o maior valor de curto-circuito).</p>
+                <p></p>
+                </p>
+        </div>
+        </div>
+
+        <div class="estudos-secao-bloco" id="bloco-calculo-saturacao-tc">
+                <div class="estudos-title-block" id="titulo-calculo-saturacao-tc">
+                        <h2>Cálculo por Tensão de Saturação TCs de Proteção</h2>
+                </div>
+
+        <div id="criteriocalculotcimpedancia">
+                <!-- SATURACAO TC INICIO NOVO -->
+                <p class="estudos-text-justify">
+                        O dimensionamento dos Transformadores de Corrente (TC) de proteção quanto ao fenômeno de saturação é realizado com base nos critérios estabelecidos pela norma vigente <strong>ABNT NBR 6856:2021</strong> (Transformadores de corrente - Especificação e ensaios) e a correlação técnica com a norma <strong>ABNT NBR 6856:1992</strong>. O objetivo fundamental é assegurar que a tensão exigida no secundário durante a ocorrência do curto-circuito máximo — considerando a componente transitória aperiódica (fator de assimetria 1 + X/R) — não ultrapasse a capacidade de tensão do núcleo magnético do TC com margem de segurança normativa de 20%, garantindo operação linear e reprodução fiel da corrente primária para correta atuação do relé de proteção.
+                </p>
+
+                <h4 class="estudos-subtitulo">1. Dados e Parâmetros Considerados do TC e Circuito Secundário</h4>
+                <table class="estudos-saturacao-tabela">
+                        <tbody>
+                                <tr>
+                                        <th>Corrente Nominal Primária (Ip) / Secundária (Is):</th>
+                                        <td><span class="saturacao-estudos-ip tc-corrente-primaria">100</span> / <span class="saturacao-estudos-is">5</span> A &nbsp;|&nbsp; RTC = <strong class="saturacao-estudos-rtc rtc-valor-absoluto">20</strong>:1</td>
+                                </tr>
+                                <tr>
+                                        <th>Especificação ABNT NBR 6856:2021:</th>
+                                        <td><strong class="saturacao-estudos-especificacao-nova">25VA 10P20</strong> (Sb = <span class="saturacao-estudos-sb">25</span> VA, Erro = <span class="saturacao-estudos-erro">10</span>%, ALF = <span class="saturacao-estudos-alf">20</span>)</td>
+                                </tr>
+                                <tr>
+                                        <th>Especificação Equivalente ABNT NBR 6856:1992:</th>
+                                        <td><strong class="saturacao-estudos-especificacao-antiga">10B200</strong> (Tensão terminal padronizada = <span class="saturacao-estudos-vterm-antiga">200</span> V)</td>
+                                </tr>
+                                <tr>
+                                        <th>Corrente de Curto-Circuito Máxima Simétrica Primária (Icc3∅):</th>
+                                        <td><strong class="curtoTC saturacao-estudos-icc">5000 A</strong></td>
+                                </tr>
+                                <tr>
+                                        <th>Relação Transitória de Curto-Circuito (X/R):</th>
+                                        <td><span class="saturacao-estudos-xr">0</span> &nbsp;(Fator de Assimetria Transitório 1 + X/R = <strong class="saturacao-estudos-fator-xr">1,00</strong>)</td>
+                                </tr>
+                                <tr>
+                                        <th>Fator de Impedância Interna do TC (kTC):</th>
+                                        <td><span class="saturacao-estudos-ktc">0,20</span> (conforme ABNT NBR 6856 / IEC 61869-2)</td>
+                                </tr>
+                                <tr>
+                                        <th>Condutores Secundários de Interligação (TC ao Relé):</th>
+                                        <td>Comp. = <span class="condutor-comprimento saturacao-estudos-comprimento">20</span> m &nbsp;|&nbsp; Bitola = <span class="condutor-bitola saturacao-estudos-bitola">2,5</span> mm² &nbsp;|&nbsp; Rcab = <span class="condutor-resistividade saturacao-estudos-resistividade">7,41</span> Ω/km</td>
+                                </tr>
+                                <tr>
+                                        <th>Consumo Monofásico da Bobina do Relé (Srelé):</th>
+                                        <td><span class="potencia-bobina-rele saturacao-estudos-potencia-rele">0,50</span> VA (com Is = 5 A)</td>
+                                </tr>
+                        </tbody>
+                </table>
+
+                <h4 class="estudos-subtitulo">2. Memória de Cálculo das Impedâncias do Circuito Secundário</h4>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>a) Impedância dos Condutores de Interligação (Fiação de Ida e Volta - Z<sub>cabo</sub>):</strong></p>
+                        <p>
+                                Z<sub>cabo</sub> = 2 ×
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">L (m)</span>
+                                        <span class="estudos-frac-den">1000</span>
+                                </span>
+                                × R<sub>cab</sub> (Ω/km)
+                                = 2 ×
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center saturacao-estudos-comprimento">20</span>
+                                        <span class="estudos-frac-den">1000</span>
+                                </span>
+                                × <span class="saturacao-estudos-resistividade">7,41</span>
+                                = <strong class="resultante-impedancia-condutor saturacao-estudos-zcabo">0,29640</strong> Ω
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>b) Impedância Interna do Enrolamento Secundário do TC (Z<sub>TC</sub>):</strong></p>
+                        <p class="estudos-text-justify" style="font-size: 0.9em; color: #444; margin: 4px 0 8px 0;">
+                                Conforme prescreve a ABNT NBR 6856, a impedância interna do enrolamento secundário de um TC de proteção classe P é modelada em função do fator k<sub>TC</sub> = 0,20 e da potência nominal de carga (Sb):
+                        </p>
+                        <p>
+                                Z<sub>TC</sub> =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">k<sub>TC</sub> × S<sub>b</sub></span>
+                                        <span class="estudos-frac-den">I<sub>s</sub>²</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center"><span class="saturacao-estudos-ktc">0,20</span> × <span class="saturacao-estudos-sb">25</span></span>
+                                        <span class="estudos-frac-den">5²</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center saturacao-estudos-num-ztc">5,00</span>
+                                        <span class="estudos-frac-den">25</span>
+                                </span>
+                                = <strong class="resultante-impedancia-tc-estimada saturacao-estudos-ztc">0,20000</strong> Ω
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>c) Impedância da Bobina de Corrente do Relé (Z<sub>relé</sub>):</strong></p>
+                        <p class="estudos-text-justify" style="font-size: 0.9em; color: #444; margin: 4px 0 8px 0;">
+                                Em condição de falta trifásica equilibrada, a corrente secundária circula pelas bobinas de fase e a corrente no condutor de neutro é nula:
+                        </p>
+                        <p>
+                                Z<sub>relé</sub> =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">S<sub>relé</sub> (VA)</span>
+                                        <span class="estudos-frac-den">I<sub>s</sub>²</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center saturacao-estudos-potencia-rele">0,50</span>
+                                        <span class="estudos-frac-den">5²</span>
+                                </span>
+                                = <strong class="resultante-impedancia-tc saturacao-estudos-zrele">0,02000</strong> Ω
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>d) Impedância de Carga Nominal Padronizada (Burden Nominal Z<sub>b</sub>):</strong></p>
+                        <p>
+                                Z<sub>b</sub> =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">S<sub>b</sub> (VA)</span>
+                                        <span class="estudos-frac-den">I<sub>s</sub>²</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center saturacao-estudos-sb">25</span>
+                                        <span class="estudos-frac-den">5²</span>
+                                </span>
+                                = <strong class="saturacao-estudos-zb">1,00000</strong> Ω
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>e) Impedância Total Conectada ao Secundário do TC (Z<sub>total</sub>):</strong></p>
+                        <p>
+                                Z<sub>total</sub> = Z<sub>cabo</sub> + Z<sub>TC</sub> + Z<sub>relé</sub>
+                                = <span class="saturacao-estudos-zcabo">0,29640</span> + <span class="saturacao-estudos-ztc">0,20000</span> + <span class="saturacao-estudos-zrele">0,02000</span>
+                                = <strong class="resultante-impedancia-total saturacao-estudos-ztotal">0,51640</strong> Ω
+                        </p>
+                </div>
+
+                <h4 class="estudos-subtitulo">3. Memória de Cálculo das Correntes e Tensões de Saturação</h4>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>a) Corrente Secundária de Curto-Circuito (I<sub>sec,cc</sub>):</strong></p>
+                        <p>
+                                I<sub>sec,cc</sub> =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">I<sub>cc3∅</sub> (A)</span>
+                                        <span class="estudos-frac-den">RTC</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center curtoTC saturacao-estudos-icc">5000 A</span>
+                                        <span class="estudos-frac-den rtc-valor-absoluto saturacao-estudos-rtc">20</span>
+                                </span>
+                                = <strong class="icc-secundaria saturacao-estudos-isec">250,00</strong> A
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>b) Tensão Requerida sob Falta no Secundário (V<sub>req</sub>):</strong></p>
+                        <p>
+                                V<sub>req</sub> = I<sub>sec,cc</sub> × Z<sub>total</sub> × (1 + X/R)
+                                = <span class="saturacao-estudos-isec">250,00</span> A × <span class="saturacao-estudos-ztotal">0,51640</span> Ω × <span class="saturacao-estudos-fator-xr">1,00</span>
+                                = <strong class="saturacao-estudos-vreq">129,10</strong> V
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>c) Tensão Requerida com Margem de Segurança Normativa de 20% (V<sub>req,margem</sub>):</strong></p>
+                        <p class="estudos-text-justify" style="font-size: 0.9em; color: #444; margin: 4px 0 8px 0;">
+                                Conforme recomendado pelas normas de proteção para considerar transitórios e dispersão magnética:
+                        </p>
+                        <p>
+                                V<sub>req,margem</sub> = 1,2 × V<sub>req</sub>
+                                = 1,2 × <span class="saturacao-estudos-vreq">129,10</span> V
+                                = <strong class="saturacao-estudos-vreq-margem">154,92</strong> V
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>d) Tensão Limite de Saturação Suportada pelo TC (V<sub>sat</sub>):</strong></p>
+                        <p class="estudos-text-justify" style="font-size: 0.9em; color: #444; margin: 4px 0 8px 0;">
+                                Máxima tensão eficaz secundária que o TC suporta na sua classe de exatidão antes da saturação do núcleo:
+                        </p>
+                        <p>
+                                V<sub>sat</sub> =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">S<sub>b</sub> (VA) × ALF</span>
+                                        <span class="estudos-frac-den">I<sub>s</sub> (A)</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center"><span class="saturacao-estudos-sb">25</span> × <span class="saturacao-estudos-alf">20</span></span>
+                                        <span class="estudos-frac-den">5</span>
+                                </span>
+                                =
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center saturacao-estudos-num-vsat">500</span>
+                                        <span class="estudos-frac-den">5</span>
+                                </span>
+                                = <strong class="v-sat-calculada saturacao-estudos-vsat">100,00</strong>
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>e) Fator Limite de Exatidão Operacional Real (ALF<sub>real</sub>):</strong></p>
+                        <p class="estudos-text-justify" style="font-size: 0.9em; color: #444; margin: 4px 0 8px 0;">
+                                Fator real de sobrecorrente que o TC é capaz de fornecer na impedância total conectada:
+                        </p>
+                        <p>
+                                ALF<sub>real</sub> = ALF ×
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center">Z<sub>TC</sub> + Z<sub>b</sub></span>
+                                        <span class="estudos-frac-den">Z<sub>total</sub></span>
+                                </span>
+                                = <span class="saturacao-estudos-alf">20</span> ×
+                                <span class="estudos-inline-middle">
+                                        <span class="estudos-block-center"><span class="saturacao-estudos-ztc">0,20000</span> + <span class="saturacao-estudos-zb">1,00000</span></span>
+                                        <span class="estudos-frac-den saturacao-estudos-ztotal">0,51640</span>
+                                </span>
+                                = <strong class="saturacao-estudos-alf-real">46,48</strong>
+                        </p>
+                </div>
+
+                <div class="estudos-saturacao-bloco-formula">
+                        <p><strong>f) Especificação Equivalente pela Norma Antiga (ABNT NBR 6856:1992):</strong></p>
+                        <p>
+                                Tensão Terminal Padronizada (20 × Is em Zb): &nbsp;
+                                V<sub>terminal</sub> = ALF × I<sub>s</sub> × Z<sub>b</sub> = 20 × 5 × <span class="saturacao-estudos-zb">1,00000</span> = <strong class="saturacao-estudos-vterm-antiga">200</strong> V
+                                &nbsp;⟹&nbsp; Classe <strong><span class="saturacao-estudos-especificacao-antiga">10B200</span></strong>
+                        </p>
+                </div>
+
+                <h4 class="estudos-subtitulo">4. Avaliação Normativa e Parecer Técnico de Não Saturação (ABNT NBR 6856:2021)</h4>
+
+                <div id="estudos-saturacao-status-card" class="estudos-saturacao-status-card estudos-saturacao-status-card--aprovado">
+                        <div id="estudos-saturacao-status-title" class="estudos-saturacao-status-title">
+                                TC Aprovado - Não Satura sob Falta (ABNT NBR 6856:2021)
+                        </div>
+                        <div id="estudos-saturacao-status-detail" class="estudos-saturacao-status-detail">
+                                A tensão limite nominal suportada pelo TC (<strong>V<sub>sat</sub> = <span class="saturacao-estudos-vsat">100,00</span> V</strong>) é superior à tensão exigida pela falta com margem de segurança de 20% (<strong>1,2 × V<sub>req</sub> = <span class="saturacao-estudos-vreq-margem">154,92</span> V</strong>).<br>
+                                O fator de exatidão real é <strong>ALF<sub>real</sub> = <span class="saturacao-estudos-alf-real">46,48</span></strong>, operando na região linear e garantindo atuação seletiva e confiável do relé.
+                        </div>
+                        <div>
+                                <span id="estudos-saturacao-status-badge" class="estudos-saturacao-status-badge estudos-saturacao-status-badge--verde">APROVADO</span>
+                        </div>
+                </div>
+
+        <!-- SATURACAO TC FIM -->
+                        
+
+
+
+        </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Dimensionamento TC</h2>
+                </div>
+
+                <div id="especificacaodotc">
+
+                <div>
+                        Transformador de Corrente com função de Proteção - TC<br><br>
+                        Critérios:<br><br>
+                         Nível máximo de curto-circuito indicado: <span class="curtoTC"></span><br>
+                         Corrente máxima de carga em regime: <span class="ip-partida-resultado"></span><br><br>
+                        (1) Corrente Nominal Primária (Ip): <span class="tc-corrente-primaria"></span>;<br>
+                        (2) Corrente Nominal Secundária: <span>5</span> A;<br>
+                        (3) Relação de Transformação: <span class="rtc-especificacao"></span>:1;<br>
+                        <!-- (4) Classe de Tensão: <span>15 KV</span>;<br>
+                        (5) Freqüência Nominal: <span>60</span> Hz;<br>
+                        (6) Classe de exatidão: <span>Norma ASA 10B50 ou equivalente ABNT</span>;<br>
+                        (7) Fator de sobrecorrente: <span>50xIp</span>;<br>
+                        (8) Fator térmico: <span>1,2</span>.<br> -->
+
+
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- <p>O transformador de corrente definido para atender os critérios avaliados será:</p>
+                <span class="tc-especificacao"></span> -->
+                
+                <textarea class="estudos-textarea-md" placeholder="Observações ou justificativas técnicas do dimensionamento do TC">            
+(4) Classe de Tensão: 15 KV
+(5) Freqüência Nominal: 60 Hz;
+(6) Fator térmico: 1,2.
+
+
+
+
+                </textarea>
+
+
+
+
+                <p>Conforme norma:<br><em>Ligação ao secundário dos TC de proteção: no mínimo deverão ser conectadas as 3
+                                fases e o neutro, sendo recomendável especial atenção à polaridade dos TC para que a
+                                proteção possa atuar da forma correta.</em></p>
+
+        </div>
+        </div>
+
+        <div class="habilitageradoradiesel estudos-secao-bloco"
+                style="background:transparent; border:none; padding:0; margin:0 auto; box-shadow:none; color:inherit; width:100%;">
+
+                <div class="estudos-title-block">
+                        <h2>Dimensionamento TP de Proteção</h2>
+                </div>
+
+                <div class="dimensionamentotpprotecao">
+                        <p>O sistema de proteção deve ser alimentado pela tensão secundária do(s) TP de proteção.</p>
+                        <p>
+                                Conforme norma:<em> Nas unidades consumidoras com geração própria devem ser usados 3
+                                        (três) TP
+                                        para proteção: 13,8 ou 22 ou 34,5 kv conforme o sistema de
+                                        distribuição da
+                                        CEMIG. Se não houver geração própria, pode ser usado apenas um TP para o sistema
+                                        de
+                                        proteção.</em>
+                        </p>
+                        <p>O TP será dimensionado conforme critérios:</p>
+
+                        <p>Ligação:<span class="tp-fechamento"></span></p>
+
+                        <p>Tensão Primária F-F:<span class="tp-primaria-ff"></span>
+
+                        </p>
+
+                        <p>Tensão Primária F-N:<span class="tp-primaria-fn"></span>
+
+                        </p>
+
+                        <p>Tensão Secundária F-F:<span class="tp-secundaria-ff"></span>
+
+
+
+                        </p>
+                        <p>Tensão Secundária F-N:<span class="tp-secundaria-fn"></span></p>
+
+                        <p>Relação de transformação do TP=<span class="rtp-label"></span></p>
+
+
+                        <p>Características Técnicas Mínimas do TP:</p>
+                        <textarea class="estudos-textarea-md">
+(1) Atender à ABNT NBR 6855
+(2) Classe tensão: 15 KV;
+(3) Freqüência nominal: 60 Hz;
+(4) Carga nominal mínima: 400 VA;
+(5) Classe de exatidão: 0,6P75 (0,6%) ou equivalente ABNT;
+
+
+
+
+
+
+
+                </textarea>
+                </div>
+
+        </div>
+
+        <div class="estudos-secao-bloco"
+                style="background:transparent; border:none; padding:0; margin:0 auto; box-shadow:none; color:inherit; width:100%; max-width:225mm;">
+
+                <div class="estudos-title-block">
+                        <h2>Dimensionamento NOBREAK</h2>
+                </div>
+
+                <div class="dimensionamentotpprotecao">
+
+
+                        <textarea class="estudos-textarea-md" style="text-align:left; padding-bottom:100px;">
+Nas subestações onde for aplicável nobreak, este deve ter as seguintes características:
+
+a) Tensão de saída:
+i. Caso exista TP de proteção: conforme tensão de saída do TP de proteção;
+ii. Caso não exista TP de proteção: conforme tensão secundária do transformador de
+potência;
+b) Potência mínima: 600 VA; Forma de onda: senoidal;
+c) Autonomia mínima: 2 horas, considerando uma carga de, no mínimo, 20 W / 30 VA;
+d) Faixa de temperatura mínima: 0 a 40°C.
+
+
+
+
+
+
+
+
+
+                </textarea>
+                </div>
+
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-curvas-fase">
+                        <h2>Cálculo e dimensionamento Curvas de Fase</h2>
+                </div>
+
+                <div class="calculosfuncoes">
+
+                <h3>1º Estágio - Função 51 (Sobrecorrente de fase tempo inverso)</h3>
+
+                <div class="correnteminima">
+
+                        Conforme a norma ND-5.3:<br>
+                        <em>A corrente de partida deverá ser superior a 10% da corrente primária nominal dos TC de
+                                proteção para assegurar uma melhor exatidão.</em>
+
+                        <p>Apesar da potência de consumo de contrato ser de <span
+                                        class="demanda-contratada-consumo"></span>,
+                                será priorizado o dimensionamento para que o TC suporte a corrente de saturação de
+                                curto-circuito.
+                                Devido as limitações de
+                                sensibilidade do TC de
+                                proteção e conforme a norma será adotada a demanda mínima de <span
+                                        class="numerador-potencia-nominal"></span> kW que tem como resultado a corrente
+                                de 10% do primário do TC de
+                                proteção dimensionado.
+
+
+                        </p>
+                </div>
+                <p>
+                        <span>In fase:</span>
+                        <span class="estudos-inline-middle">
+                                <span class="estudos-block-center">P</span>
+                                <span class="estudos-frac-den">V × √3 × FP</span>
+                        </span>
+                        =
+                        <span class="fraction estudos-inline-middle">
+                                <span class="numerador-potencia-nominal estudos-block-center">300,00</span>
+                                <span class="ip-partida-denominador estudos-frac-den"></span>
+                        </span>
+                        = <span class="corrente-nominal-fase"></span>
+                </p>
+                <p>
+                        <span class="label">Ip fase:</span>
+                        <span class="fraction estudos-inline-middle">
+                                <span class="estudos-block-center">P * 105%</span>
+                                <span class="estudos-frac-den">V × √3 × FP</span>
+                        </span>
+                        =
+                        <span class="fraction estudos-inline-middle">
+                                <span class="ip-partida-numerador estudos-block-center"></span>
+                                <span class="ip-partida-denominador estudos-frac-den"></span>
+                        </span>
+                        = <span class="ip-partida-resultado"></span>
+                </p>
+
+                <h3>Conversão para P.U</h3>
+
+                <p>
+                        <span class="label">Ip fase em P.U:</span>
+                        <span class="fraction estudos-inline-middle">
+                                <span class="estudos-block-center">Ip</span>
+                                <span class="estudos-frac-den">Prim TC</span>
+                        </span>
+                        =
+                        <span class="fraction estudos-inline-middle">
+                                <span class="ip-partida-resultado estudos-block-center"></span>
+                                <span class="tc-especificacao-valor estudos-frac-den"></span>
+                        </span>
+                        = <span class="corrente-ip-pu"></span>
+                </p>
+                <!-- <p>Curva de Atuação:<span class="curva-fase"></span></p> -->
+
+
+
+                <h3>2º Estágio - Função 50 (Sobrecorrente de Fase Instantânea)</h3>
+
+                <span>I<sub>inst</sub> fase=</span> Imag * <span class="imag-tolerancia-percentual"></span>
+
+
+                <br>
+
+                <span>I<sub>inst</sub> fase=<span class="imag-total-valor"></span>
+                        <span class="valor-torlerancia-imag"></span>
+                        =
+                        <span class="inst-fase-resultado"></span>
+                        <br>
+                        <span>I<sub>inst</sub> fase=<span class="inst-fase-resultado"></span>
+
+                                <h3>Conversão para P.U</h3>
+
+                                <p>
+                                        <span>I<sub>inst</sub> fase P.U:</span>
+                                        <span class="estudos-inline-middle">
+                                                <span class="estudos-block-center">I<sub>inst</sub></span>
+                                                <span class="estudos-frac-den">Prim
+                                                        TC</span>
+                                        </span>
+                                        =
+                                        <span class="estudos-inline-middle">
+                                                <span class="inst-fase-resultado estudos-block-center"></span>
+                                                <span class="tc-especificacao-valor estudos-frac-den"></span>
+                                        </span>
+                                        = <span class="inst-valor-pu"></span>
+                                </p>
+                                <p>
+                                        <span>Tempo para atuação:</span> 0,00 s ou o menor valor possível.
+                                </p>
+
+
+                                <!-- INICIO CALCULO DO DIAL DE FASE  -->
+
+                                                <h3>Parâmetros Considerados para o cálculo do dial de fase</h3>
+                <p>Para o cálculo do dial de fase, serão considerados os seguintes parâmetros:</p>
+                <table class="estudos-border-collapse">
+                        <tr>
+                                <td class="estudos-pad-2-8">Tipo de curva:</td>
+                                <td class="curva-fase estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Fator alfa (a):</td>
+                                <td class="fator-alfa-fase estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Fator beta (b):</td>
+                                <td class="fator-beta-fase estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Tempo de magnetização (t):</td>
+                                <td class="tempo-mag-fase estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Corrente instantânea fase (Iinst):</td>
+                                <td class="corrente-instantanea-fase-dial estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Corrente de partida (Ip):</td>
+                                <td class="corrente-partida-fase-dial estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Fator M (Iinst/Ip):</td>
+                                <td class="fator-m estudos-pad-2-8"></td>
+                        </tr>
+                        <tr>
+                                <td class="estudos-pad-2-8">Constante k:</td>
+                                <td class="fator-k-fase estudos-pad-2-8"></td>
+                        </tr>
+                </table>
+
+
+                <h3>Calculo do dial:</h3>
+                <p class="formula1 estudos-fs-12"></p>
+
+                <p class="formula2 estudos-fs-12"></p>
+
+                <p class="formula3 estudos-fs-12"></p>
+
+                <p class="formula4 estudos-fs-12"></p>
+
+                <p class="formula5 estudos-fs-12"></p>
+
+                <p class="formula6 estudos-fs-11"></p>
+
+                <p class="formula7 estudos-fs-11"></p>
+
+                <p>Dial calculado:<span class="dial-fase-calculado"></span></p>
+
+
+                <div id="texto_dial_ajustado">
+                <p>Conforme Dial calculado, será considerado o ajuste a seguir a fim de garantir
+                        o tempo necessário para a corrente de magnetização da conexão:</p>
+
+                <p><span>Dial ajustado:</span> <span class="dial-fase-ajustado"></span></p>
+
+                </div>
+
+                <!-- <div id="formulatempodeimag">
+
+                        <div class="valores">
+                                <label>β: <span id="beta">5</span></label>
+                                <label>Imag: <span id="imag">300</span></label>
+                                <label>In: <span id="in">50</span></label>
+                                <label>α: <span id="alpha">0.8</span></label>
+                                <label>k: <span id="k">1.2</span></label>
+                                <label>DT: <span id="dt">0.02</span></label>
+                        </div>
+
+                        <h3>Fórmula:</h3>
+                        <p class="estudos-fs-11" id="formula"></p>
+                </div> -->
+
+
+
+
+                <!-- <p>Conforme Dial calculado, o Dial real à ser parametrizado no relé será: 0,1</p>
+
+
+
+
+                <p><span>Dial real parametrizado:</span> 0,1</p>
+
+
+                <p><span>Tempo máximo real de magnetização:</span> 1,94 s (1942,5 ms)</p> -->
+
+
+
+
+
+
+
+
+
+
+        </div>
+        </div>
+
+        <div class="exibircalculomotores estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Cálculo e dimensionamento Cargas especiais (Motores)</h2>
+                </div>
+
+                <div class="calculosfuncoes">
+
+                <h3>Calculo do dial de fase considerando os motores instalados</h3>
+
+                <div style="text-align: justify;">
+                        <span>Considerando o motor de maior corrente de partida da instalação, foi considerado nesse
+                                estudo
+                                a pior situação possível.<br>
+                                Para dimensionamento do dial de fase foi considerado o cenário abaixo:<br><br>
+
+                                Demanda total da planta em kVA = <span id="demanda-contratada-motor"
+                                        class="valor-dinamico">1650</span> kW / <span id="fator-potencia-motor"
+                                        class="valor-dinamico">0,92</span> = <span id="demanda-total-kva"
+                                        class="valor-dinamico">1793,48</span> kVA
+                                (Maior potência da planta considerando a demanda contratada).<br><br>
+
+                                Potência do maior motor instalado em kVA = <span id="potencia-motor-kva"
+                                        class="valor-dinamico">222,3</span> kVA.<br><br>
+
+                                Subtraindo essa potência da demanda total, obtém-se a potência de <span
+                                        id="potencia-operante-motor" class="valor-dinamico">1571,18</span> kVA
+                                que é a potência operante no momento da partida do motor de maior potência.<br><br>
+
+                                Considerando a corrente de partida na Média Tensão, do motor de maior potência (<span
+                                        id="corrente-partida-motor" class="valor-dinamico">77,49</span> A),
+                                somado a corrente operante da planta ( <span id="corrente-operante-planta"
+                                        class="valor-dinamico">66</span> A),
+                                temos a corrente de partida total de <span id="corrente-partida-total"
+                                        class="valor-dinamico">140,23</span> A na Média Tensão.<br><br>
+
+                                Essa partida será realizada em um período de tempo de <span id="tempo-partida-motor"
+                                        class="valor-dinamico">60</span> segundos.<br><br>
+
+                                As informações sobre os motores estão informados na tabela abaixo:<br><br>
+
+                        </span>
+
+
+                        <div id="tabela-motores">
+
+
+
+                        </div><br>
+
+                        <h3>Calculo do dial de fase considerando partida de motores</h3>
+
+                        <div id="parametros-considerados-motor">
+
+
+
+                        </div>
+
+                        <div id="calculo-dial-motores">
+
+
+
+                        </div><br><br>
+
+                        <span>
+                                Diante desse cenário o dial de fase necessário para garantir a partida do motor de
+                                maior potência da instalação, considerando a corrente de partida total (<span
+                                        id="corrente-partida-total-frase">140,23</span> A)
+                                e o tempo de partida de <span id="tempo-partida-frase-motores">60</span> segundos,
+                                é de <span id="dial-calculado-frase-motores">0,10</span>.<br><br>
+
+                                A corrente de partida do motor foi plotada no gráfico do coordenograma conforme
+                                calculado.
+
+                        </span>
+
+
+
+
+
+                </div>
+        </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+        <br>
+        <div class="estudos-title-block" id="titulo-curvas-neutro">
+                <h2>Cálculo e dimensionamento Curvas de Neutro</h2>
+        </div>
+        <br>
+
+        <div class="calculosfuncoes">
+
+                <h3>1º Estágio - 51 N (Sobrecorrente de Neutro Temporizado)</h3>
+                <span>Ip<sub>Neutro</sub>= Ip fase x Desequilíbrio(%)</span><br><br>
+                <span>Ip<sub>Neutro</sub>=</span>
+                <span class="ip-partida-resultado"></span> x
+                <span class="Desequelibrio-neutro"> </span><br><br>
+
+                <span>Ip<sub>Neutro</sub>=</span>
+                <span class="ip-neutro"></span><br><br>
+
+                <h3>Conversão para P.U</h3>
+
+                <span>Ip<sub>Neutro</sub>P.U =</span>
+                <span class="estudos-inline-middle">
+                        <span class="estudos-block-center">I<sub>P neutro</sub></span>
+                        <span class="estudos-frac-den">Prim TC</span>
+                </span><br><br>
+
+                <span>Ip<sub>Neutro</sub>P.U =</span>
+
+                <span class="estudos-inline-middle">
+                        <span class="ip-neutro estudos-block-center"></span>
+                        <span class="estudos-frac-den tc-especificacao-valor"></span>
+                </span><br>
+
+                <p><span>Ip<sub>Neutro</sub>P.U =</span>
+                        <span class="ip-neutro-PU"></span>
+                </p>
+                <p><span>Curva:</span> Tempo Definido</p>
+                <p><span>Tempo de atuação= </span><span class="tempo-neutro-ip"></span></p>
+
+
+                <h3>2º Estágio - 50N (Sobrecorrente de Neutro Instantânea)</h3>
+                <span>I<sub>inst</sub> neutro=</span> <span>I<sub>Inst fase </sub>x Desequilíbrio(%)</span><br><br>
+
+                <p><span>I<sub>inst</sub> neutro=</span>
+                        <span class="inst-fase-resultado"></span> x
+                        <span class="Desequelibrio-neutro"></span>
+
+                </p>
+
+                <span>I<sub>inst</sub> neutro=</span><span class="inst-neutro-resultado"></span>
+
+                <h3>Conversão para P.U</h3>
+
+                <p><span>I<sub>inst</sub> neutro P.U=</span>
+                        <span class="estudos-inline-middle">
+                                <span class="estudos-block-center">I<sub>Inst neutro</sub></span>
+                                <span class="estudos-frac-den">Prim TC</span>
+                        </span><br>
+
+                <p><span>I<sub>inst</sub> neutro P.U=</span>
+
+                        <span class="estudos-inline-middle">
+                                <span class="inst-neutro-resultado estudos-block-center"></span>
+                                <span class="estudos-frac-den tc-especificacao-valor"></span>
+                        </span><br>
+
+                <p><span>I<sub>inst</sub> neutro P.U=</span>
+                        <span class="inst-neutro-PU"></span>
+                </p>
+
+                <p><span>Tempo de atuação:</span> 0,00 s ou o menor tempo possível</p>
+        </div>
+        </div>
+
+        <div class="habilitageradoradiesel estudos-secao-bloco" style="box-shadow: none; background-color: transparent; border: none; padding: 0;">
+                <div class="estudos-title-block">
+                        <h2>Cálculo e Parametrização - Gerador Diesel</h2>
+                </div>
+
+                <div class="calculosfuncoes habilitageradoradiesel">
+                <!-- <div class="habilitageradoradiesel"> -->
+
+                <p>A instalação possui geração a Diesel que entrará em operação através de paralelismo
+                        momentâneo com a
+                        rede. Seguem os cálculos de seus parâmetros:</p>
+
+
+
+                <p><span>Potência aparente: </span><span class="potencia-aparente-gerador"></span></p>
+                <p><span>Fator de Potência do gerador: </span><span class="fator-potencia-gerador"></span></p>
+                <p><span>Tolerância de injeção: </span><span class="tolerancia-gerador"></span></p>
+                <p><span>Potência reversa = Potência aparente x Fator de potência do gerador x
+                                tolerância(%)</span><br>
+
+                <p><span>Potência reversa =</span>
+                        <span class="potencia-aparente-gerador"></span> x
+                        <span class="fator-potencia-gerador"></span> x
+                        <span class="tolerancia-gerador"></span><br>
+
+
+                <p>Potencia reversa = <span class="potencia-reversa-gerador"></span> ou <span
+                                class="potencia-reversa-geradorkw"></span></p>
+
+
+
+                <p><span class="p-ajuste-pu"><span>P ajuste P.U:</span>
+                                <span class="fracao-p-ajuste-pu estudos-inline-middle">
+                                        <span class="estudos-block-center">Potência reversa</span>
+                                        <span class="estudos-frac-den">Primário
+                                                do TP<sub>FF</sub> × √3 × Primário do TC</span>
+                                </span>
+
+
+
+                </p>
+
+                <p><span class="p-ajuste-pu"><span>P ajuste P.U:</span>
+                                <span class="fracao-p-ajuste-pu estudos-inline-middle">
+                                        <span class="potencia-reversa-gerador estudos-block-center">Potência
+                                                reversa</span>
+                                        <span class="denominador-potreversa-ajuste-pu estudos-frac-den">V × √3 ×
+                                                Primário do TC</span>
+                                </span>
+
+
+
+                </p>
+                <p><span>P ajuste P.U:</span>
+                        <span class="potreversa-ajuste-pu"></span></span>
+
+
+                <p><span>Tempo de ajuste:</span> 15 segundos</p>
+
+                <div class="ajuste-potencia-reversa-minimo">
+                        <p>Obs:Devido a limitação da faixa de ajuste mínima do relé, poderá ser considerado a
+                                potência
+                                reversa mínima parametrizável caso não seja possível a parametrização real.Ver
+                                ajuste na
+                                tabela de parâmetros do relé.</p>
+
+
+                        <span class="ajuste-potencia-reversa-valor"></span>
+
+
+
+
+
+                </div>
+                <!-- </div> -->
+        </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Resumo de Parâmetros</h2>
+                </div>
+
+                <div id="tabelaresumofuncoes">
+
+                <table class="resumo-parametros-tabela">
+
+                        <tr class="linha-tp habilitageradoradiesel">
+                                <th colspan="3">
+                                        <span class="titulo-tp">Relação de transformação do TP:</span> <span
+                                                class="rtp-label"></span>
+                                </th>
+                        </tr>
+
+                        <tr class="linha-tc">
+                                <th colspan="3">
+                                        <span class="tc-especificacao"></span> ( <span class="rtc-especificacao"></span>
+                                        )
+                                </th>
+                        </tr>
+                        <!-- <tr class="linha-tc">
+                                <th colspan="3">
+                                        <span class="rtc-especificacao"></span>
+                                </th>
+                        </tr> -->
+                        <tr>
+                                <th>Descrição</th>
+                                <th>Ajuste absoluto</th>
+                                <th>Ajuste P.U</th>
+                        </tr>
+                        <tr class="linha-51-titulo">
+                                <td colspan="3"><strong>Sobrecorrente temporizada função ANSI 51</strong></td>
+                        </tr>
+                        <tr>
+                                <td>Corrente de pick-up</td>
+                                <td class="ip-partida-resultado"></td>
+                                <td class="corrente-ip-pu"></td>
+                        </tr>
+                        <tr class="linha-51-curva">
+                                <td>Curva</td>
+                                <td class="curva-fase"></td>
+                                <td></td>
+                        </tr>
+                        <tr class="linha-51-dial">
+                                <td>Dial</td>
+                                <td class="dial-fase-ajustado"></td>
+                                <td></td>
+                        </tr>
+                        <tr>
+                                <td colspan="3"><strong class="funcao-50">Sobrecorrente instantânea função ANSI
+                                                50</strong></td>
+                        </tr>
+                        <tr>
+                                <td>Corrente instântanea</td>
+                                <td class="inst-fase-resultado"></td>
+                                <td class="inst-valor-pu"></td>
+                        </tr>
+                        <tr>
+                                <td>Tempo para atuação</td>
+                                <td>0,00 s</td>
+                                <td></td>
+                        </tr>
+                        <tr>
+                                <td colspan="3"><strong class="funcao-51n">Sobrecorrente temporizada função ANSI
+                                                51N</strong></td>
+                        </tr>
+                        <tr>
+                                <td>Corrente de pick-up</td>
+                                <td class="ip-neutro"></td>
+                                <td class="ip-neutro-PU"></td>
+                        </tr>
+                        <tr>
+                                <td>Curva</td>
+                                <td>Tempo definido</td>
+                                <td></td>
+                        </tr>
+                        <tr>
+                                <td>Dial</td>
+                                <td class="tempo-neutro-ip"></td>
+                                <td></td>
+                        </tr>
+                        <tr>
+                                <td colspan="3"><strong>Sobrecorrente instantânea função ANSI 50N</strong></td>
+                        </tr>
+                        <tr>
+                                <td>Corrente instântanea</td>
+                                <td class="inst-neutro-resultado">326,32 A</td>
+                                <td class="inst-neutro-PU">3,26 P.U</td>
+                        </tr>
+                        <tr>
+                                <td>Tempo para atuação</td>
+                                <td>0,00 s</td>
+                                <td></td>
+                        </tr>
+                        <tr class="habilitageradoradiesel">
+                                <td colspan="3" class="titulo-funcao"><strong class="funcao-32">Direcional de Potência
+                                                ANSI 32</strong></td>
+                        </tr>
+                        <tr class="habilitageradoradiesel">
+                                <td>Potência reversa</td>
+                                <td class="potencia-reversa-geradorkw"></td>
+                                <td class="potreversa-ajuste-pu"></td>
+                        </tr>
+                        <tr class="habilitageradoradiesel">
+                                <td>Tempo</td>
+                                <td>15,00 s</td>
+                                <td></td>
+                        </tr>
+                </table>
+
+        </div>
+        </div>
+
+
+        <div id="tituloreles" class="estudos-secao-bloco">
+                <div class="estudos-title-block">
+                        <h2>Parâmetros do Relé de Proteção</h2>
+                </div>
+
+                <div id="tabelareles" class="tabelaparametrizacaoreles"></div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-curva-protecao">
+                        <h2>Plotagem Curva de Proteção</h2>
+                </div>
+
+                <div id="curvaProtecao">
+                        <canvas id="grafico"></canvas>
+                </div>
+        </div>
+
+        <div class="estudos-secao-bloco">
+                <div class="estudos-title-block" id="titulo-notas-obrigatorias">
+                        <h2>NOTAS OBRIGATÓRIAS</h2>
+                </div>
+
+                <div id="notas-obrigatorias">
+
+                a) A CEMIG fica autorizada a reproduzir cópias desse projeto para uso interno, se necessário,
+                bem como fazer arquivamento pelo processo que lhe for conveniente.<br><br>
+
+                b) As informações/detalhes não contidos neste projeto estão de acordo com a norma CEMIG ND-5.3,
+                (conforme informações do site da CEMIG).<br><br>
+
+                c) A carga declarada no projeto estará disponível para conferência no ato da ligação.<br><br>
+
+                d) A <span class="nome-cliente value-label-bold" data-form-field="nomeEmpreendimento"></span>,
+                através de seu representante legal, declara que está ciente das responsabilidades legais
+                inerentes à energização acidental de circuitos elétricos da concessionária por equipamentos
+                de geração própria existentes na instalação, ou que vierem a ser instalados dentro de sua
+                propriedade.<br><br>
+
+                <h2>TERMO DE RESPONSABILIDADE:</h2>
+
+                e) Eu, <span class="nome-responsavel-tecnico value-label-bold" data-form-field="nomeRT"></span>, Engenheiro
+                Eletricista
+                CREA: <span class="crea value-label-bold" data-form-field="creaEstado"></span>,
+                Responsável técnico pelo projeto elétrico
+                relativo à edificação situada na
+                <span class="endereco value-label-bold" data-form-field="enderecoEmpreendimento"></span>
+                , declaro conhecer o disposto na Lei Federal n° 5.194/66 de 24/12/66, na Lei n° 9.695/98 de 19/02/98,
+                e nas Resoluções, Instruções Normativas e Atos do CONFEA e do CREA-MG,
+                responsabilizando-me, única e exclusivamente, administrativa e judicialmente,
+                em caso de arguição de violação dos direitos autorais.<br><br>
+
+
+                <div class="bloco-data-cidade">
+                        <em><span class="cidade value-label-bold" data-form-field="cidadeEmpreendimento"></span>,
+                        <span class="data value-label-bold" data-form-field="dataProjeto"></span></em>
+                </div>
+
+                <div class="bloco-assinatura-rt">
+                        <div class="linha-assinatura-rt"></div>
+                        <div class="nome-assinatura-rt"><span class="nome-responsavel-tecnico value-label-bold" data-form-field="nomeRT"></span></div>
+                        <div class="detalhes-assinatura-rt">Engenheiro Eletricista &bull; CREA: <span class="crea value-label-bold" data-form-field="creaEstado"></span></div>
+                        <div class="sub-assinatura-rt">Responsável Técnico pelo Estudo de Proteção</div>
+                </div>
+
+        </div>
+        </div>
+
+        <script src="estudos.js"></script>
+        <!-- <script src="tabelarele.js"></script> -->
+        <script src="grafico5051consumo.js"></script>
+
+
+
+</body>
+
+</html>

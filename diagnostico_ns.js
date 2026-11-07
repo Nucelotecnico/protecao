@@ -1,0 +1,1 @@
+c:\Users\marco\OneDrive\OTIMIZACOES E MELHORIAS\Cordinationweb\diagnostico_ns.js

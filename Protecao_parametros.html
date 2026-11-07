@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROTECAO</title>
+
+    <link rel="stylesheet" href="animacao.css">
+    <link rel="stylesheet" href="botoes-header.css">
+    <link rel="stylesheet" href="Protecao_parametros.css" type="text/css">
+    <script src="controle-acesso.js"></script>
+
+</head>
+
+<body>
+    <div class="page-brand-wrap">
+        <span class="page-brand-title">
+            COORDINATION WEB
+        </span>
+        <svg viewBox="0 0 350 350" class="page-brand-graphic">
+            <line x1="50" y1="350" x2="550" y2="350" class="eixo" />
+            <line x1="50" y1="50" x2="50" y2="350" class="eixo" />
+            <!-- Curva de tempo definido -->
+            <polyline class="curva-definida" fill="none" stroke="#00ff88" stroke-width="3" stroke-dasharray="1000"
+                stroke-dashoffset="1000" points="100,50,50, 50, 50,200, 200,200,200,350, 200,200" />
+        </svg>
+    </div>
+    <h1>
+
+        <button id="botaoconfightml" class="dark-mode-toggle"
+            onclick="window.location.href='config.html';">CONFIGURAÇÕES</button>
+        <button id="botaodiagramahtml" class="dark-mode-toggle"
+            onclick="window.location.href='Diagramas.html';">DIAGRAMAS</button>
+        <button id="botaoparametrohtml" class="dark-mode-toggle"
+            onclick="window.location.href='Protecao_parametros.html';">PARÂMETROS</button>
+        <button id="botaotrafohtml" class="dark-mode-toggle"
+            onclick="window.location.href='transformadores.html';">TRAFOS</button>
+        <button id="botaotptchtml" class="dark-mode-toggle" onclick="window.location.href='TP-TC.html';">TP/TC</button>
+        <button id="botaoajustehtml" class="dark-mode-toggle"
+            onclick="window.location.href='protecaoajuste.html';">AJUSTES</button>
+        <button id="botaoajustesGDhtml" class="dark-mode-toggle"
+            onclick="window.location.href='ajustesGD.html';">AJUSTES GD</button>
+        <button id="botaotabelarelehtml" class="dark-mode-toggle"
+            onclick="window.location.href='tabelarele.html';">TABELA</button>
+        <button id="botaoestudoshtml" class="dark-mode-toggle"
+            onclick="window.location.href='estudos.html';">ESTUDOS</button>
+        <button id="botaotabelaGDhtml" class="dark-mode-toggle" onclick="window.location.href='tabelaGD.html';">TABELA
+            GD</button>
+        <button id="botaoestudosGDhtml" class="dark-mode-toggle"
+            onclick="window.location.href='estudosGD.html';">ESTUDOS GD</button>
+        <button id="botaoanalisehtml" class="dark-mode-toggle"
+            onclick="window.location.href='analise.html';">ANÁLISE</button>
+        <button id="botaosairhtml" class="dark-mode-toggle" onclick="window.location.href='index.html';">SAIR</button>
+
+    </h1>
+
+    <div class="tabela-titulo">
+        PARÂMETROS ELÉTRICOS<br>
+    </div>
+
+
+    <div class="tabela-container parametros-table-container">
+        <table class="parametros-data-table">
+
+            <thead>
+                <tr>
+                    <th>Parâmetros</th>
+                    <th>Ajuste</th>
+                    <th>Valor Ajustado</th>
+                    <!-- <th>Real</th> -->
+                    <!-- <th>P.U</th> -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>TENSÃO DA CONEXÃO:</td>
+                    <td class="cell-right">
+                        <div class="input-container" style="display: flex; flex-direction: column; gap: 6px; width: 100%; align-items: stretch;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%;">
+                                <label for="tensaoprimaria_mt" style="font-weight: 600; font-size: 11px; min-width: 28px; color: inherit;">MT:</label>
+                                <select id="tensaoprimaria_mt" size="1" class="field-left" style="width: 100%; font-size: 12px; height: 26px; padding: 2px;">
+                                    <option value="">Selecione MT</option>
+                                    <option value="13.8">13.8 kV</option>
+                                    <option value="22.0">22.0 kV</option>
+                                    <option value="34.5">34.5 kV</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%;">
+                                <label for="tensaoprimaria_bt" style="font-weight: 600; font-size: 11px; min-width: 28px; color: inherit;">BT:</label>
+                                <select id="tensaoprimaria_bt" size="1" class="field-left" style="width: 100%; font-size: 12px; height: 26px; padding: 2px;">
+                                    <option value="">Selecione BT</option>
+                                    <option value="0.220">0.220 kV (220 V)</option>
+                                    <option value="0.380">0.380 kV (380 V)</option>
+                                    <option value="0.440">0.440 kV (440 V)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo oculto sincronizado para manter 100% de compatibilidade com id="tensaoprimaria" -->
+                        <select id="tensaoprimaria" style="display: none;">
+                            <option value="">Selecione</option>
+                            <option value="13.8">13.8</option>
+                            <option value="22.0">22.0</option>
+                            <option value="34.5">34.5</option>
+                            <option value="0.220">0.220</option>
+                            <option value="0.380">0.380</option>
+                            <option value="0.440">0.440</option>
+                        </select>
+                    </td>
+                    <td id="valorAjustadoTensaoPrimaria"></td>
+                </tr>
+
+                <tr>
+                    <td>POTÊNCIA DE CONSUMO:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <input id="demandaConsumo" type="number" placeholder="Digite um valor"
+                                class="field-left field-gap-4">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoDemandaConsumo"></td>
+                </tr>
+
+
+
+                <tr class="displayadm">
+                    <td>FATOR DE POTÊNCIA CONSUMO:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <input id="fatorPotencia" type="text" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoFatorPotencia"></td>
+                </tr>
+                <tr class="displayadm">
+                    <td>DESEQUILÍBRIO NEUTRO:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <input type="number" id="desequilibrio" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoDesequilibrio"></td>
+                </tr>
+
+
+
+
+
+                <tr>
+                    <td>ICC TRIFÁSICA:</td>
+                    <td>
+                        <div class="input-container">
+                            <input id="icctrifasica" type="number" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoICCTri"></td>
+                </tr>
+
+
+
+
+                <!-- <tr>
+                <td>RELÉ DE PROTEÇÃO:</td>
+
+                <td>
+                        <select id="tabelaselecionadahtml" onchange="salvarTabela()" style="width: 95%; font-size: 0.95em; min-width: 320px; text-align: left;">
+                            <option value=""></option>
+                            <option value="1-PEXTRON-URP7104">1-PEXTRON-URP7104</option>
+                            <option value="2-PEXTRON-URP1439">2-PEXTRON-URP1439</option>
+                            <option value="3-PEXTRON-URPE-2405">3-PEXTRON-URPE-2405</option>
+                            <option value="4-PEXTRON-URP-6100-Software-Versão-1.0.0.061">
+                                4-PEXTRON-URP-6100-Software-Versão-1.0.0.061</option>
+                            <option value="5-SIEMENS-7SR1004">5-SIEMENS-7SR1004</option>
+                            <option value="6-SIEMENS-7SR1002">6-SIEMENS-7SR1002</option>
+                            <option value="7-SCHNEIDER-SEPAM-S42">7-SCHNEIDER-SEPAM-S42</option>
+                            <option value="8-VAMP-11-SCHNEIDER">8-VAMP-11-SCHNEIDER</option>
+                            <option value="9-PEXTRON-URP6104">9-PEXTRON-URP6104</option>
+                            <option value="10-PEXTRON-URP-6000-Software-Versão-1.0.0.059">
+                                10-PEXTRON-URP-6000-Software-Versão-1.0.0.059</option>
+                            <option value="11-SEG_MRI3-IE">11-SEG_MRI3-IE</option>
+                            <option value="12-SCHNEIDER-SEPAM-S10">12-SCHNEIDER-SEPAM-S10</option>
+                            <option value="13-REMP-GD">13-REMP-GD</option>
+                            <option value="14-SCHNEIDER-P3U30">14-SCHNEIDER-P3U30</option>
+                            <option value="15-SIEMENS-7SR5111">15-SIEMENS-7SR5111</option>
+                            <option value="16-SEL-751">16-SEL-751</option>
+                            <option value="17-REMP100">17-REMP100</option>
+                            <option value="18-REMP32">18-REMP32</option>
+                            <option value="19-PEXTRON-URP-6100-Software-Versão-1.0.0.059">
+                                19-PEXTRON-URP-6100-Software-Versão-1.0.0.059</option>
+                            <option value="20-SCHNEIDER-SEPAM-S20">20-SCHNEIDER-SEPAM-S20</option>
+                        </select>
+                </td>
+
+            </tr> -->
+            </tbody>
+        </table>
+
+
+    </div>
+
+ 
+
+    <div class="tabela-titulo">
+        PARALELISMO MOMENTÂNEO
+    </div>
+
+    <div class="tabela-container parametros-table-container">
+        <table class="parametros-data-table">
+            <thead>
+                <tr>
+                    <th>Parâmetros</th>
+                    <th>Ajuste</th>
+                    <th>Valor Ajustado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>POTÊNCIA GERADOR A DIESEL:</td>
+                    <td>
+                        <div class="input-container">
+                            <input type="number" id="potenciageradorhtml" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoPotenciaGerador"></td>
+                </tr>
+                <tr id="rowFatorPotenciaGerador" class="gerador-dependente">
+                    <td>FATOR DE POTÊNCIA GERADOR A DIESEL:</td>
+                    <td>
+                        <div class="input-container">
+                            <input id="fatorpotenciageradorhtml" type="text" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoFatorPotenciaGerador"></td>
+                </tr>
+                <tr id="rowToleranciaGerador" class="displayadm gerador-dependente">
+                    <td>TOLERÂNCIA GERADOR A DIESEL:</td>
+                    <td>
+                        <div class="input-container">
+                            <input id="toleranciageradorhtml" type="text" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoToleranciaGerador"></td>
+                </tr>
+                <tr id="rowPotenciaReversaGerador" class="gerador-dependente">
+                    <td colspan="2">POTÊNCIA REVERSA MÁXIMA GERADOR A DIESEL:</td>
+                    <td>
+                        <div class="input-container">
+                            <label type="number" id="potenciareversageradorhtml" class="value-label"></label>
+                        </div>
+                    </td>
+                </tr>
+                <tr id="rowPotenciaReversaGeradorPU" class="gerador-dependente">
+                    <td colspan="2">POTÊNCIA REVERSA MÁXIMA GERADOR A DIESEL PU:</td>
+                    <td>
+                        <div class="input-container">
+                            <label type="number" id="potenciareversageradorPUhtml" class="value-label"></label>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+       <div class="tabela-titulo displayadm">
+        PARALELISMO PERMANENTE 
+    </div>
+
+    <div class="tabela-container parametros-table-container displayadm">
+        <table class="parametros-data-table">
+            <thead>
+                <tr>
+                    <th>Parâmetros</th>
+                    <th>Ajuste</th>
+                    <th>Valor Ajustado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="displayadm">
+                    <td>POTÊNCIA DE GERAÇÃO(GD):</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <input type="number" id="potenciaGDhtml" placeholder="Digite um valor"
+                                class="field-left field-gap-4">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoPotenciaGD"></td>
+                </tr>
+                <tr class="displayadm" id="rowFatorPotenciaGD">
+                    <td>FATOR DE POTÊNCIA GD:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <input id="fatorPotenciaGDhtml" type="number" placeholder="Digite um valor"
+                                class="field-left field-gap-11">
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoFatorPotenciaGD"></td>
+                </tr>
+                <tr class="displayadm" id="rowTipoUsina">
+                    <td>TIPO DE USINA:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <select id="tipoUsina" class="field-left field-gap-11">
+                                <!-- <option value="">Selecione</option> -->
+                                <option value="Com Inversor">Com Inversor</option>
+                                <option value="Sem Inversor">Sem Inversor</option>
+                            </select>
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoTipoUsina"></td>
+                </tr>
+                <tr class="displayadm" id="rowTipoModalidade">
+                    <td>TIPO DE MODALIDADE:</td>
+                    <td>
+                        <select id="TipoModalidade" size="0" class="field-left field-gap-11">
+                            <!-- <option>Selecione</option> -->
+                            <option>Isolado</option>
+                            <option>Não-Isolado</option>
+                        </select>
+                    </td>
+                    <td id="valorAjustadoTipoModalidade"></td>
+                </tr>
+                <tr class="displayadm" id="rowTipoParalelismo">
+                    <td>TIPO DE PARALELISMO:</td>
+                    <td>
+                        <div class="input-container input-align-left field-gap-11">
+                            <select id="tipoParalelismo" class="field-left field-gap-11">
+                                <!-- <option value="">Selecione</option> -->
+                                <option value="Com Injeção">Com Injeção</option>
+                                <option value="Sem Injeção">Sem Injeção</option>
+                            </select>
+                            <span class="unidade"></span>
+                        </div>
+                    </td>
+                    <td id="valorAjustadoTipoParalelismo"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br><br>
+    <!-- <div style="display: flex; justify-content: center; align-items: center;">
+        <table>
+            <tr>
+                <td style="background-color: rgb(2, 68, 2); color: rgb(224, 221, 13);">GERADOR A DIESEL EM PARALELISMO MOMENTÂNEO:
+                </td>
+                <td style="background-color: rgb(2, 68, 2); color: white;">
+                    <div class="input-container">
+                        <input type="number" id="potenciageradorhtml">
+                    </div>
+                    Potência (kVA)
+                </td>
+                <td style="background-color: rgb(2, 68, 2); color: white;">
+                    <div class="input-container">
+                        <input type="number" id="fatorpotenciageradorhtml">
+                    </div>
+                    Fator de potência (%)
+                </td>
+                <td style="background-color: rgb(2, 68, 2); color: white;">
+                    <div class="input-container" style="flex-direction: column; align-items: center;">
+                        <input type="number" id="toleranciageradorhtml">
+                        <span style="font-size: 12px;">Tolerância (%)</span>
+                    </div>
+                </td>
+                <td style="background-color: rgb(2, 68, 2); color: white;">
+                    <div class="input-container">
+                        <label type="number" id="potenciareversageradorhtml" style="font-weight: bold;"></label>
+                    </div>
+                    kW reversa
+                </td>
+                <td style="background-color: rgb(2, 68, 2); color: white;">
+                    <div class="input-container">
+                        <label type="number" id="potenciareversageradorPUhtml" style="font-weight: bold;"></label>
+                    </div>
+                    P.U reversa
+                </td>
+            </tr>
+        </table>
+    </div> -->
+
+
+
+
+
+
+    <button id="botaoSalvar" onclick="salvarOpcao()">Salvar</button>
+
+    <button id="botaoImportar" onclick="importarICC()">Importar ICC</button>
+
+    <button id="botaoLimpar" onclick="limparICC()">Limpar ICC</button>
+
+
+    <script src="Protecao_parametros.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="animacao.css">
+    <link rel="stylesheet" href="botoes-header.css">
+    <link rel="stylesheet" href="analise.css" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>ESTUDOS</title>
+    <script src="controle-acesso.js"></script>
+
+
+
+
+
+
+</head>
+
+<body>
+    <div class="analise-brand-row">
+        <span id="titulodapagina" class="analise-brand-title">
+            COORDINATION WEB
+        </span>
+        <svg viewBox="0 0 350 350" class="analise-brand-svg">
+            <line x1="50" y1="350" x2="550" y2="350" class="eixo" />
+            <line x1="50" y1="50" x2="50" y2="350" class="eixo" />
+            <!-- Curva de tempo definido -->
+            <polyline class="curva-definida" fill="none" stroke="#00ff88" stroke-width="3" stroke-dasharray="1000"
+                stroke-dashoffset="1000" points="100,50,50, 50, 50,200, 200,200,200,350, 200,200" />
+        </svg>
+    </div>
+    <h1 class="analise-header-title">
+
+        <button id="botaoconfightml" class="dark-mode-toggle" data-nav-target="config.html">CONFIGURAÇÕES</button>
+        <button id="botaodiagramahtml" class="dark-mode-toggle" data-nav-target="Diagramas.html">DIAGRAMAS</button>
+        <button id="botaoparametrohtml" class="dark-mode-toggle"
+            data-nav-target="Protecao_parametros.html">PARÂMETROS</button>
+        <button id="botaotrafohtml" class="dark-mode-toggle" data-nav-target="transformadores.html">TRAFOS</button>
+        <button id="botaotptchtml" class="dark-mode-toggle" data-nav-target="TP-TC.html">TP/TC</button>
+        <button id="botaoajustehtml" class="dark-mode-toggle" data-nav-target="protecaoajuste.html">AJUSTES</button>
+        <button id="botaotabelarelehtml" class="dark-mode-toggle" data-nav-target="tabelarele.html">TABELA</button>
+        <button id="botaoestudoshtml" class="dark-mode-toggle" data-nav-target="estudos.html">ESTUDOS</button>
+        <button id="botaoajustesGDhtml" class="dark-mode-toggle" data-nav-target="ajustesGD.html">AJUSTES GD</button>
+        <button id="botaotabelaGDhtml" class="dark-mode-toggle" data-nav-target="tabelaGD.html">TABELA
+            GD</button>
+        <button id="botaoestudosGDhtml" class="dark-mode-toggle" data-nav-target="estudosGD.html">ESTUDOS GD</button>
+        <button id="botaoanalisehtml" class="dark-mode-toggle" data-nav-target="analise.html">ANÁLISE</button>
+        <button id="botaosairhtml" class="dark-mode-toggle" data-nav-target="index.html">SAIR</button>
+
+    </h1>
+    <br>
+    <div class="analise-parametros-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Parâmetros</th>
+                    <th>Valores</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Matrícula:</td>
+                    <td style="border: 1px solid #ccc; padding: 1px;">
+                        <input id="matricula" style="width: 250px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>NS:</td>
+                    <td style="border: 1px solid #ccc; padding: 1px;">
+                        <input id="numeroNS" style="width: 250px;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tipo de análise</td>
+                    <td id="tipo-analise-dimensionado-html">
+
+                        <select id="nota4-select" style="padding: 4px; font-size: 1em; min-width: 260px;">
+                            <option value=""></option>
+                            <option value="COORDENOGRAMA">COORDENOGRAMA</option>
+                            <option value="COORDENOGRAMA-GD">COORDENOGRAMA-GD</option>
+                            <option value="SEM ANEXO">SEM ANEXO</option>
+                            <option value="PROJETO BT">PROJETO BT</option>
+                            <option value="SUBESTAÇÃO-N°01">SUBESTAÇÃO-N°01</option>
+                            <option value="SUBESTAÇÃO-N°02">SUBESTAÇÃO-N°02</option>
+                            <option value="SUBESTAÇÃO-N°03">SUBESTAÇÃO-N°03</option>
+                            <option value="SUBESTAÇÃO-N°04">SUBESTAÇÃO-N°04</option>
+                            <option value="SUBESTAÇÃO-N°05">SUBESTAÇÃO-N°05</option>
+                            <option value="SUBESTAÇÃO-N°06">SUBESTAÇÃO-N°06</option>
+                            <option value="SUBESTAÇÃO-N°07">SUBESTAÇÃO-N°07</option>
+                            <option value="SUBESTAÇÃO-N°08">SUBESTAÇÃO-N°08</option>
+                            <option value="AUTOPRODUTOR">AUTOPRODUTOR</option>
+                        </select>
+                    </td>
+                </tr>
+
+
+
+            </tbody>
+        </table>
+
+
+
+    </div>
+    <br>
+    <div class="search-container">
+        <h2>Pesquisar RTs</h2>
+        <input type="text" id="searchInput" placeholder="Digite o nome..." disabled>
+        <button id="searchBtn" disabled>Pesquisar</button>
+        <div class="results" id="results"></div>
+    </div>
+
+    <br>
+    <div class="analise-card analise-card-notas">
+        <table class="analise-table analise-table-notas">
+            <tr>
+                <th colspan="2" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 1:
+                </th>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">TENSÃO DE ATENDIMENTO:
+                </td>
+                <td id="tensao-atendimento"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;"></td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">DEMANDA DE CONSUMO:
+                </td>
+                <td id="demanda-consumo" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">
+                </td>
+            </tr>
+            <tr id="campoGD">
+                <td id="rotulo-potencia-gd" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">POTÊNCIA GD:</td>
+                <td id="potencia-GD" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;"></td>
+            </tr>
+            <tr id="campoInjecaoZero" style="display: none;">
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">POTÊNCIA DE INJEÇÃO:</td>
+                <td id="potencia-injecao" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">0 KW (GRID ZERO)</td>
+            </tr>
+            <tr id="campogeradordiesel">
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">POTÊNCIA GERADOR A
+                    DIESEL:</td>
+                <td id="potencia-gerador" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 2:</td>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">PROJETO EM CONFORMIDADE
+                    COM NORMAS CEMIG;</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 3:</td>
+                <td id="nsedata" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;"></td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 4:</td>
+                <td id="nota4" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 5:</td>
+                <td id="nota5" style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">POTÊNCIA
+                    <span id="total-transformadores"></span>
+                </td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">NOTA 6:</td>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">COPIA DO CLIENTE FOI
+                    ANEXADA NO APR WEB.</td>
+            </tr>
+            <tr>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000;">OBSERVAÇÃO:</td>
+                <td style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; text-align: left;">
+                    <textarea id="observacao-nota6" rows="3" placeholder="Digite uma observação..."
+                        style="width: 100%; box-sizing: border-box; resize: vertical; font-size: 1em; padding: 6px; text-align: left;"></textarea>
+                </td>
+            </tr>
+        </table>
+
+                    <div style="margin-top: 10px; text-align: center;">
+            <button id="btnCopiarNotas" class="copiar-button" type="button">Copiar Notas</button>
+        </div>
+
+    </div>
+
+
+        <br><br>
+
+    <div class="analise-card analise-card-atalhos">
+
+        <table id="tabelaatalho"
+            style="width:100%; border-collapse:collapse; background:#fff; color:#000; font-size:1em; border:2px solid #000;">
+            <thead>
+                <tr style="background:#ffffff; color:#000;">
+                    <th colspan="14" style="padding:8px; border:1px solid #000;">ATALHOS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:8px; border:1px solid #000;">INICIO PLANEJADO</td>
+                    <td style="padding:8px; border:1px solid #000;"><input id="datainicioplanejado" type="text" value="03.02.2026"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    
+                </tr>
+                <tr>
+                    <td style="padding:8px; border:1px solid #000;">ANALISAR PROJETO ELETRICO</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td class="dataplanejada" style="padding:8px; border:1px solid #000;">03.02.2026</td>
+                    <td style="padding:8px; border:1px solid #000;">30</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td id="datatermino" style="padding:8px; border:1px solid #000;">24.02.2026</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td id="tipodeanalise" style="padding:8px; border:1px solid #000;">COORDENOGRAMA</td>
+                    
+                    
+                </tr>
+                <tr>
+                    <td style="padding:8px; border:1px solid #000;">RESPONSAVEL TÉCNICO</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td class="dataplanejada" style="padding:8px; border:1px solid #000;">03.02.2026</td>
+                    <td style="padding:8px; border:1px solid #000;">1</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td class="dataplanejada" style="padding:8px; border:1px solid #000;">03.02.2026</td>
+                     <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+
+                    <td id="responsavel-tecnico" style="padding:8px; border:1px solid #000;">ROBERTO CHRISTIANO ZANETTI BETTONI</td>
+                   
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 10px; text-align: center;">
+            <button id="btnCopiarAtalhosUltimasLinhas" class="copiar-button" type="button">Copiar</button>
+        </div>
+
+        <br><br>
+
+        <table id="tabela-atividade-diversa"
+            style="width:100%; border-collapse:collapse; background:#fff; color:#000; font-size:1em; border:2px solid #000;">
+            <thead>
+                <tr style="background:#ffffff; color:#000;">
+                    <th colspan="14" style="padding:8px; border:1px solid #000;">REALIZAR ATIVIDADE DIVERSA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="padding:8px; border:1px solid #000;">REALIZAR ATIVIDADE DIVERSA</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="padding:8px; border:1px solid #000;">C057514</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td class="dataplanejada" style="padding:8px; border:1px solid #000;">03.02.2026</td>
+                    <td style="padding:8px; border:1px solid #000;">1</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td class="dataplanejada" style="padding:8px; border:1px solid #000;">03.02.2026</td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="border:1px solid #000;"></td>
+                    <td style="padding:4px 8px; border:1px solid #000;">
+                        <select id="select-atividade-diversa" style="width:100%; padding:4px 6px; font-size:1em; font-weight:bold; border:1px solid #ccc; background:#fff; color:#000;">
+                            <option value="EMAIL">EMAIL</option>
+                            <option value="TELEFONE">TELEFONE</option>
+                            <option value="REUNIÃO">REUNIÃO</option>
+                            <option value="CORREÇÃO SIMPLES">CORREÇÃO SIMPLES</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 10px; text-align: center;">
+            <button id="btnCopiarAtividadeDiversa" class="copiar-button" type="button">Copiar</button>
+        </div>
+
+    </div>
+
+    <br><br>
+
+
+
+
+
+
+
+
+    <br><br>
+
+    <h1>CARTA DE EMAIL</h1>
+
+    <!-- <div class="analise-card analise-card-assunto">
+        <h2 id="assuntoemail"></h2>
+    </div> -->
+    <br>
+
+
+<div id="nt_container">
+  <h2>📧 Inconformidades NS</h2>
+
+  <label for="nt_ns">Número da NS</label>
+  <input type="text" id="nt_ns" class="nt_input">
+
+  <label for="nt_destinatario">Email do destinatário</label>
+  <input type="email" id="nt_destinatario" class="nt_input">
+
+  <label for="nt_remetente">Email do remetente</label>
+  <input type="email" id="nt_remetente" class="nt_input" readonly>
+
+  <label for="nt_corpo">Corpo do e-mail</label>
+  <textarea id="nt_corpo" class="nt_textarea"></textarea>
+
+  <button id="nt_btnEnviar" onclick="nt_enviarEmail()">Abrir no Outlook</button>
+
+  <div id="nt_footer">
+    Núcleo Técnico • Cemig
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+    <div id="email-container" class="container analise-email-container">
+        <h2 id="assuntoemail"></h2>
+        <p><span id="saudacao">Boa tarde</span>, <span id="contato-nome"></span> (<span id="email-texto"></span>),
+            (<span id="telefone-texto"></span>).</p>
+        <p>
+            Durante a análise da(s) NS(s) <span id="numero-ns">1140348899, 1140348816, 1140349051</span>, foram
+            identificados alguns itens necessários para alteração na solicitação para que a aprovação seja concluída.
+            Segue
+            itens de correção a serem observados:
+        </p>
+
+        <div class="editable-section" id="projeto-eletrico">
+            <div class="section-title"></div>
+            <div class="item-row">
+                <div class="item-number">1)</div>
+                <textarea></textarea>
+            </div>
+        </div>
+
+        <p>
+            Para auxílio na elaboração da documentação, o responsável técnico poderá consultar o material
+            disponibilizado pela Cemig:
+        </p>
+        <ul>
+            <li><a href="https://www.cemig.com.br/wp-content/uploads/2023/05/Cartilha-Tecnica-%E2%80%93-Modelo-de-estudo-de-coordenograma-para-solicitacao-de-injecao-de-potencia-MT-%E2%80%93-Geracao-Distribuida-rev2-1.pdf"
+                    target="_blank">Cartilha Técnica – Modelo de estudo de coordenograma para solicitação de injeção de
+                    potência MT – Geração Distribuída.</a></li>
+            <li><a href="https://www.cemig.com.br/wp-content/uploads/2024/04/CARTILHA-MODELO-PROJETO-GD.pdf"
+                    target="_blank">Cartilha Técnica – Modelo de projetos em média tensão – Geração Distribuída.</a>
+            </li>
+            <li><a href="https://www.cemig.com.br/wp-content/uploads/2023/09/nd5_3_000001p.pdf" target="_blank">ND.5.3 –
+                    Fornecimento de energia elétrica em média tensão – Rede de distribuição aérea ou subterrânea.</a>
+            </li>
+            <li><a href="https://www.cemig.com.br/wp-content/uploads/2024/07/ND_5.31_Conexao-em-MT-.pdf"
+                    target="_blank">ND.5.31 – Requisitos para conexão de acessantes produtores de energia elétrica ao
+                    sistema de distribuição da Cemig D – Média Tensão.</a></li>
+            <li><a href="https://www.cemig.com.br/wp-content/uploads/2024/12/nd5_2_000001p.docx.pdf" target="_blank">
+                    ND.5.2 – Fornecimento de energia elétrica em tensão secundária – Rede de distribuição aérea –
+                    edificações coletivas.</a></li>
+        </ul>
+
+        <p class="analise-aviso-importante">
+            Informamos que tabelas, gráficos, cálculos, dimensionamentos e demais modelos de estudos que venham a ser
+            encaminhados nesse
+            email, são apenas para
+            auxílio na elaboração do projeto/estudos de proteção e coordenação. O Responsável Técnico deverá analisar e
+            validar todas as informações
+            conforme necessidades da conexão do empreendimento antes de encaminhar o projeto/estudos para aprovação na
+            CEMIG!
+        </p>
+        <p class="analise-aviso-negrito">
+            Com exceção das alterações solicitadas acima, não deverá ser realizada nenhuma outra mudança!
+        </p>
+        <p>
+            Informamos que, caso necessário, esse e-mail se encontra disponível para resoluções de dúvidas relacionadas
+            à nota de serviço em questão.
+        </p>
+        <p>
+            Pedimos que se possível, informar telefone e E-mail de contato atualizado do responsável técnico.
+        </p>
+        <p>
+            Informamos que o prazo limite para as alterações solicitadas é de 24 horas. Para que haja liberação do
+            projeto elétrico aprovado, após alterações efetuadas no mesmo, favor anexar os novos arquivos diretamente no
+            APRWEB. Salientamos a importância de que essas alterações sejam feitas de forma imediata.
+        </p>
+
+        <div class="footer">
+            Att.<br>
+            Núcleo Técnico<br>
+            Processos Especiais de Expansão e Manutenção de Média e Baixa Tensão – PE/EM<br>
+            <a href="https://www.cemig.com.br" target="_blank">www.cemig.com.br</a>
+        </div>
+
+        <div class="action-panel">
+            <button id="btnAdicionarItem">Add item</button>
+            <button id="btnRemoverItem" class="delete-button">Delete</button>
+            <button id="btnCopiar" class="copiar-button">Copiar</button>
+        </div>
+    </div>
+    <br><br>
+
+
+
+    <div id="nota-operacao" class="analise-nota-operacao-title">
+        <span>NOTA PARA OPERAÇÃO</span>
+    </div>
+
+    <br><br>
+
+    <div class="analise-card analise-card-operacao">
+        <table class="analise-table analise-table-operacao">
+            <!-- Lista de IDs presentes nesta tabela:
+                in-operacao
+                alimentador-operacao
+                tensao-operacao
+                ip51-operacao
+                curva-operacao
+                dial-operacao
+                iinst50-operacao
+                tinst-operacao
+                ip51n-operacao
+                tempodefinido-operacao
+                iinst50n-operacao
+                tinstn-operacao
+            -->
+            <tr>
+                <th colspan="2"
+                    style="border-bottom: 2px solid #ccc; padding-bottom: 8px; text-align: left; background: #fff; color: #000;">
+                    NOTA PARA OPERAÇÃO</th>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">IN:</td>
+                <td id="in-operacao" style="padding: 6px; background: #fff; color: #000;">3009007177</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Alimentador:</td>
+                <td id="alimentador-operacao" style="padding: 6px; background: #fff; color: #000;">JFAU18</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Tensão:</td>
+                <td id="tensao-operacao" style="padding: 6px; background: #fff; color: #000;">22,00 KV</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Ip 51:</td>
+                <td id="ip51-operacao" style="padding: 6px; background: #fff; color: #000;">47,92 A</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Curva:</td>
+                <td id="curva-operacao" style="padding: 6px; background: #fff; color: #000;">IEC-E.I</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Dial:</td>
+                <td id="dial-operacao" style="padding: 6px; background: #fff; color: #000;">0,40 s</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">I inst 50:</td>
+                <td id="iinst50-operacao" style="padding: 6px; background: #fff; color: #000;">248,00 A</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">T inst:</td>
+                <td id="tinst-operacao" style="padding: 6px; background: #fff; color: #000;">0,04 s</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Ip 51N:</td>
+                <td id="ip51n-operacao" style="padding: 6px; background: #fff; color: #000;">15,81 A</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">Tempo definido:</td>
+                <td id="tempodefinido-operacao" style="padding: 6px; background: #fff; color: #000;">2,00 s</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">I inst 50N:</td>
+                <td id="iinst50n-operacao" style="padding: 6px; background: #fff; color: #000;">81,84 A</td>
+            </tr>
+            <tr>
+                <td style="padding: 6px; background: #fff; color: #000;">T inst:</td>
+                <td id="tinstn-operacao" style="padding: 6px; background: #fff; color: #000;">0,04 s</td>
+            </tr>
+        </table>
+        <div style="margin-top: 10px; text-align: center;">
+            <button id="btnCopiarOperacaoInAteTinst" class="copiar-button" type="button">Copiar</button>
+        </div>
+    </div>
+
+    <br><br>
+
+    <div class="analise-card analise-card-operacao analise-card-teste-dial">
+        <div style="margin-bottom: 16px;">
+            <table class="analise-table analise-table-operacao">
+                <tr>
+                    <th colspan="4"
+                        style="border-bottom: 2px solid #ccc; padding-bottom: 8px; text-align: left; background: #fff; color: #000;">
+                        LEMBRETE DE PARÂMETROS DAS CURVAS
+                    </th>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #e8f6d0; color: #000;"><strong>Curva</strong></td>
+                    <td style="padding: 6px; background: #e8f6d0; color: #000;"><strong>ALFA (α)</strong></td>
+                    <td style="padding: 6px; background: #e8f6d0; color: #000;"><strong>BETA (β)</strong></td>
+                    <td style="padding: 6px; background: #e8f6d0; color: #000;"><strong>K</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #fff; color: #000;">Inversa</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">0,02</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">0,14</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #fff; color: #000;">Muito inversa</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">13,5</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #fff; color: #000;">Extremamente inversa</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">2</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">80</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #fff; color: #000;">Long</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">80</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                </tr>
+                <tr>
+                    <td style="padding: 6px; background: #fff; color: #000;">FLAT (plana)</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">0</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">1</td>
+                    <td style="padding: 6px; background: #fff; color: #000;">0</td>
+                </tr>
+            </table>
+        </div>
+
+        <div style="display: flex; gap: 24px; flex-wrap: nowrap; align-items: flex-start;">
+            <div id="blocoDialParaImagem" style="flex: 1 1 50%; min-width: 0;">
+                <table class="analise-table analise-table-operacao">
+                    <tr>
+                        <th colspan="2"
+                            style="border-bottom: 2px solid #ccc; padding-bottom: 8px; text-align: left; background: #fff; color: #000;">
+                            PARÂMETROS PARA O CALCULO DO DIAL
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Tempo (s):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialTempoCalc" type="text" style="width: 100%;" placeholder="Ex: 0,40"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Beta:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialBetaCalc" type="text" style="width: 100%;" placeholder="Ex: 13,5"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Alfa:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialAlfaCalc" type="text" style="width: 100%;" placeholder="Ex: 1"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">I inst (A):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialIinstCalc" type="text" style="width: 100%;" placeholder="Ex: 248"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Ip (A):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialIpCalc" type="text" style="width: 100%;" placeholder="Ex: 47,92"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">K:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialKCalc" type="text" style="width: 100%;" placeholder="Ex: 1"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;"><strong>DIAL de ajuste:</strong></td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeDialResultadoCalc" type="text" style="width: 100%; font-weight: bold;" readonly></td>
+                    </tr>
+                </table>
+                <div id="formulaDialCalcEq"
+                    style="margin-top: 10px; padding: 10px; background: #f8fff8; border: 1px solid #cfe8cf; border-radius: 6px; overflow-x: visible; overflow-y: visible;">
+                </div>
+                <div data-excluir-captura="true" style="margin-top: 10px; text-align: center;">
+                    <button id="btnCopiarDialTesteDetalhes" class="copiar-button" type="button">Copiar</button>
+                    <button id="btnCopiarDialTesteJpg" class="copiar-button" type="button">Copiar JPG</button>
+                </div>
+            </div>
+
+            <div style="width: 2px; align-self: stretch; background: #000;"></div>
+
+            <div id="blocoTempoParaImagem" style="flex: 1 1 50%; min-width: 0;">
+                <table class="analise-table analise-table-operacao">
+                    <tr>
+                        <th colspan="2"
+                            style="border-bottom: 2px solid #ccc; padding-bottom: 8px; text-align: left; background: #fff; color: #000;">
+                            PARÂMETROS PARA O CALCULO DO TEMPO
+                        </th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">DIAL (s):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoDialCalc" type="text" style="width: 100%;" placeholder="Ex: 0,40"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Beta:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoBetaCalc" type="text" style="width: 100%;" placeholder="Ex: 13,5"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Alfa:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoAlfaCalc" type="text" style="width: 100%;" placeholder="Ex: 1"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">I inst (A):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoIinstCalc" type="text" style="width: 100%;" placeholder="Ex: 248"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">Ip (A):</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoIpCalc" type="text" style="width: 100%;" placeholder="Ex: 47,92"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;">K:</td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoKCalc" type="text" style="width: 100%;" placeholder="Ex: 1"></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 6px; background: #fff; color: #000;"><strong>Tempo calculado (s):</strong></td>
+                        <td style="padding: 6px; background: #fff; color: #000;"><input id="testeTempoResultadoCalc" type="text" style="width: 100%; font-weight: bold;" readonly></td>
+                    </tr>
+                </table>
+                <div id="formulaTempoCalcEq"
+                    style="margin-top: 10px; padding: 10px; background: #f8fff8; border: 1px solid #cfe8cf; border-radius: 6px; overflow-x: visible; overflow-y: visible;">
+                </div>
+                <div data-excluir-captura="true" style="margin-top: 10px; text-align: center;">
+                    <button id="btnCopiarTempoTesteDetalhes" class="copiar-button" type="button">Copiar</button>
+                    <button id="btnCopiarTempoTesteJpg" class="copiar-button" type="button">Copiar JPG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="analise-card analise-card-selo">
+        <table class="analise-table analise-table-selo">
+            <tr>
+                <td rowspan="2"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; text-align: center; vertical-align: middle; height: 55px;">
+                    <img src="logo/logocemig.png" alt="Logo CEMIG"
+                        style="max-width: 90px; max-height: 60px; display: block; margin: 0 auto;">
+                </td>
+                <td
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; border: 2.5px solid #000; height: 55px; text-align: center; vertical-align: middle;">
+                    ANÁLISE DE CONFORMIDADE
+                    COM AS NORMAS DA CEMIG E ABNT
+                </td>
+            </tr>
+            <tr>
+                <td id="nsselo" rowspan="2"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; border: 2.5px solid #000; height: 30px; font-size: 1.5em; font-weight: bold;">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; border: 2.5px solid #000;">
+                    Nota de
+                    Serviço Nº:</td>
+            </tr>
+            <tr>
+                <td colspan="2"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; border: 2.5px solid #000;">
+                    <div
+                        style="background: #b6fcb6; border-radius: 8px; padding: 2px 0; text-align: center; margin: 0 auto; width: 60%; border: 2px solid #2e8b57;">
+                        <span
+                            style="font-weight: bold; font-style: italic; font-size: 1.7em; letter-spacing: 1px; display: block; padding: 0 25px; text-align: left;">APROVADO</span>
+                        <span id="aprovadorselo">Por c057514 às 15:22, 03/08/2025</span>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"
+                    style="border: 1px solid #ccc; padding: 8px; background: #fff; color: #000; text-align: justify; border: 2.5px solid #000;">
+                    - Antes de solicitar a ligação, esta instalação deve ser submetida a uma vistoria pela CEMIG.<br>
+                    - Esta análise não isenta o responsável técnico da obra quanto à observância das normas CEMIG, ABNT
+                    e AMBIENTAIS.<br>
+                    - Caso não seja executado no prazo de 12 meses, este projeto deverá ser submetido novamente à CEMIG
+                    para análise.<br>
+                    - Excepcionalmente nos atendimentos com obras no sistema da CEMIG para conexão de cargas ou de usina
+                    geradora, a validade do projeto elétrico aprovado pela CEMIG será até o término da obra.<br>
+                    - A ligação ao sistema elétrico da CEMIG está condicionada à análise de viabilidade técnica e
+                    comercial, podendo haver custos ao interessado.<br>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+
+     <button id="botaoSalvar">Salvar</button>
+
+    <script src="analise.js"></script>
+    <script>
+        function formatDateBR(date) {
+            const d = date.getDate().toString().padStart(2, '0');
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const y = date.getFullYear();
+            return `${d}.${m}.${y}`;
+        }
+
+        function persistDataPlanejada(value) {
+            // Atualiza todos os campos com class="dataplanejada"
+            document.querySelectorAll('.dataplanejada').forEach(el => {
+                el.textContent = value;
+            });
+            // Salva no localStorage
+            localStorage.setItem('datainicioplanejado', value);
+        }
+
+        function updateDataTermino(value) {
+            // Sempre define datatermino como a data atual
+            const hoje = new Date();
+            const dataTermino = formatDateBR(hoje);
+            document.getElementById('datatermino').textContent = dataTermino;
+            localStorage.setItem('datatermino', dataTermino);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('datainicioplanejado');
+            // Carrega valor persistido
+            const persisted = localStorage.getItem('datainicioplanejado');
+            if (persisted) {
+                input.value = persisted;
+                persistDataPlanejada(persisted);
+                updateDataTermino(persisted);
+            }
+            input.addEventListener('input', function () {
+                persistDataPlanejada(this.value);
+                updateDataTermino(this.value);
+            });
+
+            // Preenche responsável técnico
+            const contatoNome = localStorage.getItem('contato_nome');
+            if (contatoNome) {
+                const responsavel = document.getElementById('responsavel-tecnico');
+                if (responsavel) responsavel.textContent = contatoNome;
+            }
+
+            // Preenche tipo de análise
+            const tipoAnalise = localStorage.getItem('tipodeanalise');
+            if (tipoAnalise) {
+                const tipoAnaliseEl = document.getElementById('tipodeanalise');
+                if (tipoAnaliseEl) tipoAnaliseEl.textContent = tipoAnalise;
+            }
+
+            // Preenche seleção atividade diversa
+            const selectAtividade = document.getElementById('select-atividade-diversa');
+            const atividadePersistida = localStorage.getItem('atividade_diversa_termo');
+            if (selectAtividade && atividadePersistida) {
+                selectAtividade.value = atividadePersistida;
+            }
+            if (selectAtividade) {
+                selectAtividade.addEventListener('change', function () {
+                    localStorage.setItem('atividade_diversa_termo', this.value);
+                });
+            }
+
+
+
+
+        });
+    </script>
+</body>
+
+</html>
